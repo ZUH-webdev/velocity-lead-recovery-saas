@@ -1,0 +1,479 @@
+# 📐 Velocity Architecture Diagram
+
+## System Architecture Overview
+
+```
+┌──────────────────────────────────────────────────────────────────────────┐
+│                           CLIENT LAYER                                   │
+├──────────────────────────────────────────────────────────────────────────┤
+│                                                                          │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────────┐        │
+│  │   Web Browser   │  │  SMS Provider   │  │  Lead Form Widget│        │
+│  │   (React App)   │  │    (Twilio)     │  │  (JavaScript)    │        │
+│  └────────┬────────┘  └────────┬────────┘  └────────┬─────────┘        │
+│           │                     │                     │                 │
+└───────────┼─────────────────────┼─────────────────────┼─────────────────┘
+            │                     │                     │
+            │         HTTPS       │      HTTPS          │
+            │                     │                     │
+┌───────────┼─────────────────────┼─────────────────────┼─────────────────┐
+│           ↓                     ↓                     ↓                 │
+│  ┌──────────────────────────────────────────────────────────────┐      │
+│  │              LOAD BALANCER / API GATEWAY                      │      │
+│  └──────────────────┬───────────────────────────────────────────┘      │
+│                     │                                                   │
+│                  EXPRESS.JS                                            │
+│  ┌──────────────────────────────────────────────────────────────┐      │
+│  │                    MIDDLEWARE LAYER                           │      │
+│  ├──────────────────────────────────────────────────────────────┤      │
+│  │ ┌──────────┐ ┌─────────┐ ┌────────┐ ┌────────┐ ┌──────────┐ │      │
+│  │ │ Helmet   │ │ Morgan  │ │ CORS   │ │ Rate   │ │ JSON     │ │      │
+│  │ │(Security)│ │(Logging)│ │        │ │Limiter │ │ Parser   │ │      │
+│  │ └──────────┘ └─────────┘ └────────┘ └────────┘ └──────────┘ │      │
+│  └──────────────────────────────────────────────────────────────┘      │
+│                     │                                                   │
+│  ┌──────────────────────────────────────────────────────────────┐      │
+│  │                      ROUTE LAYER                              │      │
+│  ├──────────────────────────────────────────────────────────────┤      │
+│  │                                                               │      │
+│  │ ┌──────────────┐  ┌────────────────┐  ┌────────────────┐     │      │
+│  │ │ /api/auth    │  │ /api/business  │  │ /api/leads     │     │      │
+│  │ ├──────────────┤  ├────────────────┤  ├────────────────┤     │      │
+│  │ │ POST signup  │  │ GET /:id       │  │ POST /         │     │      │
+│  │ │ POST login   │  │ PUT /settings  │  │ GET /:bid      │     │      │
+│  │ │ POST logout  │  │ POST /services │  │ PUT /:bid/:lid │     │      │
+│  │ │ POST refresh │  │                │  │ GET /:bid/:lid │     │      │
+│  │ └──────────────┘  └────────────────┘  └────────────────┘     │      │
+│  │                                                               │      │
+│  │ ┌──────────────────────────────────────────────────────────┐ │      │
+│  │ │         /api/sms (NEW - Velocity SMS System)            │ │      │
+│  │ ├──────────────────────────────────────────────────────────┤ │      │
+│  │ │ POST /start       - Start new conversation              │ │      │
+│  │ │ POST /incoming    - Receive lead message                │ │      │
+│  │ │ GET /conversation - Get chat history                    │ │      │
+│  │ │ POST /close       - End conversation                    │ │      │
+│  │ │ POST /escalate    - Handoff to human                    │ │      │
+│  │ └──────────────────────────────────────────────────────────┘ │      │
+│  │                                                               │      │
+│  └──────────────────────────────────────────────────────────────┘      │
+│                     │                                                   │
+│  ┌──────────────────────────────────────────────────────────────┐      │
+│  │                   SERVICE LAYER (Business Logic)             │      │
+│  ├──────────────────────────────────────────────────────────────┤      │
+│  │                                                               │      │
+│  │ ┌────────────────────────┐    ┌──────────────────────────┐   │      │
+│  │ │    AuthService         │    │   SMSService (NEW)       │   │      │
+│  │ ├────────────────────────┤    ├──────────────────────────┤   │      │
+│  │ │ • signup()             │    │ • processIncoming()      │   │      │
+│  │ │ • login()              │    │ • _generateResponse()    │   │      │
+│  │ │ • refreshToken()       │    │ • _handleGreeting()      │   │      │
+│  │ │ • logout()             │    │ • _handleQualification() │   │      │
+│  │ │ • generateAccessToken()│    │ • _handleBooking()       │   │      │
+│  │ │ • generateRefreshToken()│   │ • startConversation()    │   │      │
+│  │ └────────────────────────┘    │ • escalate()             │   │      │
+│  │                                │ • closeConversation()    │   │      │
+│  │ ┌────────────────────────┐    │ • getConversation()      │   │      │
+│  │ │  smsTemplates (NEW)    │    └──────────────────────────┘   │      │
+│  │ ├────────────────────────┤                                    │      │
+│  │ │ • openMissedCall()     │                                    │      │
+│  │ │ • openFormSubmit()     │                                    │      │
+│  │ │ • qualReason()         │                                    │      │
+│  │ │ • qualTimePreference() │                                    │      │
+│  │ │ • bookingTwoSlots()    │                                    │      │
+│  │ │ • confirmAppointment() │                                    │      │
+│  │ │ • emergencyResponse()  │                                    │      │
+│  │ │ • getTimeSlots()       │                                    │      │
+│  │ └────────────────────────┘                                    │      │
+│  │                                                               │      │
+│  └──────────────────────────────────────────────────────────────┘      │
+│                                                                        │
+│  ┌──────────────────────────────────────────────────────────────┐      │
+│  │                      MODEL LAYER (Mongoose)                  │      │
+│  ├──────────────────────────────────────────────────────────────┤      │
+│  │                                                               │      │
+│  │ ┌────────────┐  ┌──────────┐  ┌────────┐  ┌──────────────┐   │      │
+│  │ │ User       │  │ Business │  │ Lead   │  │SMSConversation│   │      │
+│  │ │            │  │          │  │        │  │ (NEW)        │   │      │
+│  │ │ • _id      │  │ • _id    │  │ • _id  │  │ • _id        │   │      │
+│  │ │ • email    │  │ • name   │  │ • bid  │  │ • phone      │   │      │
+│  │ │ • password │  │ • phone  │  │ • name │  │ • leadName   │   │      │
+│  │ │ • businessId│ │ • addr   │  │ • email│  │ • state      │   │      │
+│  │ │ • role     │  │ • services│ │ • phone│  │ • messages[] │   │      │
+│  │ │ • tier     │  │ • settings│ │ • status│ │ • appt data  │   │      │
+│  │ └────────────┘  └──────────┘  │ • score │  └──────────────┘   │      │
+│  │                                │ • notes │                      │      │
+│  │                                └────────┘                      │      │
+│  └──────────────────────────────────────────────────────────────┘      │
+│                                                                        │
+└────────────────────────────────────────────────────────────────────────┘
+         ↓                                              ↓
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         DATA PERSISTENCE LAYER                          │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│  ┌──────────────────────────┐        ┌──────────────────────────┐      │
+│  │      MONGODB             │        │      REDIS CACHE         │      │
+│  │                          │        │                          │      │
+│  │  Collections:            │        │  Keys:                   │      │
+│  │  ┌────────────────────┐  │        │  ┌──────────────────┐    │      │
+│  │  │ users              │  │        │  │ refresh:{userId} │    │      │
+│  │  │ businesses         │  │        │  │ (7-day expiry)   │    │      │
+│  │  │ leads              │  │        │  │                  │    │      │
+│  │  │ smsconversations   │  │        │  │ cache keys (TBD) │    │      │
+│  │  │ (NEW)              │  │        │  └──────────────────┘    │      │
+│  │  └────────────────────┘  │        │                          │      │
+│  │                          │        │  Used for:               │      │
+│  │  Indexes:                │        │  • Token refresh         │      │
+│  │  • email (users)         │        │  • Session state         │      │
+│  │  • businessId (all)      │        │  • Conversation cache    │      │
+│  │  • status + score (leads)│        │                          │      │
+│  │  • phone + bid (sms)     │        │                          │      │
+│  │  • state (sms)           │        │                          │      │
+│  └──────────────────────────┘        └──────────────────────────┘      │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+
+
+```
+
+## SMS Conversation State Machine
+
+```
+                    ┌─────────────────────┐
+                    │    GREETING STATE   │
+                    └──────────┬──────────┘
+                               │
+                    Capture lead name
+                               │
+                    ┌──────────▼──────────┐
+                    │ QUALIFICATION STATE │
+                    └──────────┬──────────┘
+                               │
+          ┌─────────────────────┼─────────────────────┐
+          │                     │                     │
+    Ask visit reason    Check urgency level   Ask time preference
+          │                     │                     │
+   ┌──────▼──────┐    ┌─────────▼────────┐    ┌──────▼──────┐
+   │Emergency?   │    │Emergency?: 911   │    │Morning or   │
+   │  No → cont  │    │  Yes → ESCALATED │    │ Afternoon?  │
+   └──────┬──────┘    └──────────────────┘    └──────┬──────┘
+          │                                           │
+          └───────────────────┬───────────────────────┘
+                              │
+                All qualification data collected
+                              │
+                    ┌─────────▼────────┐
+                    │  BOOKING STATE   │
+                    └─────────┬────────┘
+                              │
+                    Offer 2 time slots
+                              │
+                    ┌─────────▼────────┐
+                    │  Lead selects    │
+                    └─────────┬────────┘
+                              │
+                    ┌─────────▼────────┐
+                    │  CONFIRMED STATE │
+                    └──────────────────┘
+                        (end)
+
+
+Escalation Paths:
+├─ Emergency keyword detected → ESCALATED (human handoff)
+├─ Complex question → ESCALATED (human handoff)
+├─ User requests escalation → ESCALATED
+└─ Conversation closed manually → CLOSED
+
+```
+
+## Data Flow: SMS Incoming Message
+
+```
+SMS PROVIDER (Twilio)
+        │
+        │ Receives SMS from lead phone
+        │
+        ├─ Extract: from, to, body
+        │
+        └─ Webhook POST to /api/sms/incoming
+                 │
+                 │ JSON body:
+                 │ {
+                 │   "phoneNumber": "+1-555-123-4567",
+                 │   "messageText": "Hi I'm interested",
+                 │   "businessId": "63f7d8e9..."
+                 │ }
+                 │
+                 ▼
+        EXPRESS ROUTE HANDLER
+                 │
+                 ├─ Validate input (phone, text, businessId)
+                 │
+                 └─ Call SMSService.processIncomingMessage()
+                         │
+                         │ STEP 1: Lookup conversation
+                         ├─ Query MongoDB: SMSConversation.findOne({
+                         │    leadPhoneNumber, businessId
+                         │  })
+                         │
+                         │ If found: resume existing conversation
+                         │ If not found: create new one (state='greeting')
+                         │
+                         │ STEP 2: Store lead message
+                         ├─ Add to conversation.messages[]:
+                         │  {
+                         │    sender: 'lead',
+                         │    text: messageText,
+                         │    timestamp: now
+                         │  }
+                         │
+                         │ STEP 3: Generate response
+                         ├─ Call _generateResponse(conversation, text)
+                         │
+                         │  Switch on conversation.state:
+                         │  ├─ greeting → _handleGreeting()
+                         │  │            Extract name, move to qualification
+                         │  │
+                         │  ├─ qualification → _handleQualification()
+                         │  │                  Capture data, advance state
+                         │  │
+                         │  ├─ booking → _handleBooking()
+                         │  │            Offer slots or confirm
+                         │  │
+                         │  └─ confirmed → return null (no response)
+                         │
+                         │  Return: Velocity's response text or null
+                         │
+                         │ STEP 4: Store Velocity response
+                         ├─ If response exists:
+                         │  Add to conversation.messages[]:
+                         │  {
+                         │    sender: 'velocity',
+                         │    text: response,
+                         │    timestamp: now
+                         │  }
+                         │
+                         │ STEP 5: Save to database
+                         ├─ conversation.save() → MongoDB
+                         │
+                         │ STEP 6: Return to API
+                         └─ Return JSON:
+                            {
+                              "success": true,
+                              "data": {
+                                "response": "What's the reason...",
+                                "state": "qualification",
+                                "conversationId": "63f7d9a0..."
+                              }
+                            }
+                             │
+                             ▼
+        API RESPONSE to SMS Provider
+                 │
+                 ├─ SMS provider receives response
+                 │
+                 └─ Sends Velocity's message to lead phone
+                      │
+                      ▼
+                   LEAD RECEIVES SMS
+                   (ready to reply)
+
+```
+
+## Authentication Flow
+
+```
+USER SIGNUP
+    │
+    └─ POST /api/auth/signup
+         {email, password, businessName}
+            │
+            ├─ Validate email, password
+            │
+            ├─ Check if email already exists
+            │
+            ├─ Hash password (bcryptjs, 10 rounds)
+            │
+            ├─ Save User document to MongoDB
+            │
+            ├─ Generate JWT access token (15 min)
+            │  Payload: {userId, businessId}
+            │
+            ├─ Generate & store refresh token (Redis, 7 days)
+            │  Key: refresh:{userId}
+            │
+            └─ Return JSON:
+               {
+                 user: {...},
+                 token: "eyJhbGc...",
+                 refreshToken: "eyJhbGc..."
+               }
+
+USER LOGIN
+    │
+    └─ POST /api/auth/login
+         {email, password}
+            │
+            ├─ Find user by email
+            │
+            ├─ Compare password (bcryptjs.compare)
+            │
+            ├─ Generate access token (15 min)
+            │
+            ├─ Generate refresh token (Redis, 7 days)
+            │
+            └─ Return same as signup
+
+AUTHENTICATED REQUEST (with Bearer token)
+    │
+    └─ GET /api/leads/businessId
+         Header: Authorization: Bearer eyJhbGc...
+            │
+            ├─ authMiddleware intercepts
+            │
+            ├─ Extract token from header
+            │
+            ├─ Verify signature (JWT_SECRET)
+            │
+            ├─ If valid:
+            │  ├─ Decode payload (userId, businessId)
+            │  │
+            │  ├─ Load user from MongoDB
+            │  │
+            │  ├─ Attach req.user = {id, businessId}
+            │  │
+            │  └─ Call next()
+            │
+            ├─ If invalid:
+            │  └─ Return 401 Unauthorized
+            │
+            └─ Route handler proceeds
+
+TOKEN REFRESH
+    │
+    └─ POST /api/auth/refresh
+         {refreshToken}
+            │
+            ├─ Verify refresh token signature
+            │
+            ├─ Look up in Redis: refresh:{userId}
+            │
+            ├─ Compare with stored token
+            │
+            ├─ If match:
+            │  ├─ Generate new access token
+            │  │
+            │  └─ Return {token: "eyJhbGc..."}
+            │
+            └─ If no match:
+               └─ Return 401 Unauthorized
+
+USER LOGOUT
+    │
+    └─ POST /api/auth/logout
+         Header: Authorization: Bearer eyJhbGc...
+            │
+            ├─ Verify token (authMiddleware)
+            │
+            ├─ Delete refresh token from Redis
+            │  Key: refresh:{userId}
+            │
+            └─ Return success
+
+```
+
+---
+
+## Technology & Dependency Tree
+
+```
+velocity-lead-recovery-saas/
+│
+└─ backend/
+   │
+   ├─ Dependencies:
+   │  ├─ express (web framework)
+   │  │  └─ req/res/next flow
+   │  │
+   │  ├─ mongoose (MongoDB ODM)
+   │  │  ├─ User, Business, Lead, SMSConversation models
+   │  │  └─ Validation, pre-hooks, indexes
+   │  │
+   │  ├─ jsonwebtoken (JWT)
+   │  │  └─ Token generation & verification
+   │  │
+   │  ├─ bcryptjs (password hashing)
+   │  │  └─ Salt + hash on user creation
+   │  │
+   │  ├─ ioredis (Redis client)
+   │  │  └─ Refresh token storage (7-day expiry)
+   │  │
+   │  ├─ helmet (security headers)
+   │  │  └─ XSS, clickjacking, MIME type protection
+   │  │
+   │  ├─ express-rate-limit (rate limiting)
+   │  │  └─ Prevent brute force / DoS
+   │  │
+   │  ├─ morgan (HTTP logging)
+   │  │  └─ Request logging
+   │  │
+   │  ├─ cors (cross-origin)
+   │  │  └─ Allow frontend requests
+   │  │
+   │  ├─ dotenv (environment config)
+   │  │  └─ Load .env variables
+   │  │
+   │  └─ validator (data validation)
+   │     └─ Email, phone format checks
+   │
+   └─ Dev Dependencies:
+      └─ nodemon (auto-restart on changes)
+```
+
+---
+
+## Deployment Architecture (Future)
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     KUBERNETES / DOCKER SWARM                   │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              Load Balancer (Nginx / HAProxy)             │  │
+│  └──────────────────┬───────────────────────────────────────┘  │
+│                     │                                          │
+│        ┌────────────┼────────────┐                             │
+│        │            │            │                             │
+│  ┌─────▼─┐   ┌─────▼─┐   ┌─────▼─┐                            │
+│  │Backend│   │Backend│   │Backend│  (3+ replicas)            │
+│  │Pod 1  │   │Pod 2  │   │Pod 3  │                            │
+│  └──────┬┘   └──────┬┘   └──────┬┘                            │
+│        │            │            │                             │
+│        └────────────┼────────────┘                             │
+│                     │                                          │
+│   ┌─────────────────────────────────────────┐                 │
+│   │  MongoDB StatefulSet (Replica Set)      │                 │
+│   │  - 3 nodes                              │                 │
+│   │  - Persistent volumes                   │                 │
+│   │  - Automatic failover                   │                 │
+│   └─────────────────────────────────────────┘                 │
+│                     │                                          │
+│   ┌─────────────────────────────────────────┐                 │
+│   │  Redis Cluster (High Availability)      │                 │
+│   │  - 3 master nodes                       │                 │
+│   │  - 3 slave nodes                        │                 │
+│   │  - Automatic failover                   │                 │
+│   └─────────────────────────────────────────┘                 │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+        ↓                                              ↓
+  ┌──────────────┐                           ┌──────────────┐
+  │ Monitoring   │                           │ Logging      │
+  │ (Prometheus) │                           │ (ELK Stack)  │
+  └──────────────┘                           └──────────────┘
+```
+
+---
+
+Generated: May 4, 2026
