@@ -3,7 +3,9 @@
  * Handles Velocity conversation logic, message routing, and state management
  */
 const SMSConversation = require('../models/SMSConversation');
+const Business = require('../models/Business');
 const { templates, getTimeSlots } = require('./smsTemplates');
+const CalendarService = require('./CalendarService');
 
 class SMSService {
   /**
@@ -35,7 +37,7 @@ class SMSService {
       });
 
       // Process message and determine response
-      const response = await this._generateResponse(conversation, messageText);
+      const response = await this._generateResponse(conversation, messageText, conversation.businessId);
 
       // Add Velocity's response
       if (response) {
@@ -64,7 +66,7 @@ class SMSService {
   /**
    * Generate response based on conversation state
    */
-  async _generateResponse(conversation, messageText) {
+  async _generateResponse(conversation, messageText, businessId) {
     const text = messageText.toLowerCase().trim();
 
     switch (conversation.state) {
@@ -75,7 +77,7 @@ class SMSService {
         return this._handleQualification(conversation, text);
 
       case 'booking':
-        return this._handleBooking(conversation, text);
+        return await this._handleBooking(conversation, text, businessId);
 
       case 'confirmed':
         return null; // No more responses
@@ -151,18 +153,76 @@ class SMSService {
   }
 
   /**
-   * Handle booking phase
+   * Handle booking phase - Get real-time availability from Google Calendar
    */
-  _handleBooking(conversation, text) {
-    const clinicName = '[Clinic Name]';
-    const slots = getTimeSlots();
+  async _handleBooking(conversation, text, businessId) {
+    let clinicName = '[Clinic Name]';
+    let availableSlots = [];
+
+    try {
+      // Fetch business details for timezone and calendar integration
+      const business = await Business.findById(businessId);
+      if (business) {
+        clinicName = business.name;
+
+        // Try to get real-time slots from Google Calendar
+        if (business.integrations?.googleCalendar?.refreshToken) {
+          try {
+            // Get tomorrow's date in YYYY-MM-DD format
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowDate = tomorrow.toISOString().split('T')[0];
+
+            // Get available slots from calendar
+            const realSlots = await CalendarService.getAvailableSlots(business, tomorrowDate);
+
+            // Format slots with dates
+            const tomorrowFormatted = tomorrow.toLocaleDateString('en-US', {
+              weekday: 'long',
+              month: 'short',
+              day: 'numeric'
+            });
+
+            availableSlots = realSlots.map(time => ({
+              slot: `tomorrow (${tomorrowFormatted}) at ${time}`,
+              date: tomorrowFormatted,
+              time: time
+            }));
+
+            console.log(`Found ${availableSlots.length} available slots for ${clinicName}`);
+          } catch (calendarError) {
+            console.warn(`Calendar lookup failed, falling back to defaults: ${calendarError.message}`);
+            // Fall back to hardcoded slots if calendar lookup fails
+            availableSlots = this._getDefaultSlots();
+          }
+        } else {
+          // No calendar integration configured, use defaults
+          availableSlots = this._getDefaultSlots();
+        }
+      } else {
+        // Business not found, use defaults
+        availableSlots = this._getDefaultSlots();
+      }
+    } catch (error) {
+      console.error('Error in booking handler:', error);
+      // Use default slots as fallback
+      availableSlots = this._getDefaultSlots();
+    }
+
+    // Ensure we have at least 2 slots
+    const slotsToOffer = availableSlots.slice(0, 2);
+    if (slotsToOffer.length < 2) {
+      slotsToOffer.push(...this._getDefaultSlots().slice(0, 2 - slotsToOffer.length));
+    }
 
     // Check which slot they chose
     const chosenSlot =
-      text.includes('tomorrow') || text.includes('2:00') || text.includes('2 pm')
-        ? slots[0]
-        : text.includes('wednesday') || text.includes('10:00') || text.includes('10 am')
-        ? slots[1]
+      text.includes(slotsToOffer[0].time.toLowerCase().replace(' ', '')) ||
+      text.includes('first')
+        ? slotsToOffer[0]
+        : text.includes(slotsToOffer[1].time.toLowerCase().replace(' ', '')) ||
+          text.includes('second')
+        ? slotsToOffer[1]
         : null;
 
     if (chosenSlot) {
@@ -186,6 +246,15 @@ class SMSService {
       return templates.bookingAlternate();
     }
 
+    // First time in booking state - offer available slots
+    if (!conversation.slotOffer) {
+      conversation.slotOffer = {
+        slot1: slotsToOffer[0].slot,
+        slot2: slotsToOffer[1].slot
+      };
+      return templates.bookingTwoSlots(slotsToOffer[0].slot, slotsToOffer[1].slot);
+    }
+
     // If they provide custom date/time, capture it
     if (text) {
       conversation.appointmentDate = text;
@@ -195,6 +264,35 @@ class SMSService {
     }
 
     return templates.clarification();
+  }
+
+  /**
+   * Get default hardcoded time slots (fallback if calendar not configured)
+   * @private
+   */
+  _getDefaultSlots() {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const wednesday = new Date();
+    wednesday.setDate(wednesday.getDate() + (3 - wednesday.getDay()));
+
+    const tomorrowFormatted = tomorrow.toLocaleDateString('en-US', {
+      weekday: 'long',
+      month: 'short',
+      day: 'numeric'
+    });
+
+    const wednesdayFormatted = wednesday.toLocaleDateString('en-US', {
+      weekday: 'long',
+      month: 'short',
+      day: 'numeric'
+    });
+
+    return [
+      { slot: `tomorrow (${tomorrowFormatted}) at 2:00 PM`, date: tomorrowFormatted, time: '2:00 PM' },
+      { slot: `Wednesday (${wednesdayFormatted}) at 10:00 AM`, date: wednesdayFormatted, time: '10:00 AM' }
+    ];
   }
 
   /**
