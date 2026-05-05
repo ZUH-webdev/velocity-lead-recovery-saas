@@ -25,7 +25,14 @@ const BusinessSchema = new mongoose.Schema(
       enabled: { type: Boolean, default: false },
       config: { type: mongoose.Schema.Types.Mixed }
     },
-    integrations: { type: mongoose.Schema.Types.Mixed }
+    integrations: {
+      googleCalendar: {
+        refreshToken: { type: String },
+        calendarId: { type: String },
+        connectedAt: { type: Date },
+        connectedBy: { type: String } // userId who connected it
+      }
+    }
   },
   { timestamps: true }
 );

@@ -15,6 +15,7 @@ const authRoutes = require('./routes/auth.routes');
 const businessRoutes = require('./routes/business.routes');
 const leadsRoutes = require('./routes/leads.routes');
 const smsRoutes = require('./routes/sms.routes');
+const calendarRoutes = require('./routes/calendar.routes');
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/business', businessRoutes);
 app.use('/api/leads', leadsRoutes);
 app.use('/api/sms', smsRoutes);
+app.use('/api/calendar', calendarRoutes);
 
 
 // backend/src/app.js
