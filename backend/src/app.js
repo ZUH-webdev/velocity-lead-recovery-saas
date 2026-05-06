@@ -30,6 +30,14 @@ app.get('/api/health', (req, res) => {
   res.json({ success: true, data: { status: 'ok' } });
 });
 
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Velocity Lead Recovery backend is running',
+    endpoints: ['/api/health', '/api/auth', '/api/business', '/api/leads', '/api/sms', '/api/calendar']
+  });
+});
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/business', businessRoutes);
