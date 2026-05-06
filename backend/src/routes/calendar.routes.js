@@ -105,7 +105,7 @@ router.get('/callback', auth, async (req, res) => {
  *     "count": 4
  *   }
  */
-router.get('/availability', auth, async (req, res) => {
+async function getAvailability(req, res) {
   try {
     const { date } = req.query;
 
@@ -155,7 +155,15 @@ router.get('/availability', auth, async (req, res) => {
       type: error.constructor.name 
     });
   }
-});
+}
+
+router.get('/availability', auth, getAvailability);
+
+/**
+ * GET /api/calendar/slots
+ * Backwards-compatible alias for /availability
+ */
+router.get('/slots', auth, getAvailability);
 
 /**
  * GET /api/calendar/status
