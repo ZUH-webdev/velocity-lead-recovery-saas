@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, setPersistence, browserLocalPersistence } from 'firebase/auth';
+import { getAuth, setPersistence, browserLocalPersistence, GoogleAuthProvider } from 'firebase/auth';
 import { getAnalytics } from 'firebase/analytics';
 
 // Firebase configuration
@@ -22,9 +22,12 @@ const analytics = getAnalytics(app);
 // Initialize Auth
 const auth = getAuth(app);
 
+// Google provider (exported for reuse)
+const googleProvider = new GoogleAuthProvider();
+
 // Set persistence to local storage
 setPersistence(auth, browserLocalPersistence).catch((error) => {
   console.error('Error setting persistence:', error);
 });
 
-export { app, auth, analytics };
+export { app, auth, analytics, googleProvider };
