@@ -72,7 +72,7 @@ const LeadCard = ({ lead, onClick, isSelected = false }) => {
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
             <h3 className="font-bold text-slate-900 text-base mb-1 truncate">{lead.name}</h3>
-            <p className="text-slate-500 text-xs font-mono">{lead.phoneNumber}</p>
+            <p className="text-slate-500 text-xs font-mono">{lead.phone}</p>
           </div>
 
           {/* Lead Score Badge - Premium Style */}
@@ -80,13 +80,13 @@ const LeadCard = ({ lead, onClick, isSelected = false }) => {
             className={clsx(
               'flex-shrink-0 px-3 py-2 rounded-lg border flex items-center gap-1.5',
               'font-bold text-sm',
-              getLeadScoreBg(lead.leadScore),
-              getLeadScoreColor(lead.leadScore)
+              getLeadScoreBg(lead.score),
+              getLeadScoreColor(lead.score)
             )}
             whileHover={{ scale: 1.1, rotate: 2 }}
           >
             <TrendingUp className="w-3.5 h-3.5" />
-            <span className="text-lg">{lead.leadScore}</span>
+            <span className="text-lg">{lead.score}</span>
           </motion.div>
         </div>
 
@@ -94,13 +94,13 @@ const LeadCard = ({ lead, onClick, isSelected = false }) => {
         <div className="flex items-center gap-2 flex-wrap">
           <motion.div
             className={clsx(
-              'status-pill',
-              `status-pill.${lead.conversationState.toLowerCase()}`
+              'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border',
+              getStateColor(lead.state)
             )}
             whileHover={{ scale: 1.05 }}
           >
-            {getStateIcon(lead.conversationState)}
-            <span>{lead.conversationState}</span>
+            {getStateIcon(lead.state)}
+            <span>{lead.state}</span>
           </motion.div>
 
           {lead.source && (
@@ -113,10 +113,12 @@ const LeadCard = ({ lead, onClick, isSelected = false }) => {
         {/* Footer: Last interaction and action */}
         <div className="flex items-center justify-between pt-3 border-t border-slate-200/60">
           <div className="text-xs text-slate-500">
-            {new Date(lead.lastInteraction).toLocaleTimeString([], {
-              hour: '2-digit',
-              minute: '2-digit',
-            })}
+            {lead.lastInteraction
+              ? new Date(lead.lastInteraction).toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })
+              : 'Just now'}
           </div>
 
           <div className="flex items-center gap-2">
