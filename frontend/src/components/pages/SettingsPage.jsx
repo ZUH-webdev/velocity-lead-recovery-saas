@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Settings,
@@ -11,13 +12,28 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { useAppStore } from '../../store/appStore';
+import { useAuth } from '../../context/AuthContext';
 
 export const SettingsPage = ({ onNavigate }) => {
   const { businessSettings, setBusinessSettings } = useAppStore();
+  const { logout } = useAuth();
+  const navigate = useNavigate();
   const [businessName, setBusinessName] = useState(businessSettings.businessName);
   const [timezone, setTimezone] = useState(businessSettings.timezone);
   const [smsEnabled, setSmsEnabled] = useState(businessSettings.smsEnabled);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      await logout();
+      navigate('/signin', { replace: true });
+    } catch (error) {
+      console.error('Logout error:', error);
+      setLoggingOut(false);
+    }
+  };
 
   const handleSaveSettings = () => {
     setBusinessSettings({
@@ -284,12 +300,14 @@ export const SettingsPage = ({ onNavigate }) => {
             </h3>
 
             <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full px-4 py-2.5 rounded-lg bg-rose-500 hover:bg-rose-600 text-white font-medium flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md"
+              onClick={handleLogout}
+              disabled={loggingOut}
+              whileHover={{ scale: loggingOut ? 1 : 1.02 }}
+              whileTap={{ scale: loggingOut ? 1 : 0.98 }}
+              className="w-full px-4 py-2.5 rounded-lg bg-rose-500 hover:bg-rose-600 text-white font-medium flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <LogOut className="w-4 h-4" />
-              Sign Out
+              {loggingOut ? 'Signing out...' : 'Sign Out'}
             </motion.button>
 
             <p className="text-xs text-rose-700 mt-3">

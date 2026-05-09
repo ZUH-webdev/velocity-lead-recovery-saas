@@ -1,0 +1,582 @@
+/* Neumorphism Design System */
+
+:root {
+  --neu-bg: #e0e5ec;
+  --neu-dark: #bec3cf;
+  --neu-light: #ffffff;
+  --neu-text-dark: #3d4468;
+  --neu-text-light: #9499b7;
+  --neu-text-muted: #6c7293;
+  --neu-success: #00c896;
+  --neu-error: #ff3b5c;
+}
+
+/* Base Neumorphism Container */
+.neumorphism-container {
+  background: var(--neu-bg);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.neumorphism-card {
+  background: var(--neu-bg);
+  border-radius: 30px;
+  padding: 50px 40px;
+  box-shadow: 
+    20px 20px 60px var(--neu-dark),
+    -20px -20px 60px var(--neu-light);
+  position: relative;
+  transition: all 0.3s ease;
+  max-width: 420px;
+  width: 100%;
+}
+
+.neumorphism-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Header */
+.neumorphism-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.neumorphism-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 24px;
+  background: var(--neu-bg);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    8px 8px 20px var(--neu-dark),
+    -8px -8px 20px var(--neu-light),
+    inset 0 0 0 var(--neu-dark),
+    inset 0 0 0 var(--neu-light);
+  transition: all 0.3s ease;
+}
+
+.neumorphism-icon:hover {
+  box-shadow: 
+    4px 4px 10px var(--neu-dark),
+    -4px -4px 10px var(--neu-light),
+    inset 4px 4px 10px var(--neu-dark),
+    inset -4px -4px 10px var(--neu-light);
+}
+
+.neumorphism-header h1,
+.neumorphism-header h2 {
+  color: var(--neu-text-dark);
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.neumorphism-header p {
+  color: var(--neu-text-light);
+  font-size: 15px;
+  font-weight: 400;
+}
+
+/* Input Field */
+.neumorphism-input-group {
+  margin-bottom: 28px;
+  position: relative;
+}
+
+.neumorphism-input-wrapper {
+  position: relative;
+  background: var(--neu-bg);
+  border-radius: 15px;
+  box-shadow: 
+    inset 8px 8px 16px var(--neu-dark),
+    inset -8px -8px 16px var(--neu-light);
+  transition: all 0.3s ease;
+}
+
+.neumorphism-input-wrapper:focus-within {
+  box-shadow: 
+    inset 4px 4px 8px var(--neu-dark),
+    inset -4px -4px 8px var(--neu-light);
+}
+
+.neumorphism-input-wrapper input,
+.neumorphism-input-wrapper textarea,
+.neumorphism-input-wrapper select {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 20px 24px;
+  padding-left: 55px;
+  color: var(--neu-text-dark);
+  font-size: 16px;
+  font-weight: 500;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.neumorphism-input-wrapper input::placeholder {
+  color: transparent;
+}
+
+.neumorphism-input-wrapper label {
+  position: absolute;
+  left: 55px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--neu-text-light);
+  font-size: 16px;
+  font-weight: 400;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.neumorphism-input-wrapper input:focus + label,
+.neumorphism-input-wrapper input:not(:placeholder-shown) + label {
+  top: 8px;
+  font-size: 12px;
+  color: var(--neu-text-muted);
+  transform: translateY(0);
+}
+
+.neumorphism-input-icon {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  color: var(--neu-text-light);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.neumorphism-input-wrapper:focus-within .neumorphism-input-icon {
+  color: var(--neu-text-muted);
+}
+
+/* Password Toggle */
+.neumorphism-password-toggle {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--neu-bg);
+  border: none;
+  width: 35px;
+  height: 35px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--neu-text-light);
+  box-shadow: 
+    4px 4px 10px var(--neu-dark),
+    -4px -4px 10px var(--neu-light);
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.neumorphism-password-toggle:hover {
+  color: var(--neu-text-muted);
+}
+
+.neumorphism-password-toggle:active {
+  box-shadow: 
+    inset 2px 2px 5px var(--neu-dark),
+    inset -2px -2px 5px var(--neu-light);
+}
+
+.neumorphism-password-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Checkbox */
+.neumorphism-checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.neumorphism-checkbox-wrapper input[type="checkbox"] {
+  display: none;
+}
+
+.neumorphism-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+  color: var(--neu-text-muted);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.neumorphism-checkbox {
+  width: 22px;
+  height: 22px;
+  background: var(--neu-bg);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    3px 3px 8px var(--neu-dark),
+    -3px -3px 8px var(--neu-light);
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.neumorphism-checkbox-wrapper input[type="checkbox"]:checked + .neumorphism-checkbox-label .neumorphism-checkbox {
+  box-shadow: 
+    inset 2px 2px 5px var(--neu-dark),
+    inset -2px -2px 5px var(--neu-light);
+}
+
+.neumorphism-checkbox svg {
+  width: 14px;
+  height: 14px;
+  color: var(--neu-success);
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.3s ease;
+}
+
+.neumorphism-checkbox-wrapper input[type="checkbox"]:checked + .neumorphism-checkbox-label .neumorphism-checkbox svg {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Form Options */
+.neumorphism-form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 35px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.neumorphism-forgot-link {
+  color: var(--neu-text-muted);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.neumorphism-forgot-link:hover {
+  color: var(--neu-text-dark);
+}
+
+/* Button */
+.neumorphism-button {
+  width: 100%;
+  background: var(--neu-bg);
+  border: none;
+  border-radius: 15px;
+  padding: 18px 32px;
+  color: var(--neu-text-dark);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  margin-bottom: 30px;
+  box-shadow: 
+    8px 8px 20px var(--neu-dark),
+    -8px -8px 20px var(--neu-light);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.neumorphism-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+.neumorphism-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 
+    12px 12px 30px var(--neu-dark),
+    -12px -12px 30px var(--neu-light);
+}
+
+.neumorphism-button:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.neumorphism-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 
+    inset 4px 4px 10px var(--neu-dark),
+    inset -4px -4px 10px var(--neu-light);
+}
+
+.neumorphism-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.neumorphism-button-text {
+  position: relative;
+  z-index: 1;
+  transition: opacity 0.3s ease;
+}
+
+.neumorphism-button-loader {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.neumorphism-spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid var(--neu-dark);
+  border-top: 3px solid var(--neu-text-muted);
+  border-radius: 50%;
+  animation: neumorphism-spin 1s linear infinite;
+}
+
+@keyframes neumorphism-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.neumorphism-button.loading .neumorphism-button-text {
+  opacity: 0;
+}
+
+.neumorphism-button.loading .neumorphism-button-loader {
+  opacity: 1;
+}
+
+/* Divider */
+.neumorphism-divider {
+  display: flex;
+  align-items: center;
+  margin: 30px 0;
+  gap: 16px;
+}
+
+.neumorphism-divider-line {
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--neu-dark), transparent);
+}
+
+.neumorphism-divider span {
+  color: var(--neu-text-light);
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Social Button */
+.neumorphism-social {
+  width: 50px;
+  height: 50px;
+  background: var(--neu-bg);
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--neu-text-muted);
+  box-shadow: 
+    6px 6px 15px var(--neu-dark),
+    -6px -6px 15px var(--neu-light);
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.neumorphism-social:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    8px 8px 20px var(--neu-dark),
+    -8px -8px 20px var(--neu-light);
+}
+
+.neumorphism-social:active {
+  transform: translateY(0);
+  box-shadow: 
+    inset 3px 3px 8px var(--neu-dark),
+    inset -3px -3px 8px var(--neu-light);
+}
+
+.neumorphism-social svg {
+  width: 22px;
+  height: 22px;
+}
+
+.neumorphism-social-group {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+/* Link Text */
+.neumorphism-link {
+  color: var(--neu-text-muted);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.neumorphism-link:hover {
+  color: var(--neu-text-dark);
+}
+
+.neumorphism-signup-link {
+  text-align: center;
+  margin-top: 25px;
+}
+
+.neumorphism-signup-link p {
+  color: var(--neu-text-light);
+  font-size: 14px;
+}
+
+/* Error Message */
+.neumorphism-error-message {
+  color: var(--neu-error);
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 8px;
+  margin-left: 20px;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+}
+
+.neumorphism-error-message.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.neumorphism-input-group.error .neumorphism-input-wrapper {
+  box-shadow: 
+    inset 8px 8px 16px #ffb8c4,
+    inset -8px -8px 16px var(--neu-light),
+    0 0 0 2px var(--neu-error);
+}
+
+/* Mobile Responsive */
+@media (max-width: 480px) {
+  .neumorphism-card {
+    padding: 35px 25px;
+    border-radius: 20px;
+  }
+
+  .neumorphism-header h1,
+  .neumorphism-header h2 {
+    font-size: 1.75rem;
+  }
+
+  .neumorphism-input-wrapper input {
+    padding: 18px 20px;
+    padding-left: 50px;
+  }
+
+  .neumorphism-input-wrapper label {
+    left: 50px;
+  }
+
+  .neumorphism-form-options {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* Accessibility */
+:focus-visible {
+  outline: 2px solid var(--neu-text-muted);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Application class aliases: map existing app card/button classes to the neumorphism system
+   This allows the current Tailwind-based components (e.g. .card-elite, .lead-card-elite)
+   to receive the neumorphic look without changing many component files. */
+
+.card-elite,
+.lead-card-elite,
+.stat-card-premium {
+  background: var(--neu-bg) !important;
+  border-radius: 16px !important;
+  border: none !important;
+  padding: 1rem !important;
+  box-shadow: 18px 18px 40px var(--neu-dark), -18px -18px 40px var(--neu-light) !important;
+  transition: all 0.28s ease !important;
+}
+
+.card-elite:hover,
+.lead-card-elite:hover,
+.stat-card-premium:hover {
+  transform: translateY(-6px) !important;
+  box-shadow: 22px 22px 50px var(--neu-dark), -22px -22px 50px var(--neu-light) !important;
+}
+
+/* Lead card specific tweaks */
+.lead-card-elite {
+  cursor: pointer;
+}
+
+/* Buttons that previously used solid fills: provide a neumorphic button variant */
+.btn-primary,
+.btn-secondary,
+.neumorphism-button {
+  background: var(--neu-bg) !important;
+  color: var(--neu-text-dark) !important;
+  border-radius: 12px !important;
+  box-shadow: 10px 10px 24px var(--neu-dark), -10px -10px 24px var(--neu-light) !important;
+  border: none !important;
+}
+
+.btn-primary:hover,
+.btn-secondary:hover,
+.neumorphism-button:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 14px 14px 34px var(--neu-dark), -14px -14px 34px var(--neu-light) !important;
+}
+
+/* Apply background for larger containers if the app uses .neumorphism-container elsewhere */
+.neumorphism-container {
+  background: linear-gradient(180deg, var(--neu-bg), #e8edf4) !important;
+}
+

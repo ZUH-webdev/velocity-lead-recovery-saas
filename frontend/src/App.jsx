@@ -9,6 +9,7 @@ import Dashboard from './components/Dashboard';
 import LeadsPage from './components/pages/LeadsPage';
 import CalendarPage from './components/pages/CalendarPage';
 import SettingsPage from './components/pages/SettingsPage';
+import Home from './components/pages/Home';
 import SignIn from './components/pages/SignIn';
 import SignUp from './components/pages/SignUp';
 import { useAppStore } from './store/appStore';
@@ -130,6 +131,10 @@ function AppRoutes() {
   return (
     <Routes>
       <Route
+        path="/"
+        element={isAuthenticated ? <Navigate to="/dashboard" /> : <Home />}
+      />
+      <Route
         path="/signin"
         element={isAuthenticated ? <Navigate to="/dashboard" /> : <SignIn />}
       />
@@ -144,10 +149,6 @@ function AppRoutes() {
             <DashboardLayout />
           </ProtectedRoute>
         }
-      />
-      <Route
-        path="/"
-        element={isAuthenticated ? <Navigate to="/dashboard" /> : <Navigate to="/signin" />}
       />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
