@@ -101,3 +101,14 @@ export default {
   },
   plugins: [],
 }
+// tailwind.config.js
+module.exports = {
+  theme: {
+    extend: {
+      fontFamily: {
+        headline: ['"Plus Jakarta Sans"', 'sans-serif'],
+        content: ['Inter', 'sans-serif'],
+      },
+    },
+  },
+}

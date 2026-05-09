@@ -1,17 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Mail, Lock, Chrome, AlertCircle, Loader } from 'lucide-react';
+import { Mail, Lock, Chrome, AlertCircle, Loader, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import '../../styles/neumorphism.css';
 
 export default function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const cardRef = useRef(null);
 
   const { signIn, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
+
+  // Ambient light shadow effect
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (!cardRef.current) return;
+      const rect = cardRef.current.getBoundingClientRect();
+      const x = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
+      const y = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2);
+      cardRef.current.style.boxShadow = `${x * 30}px ${y * 30}px 60px var(--neu-dark), ${-x * 30}px ${-y * 30}px 60px var(--neu-light)`;
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    return () => document.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   const handleSignIn = async (e) => {
     e.preventDefault();
@@ -46,183 +63,145 @@ export default function SignIn() {
     }
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: 'easeOut' },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: (custom) => ({
-      opacity: 1,
-      x: 0,
-      transition: { delay: custom * 0.1, duration: 0.4 },
-    }),
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center px-4 py-12">
-      {/* Background elements */}
-      <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+    <div className="neumorphism-container">
+      <div className="neumorphism-card" ref={cardRef}>
+        {/* Header */}
+        <div className="neumorphism-header">
+          <div className="neumorphism-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <h2>Welcome Back</h2>
+          <p>Sign in to your Velocity account</p>
+        </div>
 
-      <motion.div
-        className="w-full max-w-md relative z-10"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        {/* Card */}
-        <div className="bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8 shadow-2xl">
-          {/* Header */}
-          <motion.div
-            className="mb-8 text-center"
-            variants={itemVariants}
-            custom={0}
-          >
-            <h1 className="text-3xl font-bold text-white mb-2">Welcome Back</h1>
-            <p className="text-slate-400">
-              Sign in to your Velocity account
-            </p>
-          </motion.div>
+        {/* Error message */}
+        {error && (
+          <div className="neumorphism-error-message show" style={{ margin: '0 0 28px 0', display: 'block', opacity: 1, transform: 'translateY(0)' }}>
+            <div style={{ color: 'var(--neu-error)', fontSize: '14px', fontWeight: 500, display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <AlertCircle size={16} />
+              {error}
+            </div>
+          </div>
+        )}
 
-          {/* Error message */}
-          {error && (
-            <motion.div
-              className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg flex items-start gap-3"
-              variants={itemVariants}
-              custom={1}
-            >
-              <AlertCircle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
-              <p className="text-red-200 text-sm">{error}</p>
-            </motion.div>
-          )}
-
-          {/* Form */}
-          <form onSubmit={handleSignIn} className="space-y-4 mb-6">
-            {/* Email */}
-            <motion.div variants={itemVariants} custom={2}>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Email
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  className="w-full bg-slate-900/50 border border-slate-600/50 rounded-lg pl-10 pr-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all"
-                  disabled={loading}
-                  autoComplete="email"
-                />
+        {/* Form */}
+        <form onSubmit={handleSignIn} style={{ marginBottom: '30px' }}>
+          {/* Email */}
+          <div className="neumorphism-input-group">
+            <div className="neumorphism-input-wrapper">
+              <div className="neumorphism-input-icon">
+                <Mail size={20} />
               </div>
-            </motion.div>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder=" "
+                disabled={loading}
+                autoComplete="email"
+              />
+              <label htmlFor="email">Email address</label>
+            </div>
+          </div>
 
-            {/* Password */}
-            <motion.div variants={itemVariants} custom={3}>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full bg-slate-900/50 border border-slate-600/50 rounded-lg pl-10 pr-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all"
-                  disabled={loading}
-                  autoComplete="current-password"
-                />
+          {/* Password */}
+          <div className="neumorphism-input-group">
+            <div className="neumorphism-input-wrapper" style={{ paddingRight: '50px' }}>
+              <div className="neumorphism-input-icon">
+                <Lock size={20} />
               </div>
-            </motion.div>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder=" "
+                disabled={loading}
+                autoComplete="current-password"
+              />
+              <label htmlFor="password">Password</label>
+              <button
+                type="button"
+                className="neumorphism-password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label="Toggle password visibility"
+                disabled={loading}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+          </div>
 
-            {/* Remember & Forgot */}
-            <motion.div
-              className="flex items-center justify-between text-sm"
-              variants={itemVariants}
-              custom={4}
-            >
-              <label className="flex items-center gap-2 text-slate-400 cursor-pointer hover:text-slate-300">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 rounded bg-slate-900/50 border border-slate-600/50 cursor-pointer"
-                  disabled={loading}
-                />
+          {/* Remember & Forgot */}
+          <div className="neumorphism-form-options">
+            <div className="neumorphism-checkbox-wrapper">
+              <input
+                type="checkbox"
+                id="remember"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                disabled={loading}
+              />
+              <label htmlFor="remember" className="neumorphism-checkbox-label">
+                <div className="neumorphism-checkbox">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </div>
                 Remember me
               </label>
-              <Link
-                to="/forgot-password"
-                className="text-blue-400 hover:text-blue-300 transition-colors"
-              >
-                Forgot password?
-              </Link>
-            </motion.div>
-
-            {/* Sign In Button */}
-            <motion.button
-              type="submit"
-              disabled={loading}
-              variants={itemVariants}
-              custom={5}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-2.5 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed mt-6"
-            >
-              {loading ? (
-                <>
-                  <Loader className="w-5 h-5 animate-spin" />
-                  Signing in...
-                </>
-              ) : (
-                'Sign In'
-              )}
-            </motion.button>
-          </form>
-
-          {/* Divider */}
-          <motion.div
-            className="flex items-center gap-3 mb-6"
-            variants={itemVariants}
-            custom={6}
-          >
-            <div className="flex-1 h-px bg-slate-600/30"></div>
-            <span className="text-xs font-medium text-slate-400">OR</span>
-            <div className="flex-1 h-px bg-slate-600/30"></div>
-          </motion.div>
-
-          {/* Google Sign In */}
-          <motion.button
-            type="button"
-            onClick={handleGoogleSignIn}
-            disabled={loading}
-            variants={itemVariants}
-            custom={7}
-            className="w-full bg-slate-700/50 hover:bg-slate-700 border border-slate-600/50 text-white font-semibold py-2.5 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Chrome className="w-5 h-5" />
-            Sign in with Google
-          </motion.button>
-
-          {/* Sign Up Link */}
-          <motion.p
-            className="text-center text-slate-400 text-sm mt-6"
-            variants={itemVariants}
-            custom={8}
-          >
-            Don't have an account?{' '}
-            <Link
-              to="/signup"
-              className="text-blue-400 hover:text-blue-300 font-semibold transition-colors"
-            >
-              Sign up
+            </div>
+            <Link to="/forgot-password" className="neumorphism-forgot-link">
+              Forgot password?
             </Link>
-          </motion.p>
+          </div>
+
+          {/* Sign In Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className={`neumorphism-button ${loading ? 'loading' : ''}`}
+            style={{ marginTop: '30px' }}
+          >
+            <span className="neumorphism-button-text">Sign In</span>
+            <div className="neumorphism-button-loader">
+              <div className="neumorphism-spinner"></div>
+            </div>
+          </button>
+        </form>
+
+        {/* Divider */}
+        <div className="neumorphism-divider">
+          <div className="neumorphism-divider-line"></div>
+          <span>or continue with</span>
+          <div className="neumorphism-divider-line"></div>
         </div>
-      </motion.div>
+
+        {/* Social Login */}
+        <div className="neumorphism-social-group">
+          <button type="button" className="neumorphism-social" onClick={handleGoogleSignIn} disabled={loading}>
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+          </button>
+        </div>
+
+        {/* Sign Up Link */}
+        <div className="neumorphism-signup-link">
+          <p>
+            Don't have an account?{' '}
+            <Link to="/signup" className="neumorphism-link">Sign up</Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

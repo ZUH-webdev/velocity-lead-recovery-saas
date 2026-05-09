@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   LayoutDashboard,
@@ -10,9 +11,24 @@ import {
   Zap,
 } from 'lucide-react';
 import { useAppStore } from '../store/appStore';
+import { useAuth } from '../context/AuthContext';
 
 export const Sidebar = ({ onNavigate }) => {
   const { currentPage, setCurrentPage, businessSettings } = useAppStore();
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      await logout();
+      navigate('/signin', { replace: true });
+    } catch (error) {
+      console.error('Logout error:', error);
+      setLoggingOut(false);
+    }
+  };
 
   const navItems = [
     {
@@ -141,9 +157,13 @@ export const Sidebar = ({ onNavigate }) => {
           <span>Help & Support</span>
         </button>
 
-        <button className="w-full px-4 py-3 rounded-xl text-slate-700 hover:bg-rose-50 transition-all duration-300 flex items-center gap-2 text-sm font-medium hover:text-rose-600">
+        <button
+          onClick={handleLogout}
+          disabled={loggingOut}
+          className="w-full px-4 py-3 rounded-xl text-slate-700 hover:bg-rose-50 transition-all duration-300 flex items-center gap-2 text-sm font-medium hover:text-rose-600 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
           <LogOut className="w-4 h-4" />
-          <span>Sign Out</span>
+          <span>{loggingOut ? 'Signing out...' : 'Sign Out'}</span>
         </button>
       </motion.div>
     </div>
