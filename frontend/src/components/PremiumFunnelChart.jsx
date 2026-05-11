@@ -82,17 +82,17 @@ const PremiumFunnelChart = ({ metrics }) => {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="space-y-8"
+      className="space-y-4 md:space-y-8"
     >
       {/* Header Section */}
-      <motion.div variants={itemVariants} className="neu-carved p-8 rounded-xl">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-2xl font-black text-slate-900 font-jakarta mb-2 flex items-center gap-3">
-              <TrendingUp className="w-7 h-7 text-[#7c3aed]" />
-              Lead Recovery Funnel
+      <motion.div variants={itemVariants} className="neu-carved p-4 md:p-8 rounded-xl">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6 mb-4 md:mb-6">
+          <div className="min-w-0">
+            <h2 className="text-lg md:text-2xl font-black text-slate-900 font-jakarta mb-1 md:mb-2 flex items-center gap-2 md:gap-3">
+              <TrendingUp className="w-5 md:w-7 h-5 md:h-7 text-[#7c3aed] flex-shrink-0" />
+              <span className="truncate">Lead Recovery Funnel</span>
             </h2>
-            <p className="text-sm text-slate-600">
+            <p className="text-xs md:text-sm text-slate-600">
               Real-time conversion intelligence across all stages
             </p>
           </div>
@@ -100,7 +100,7 @@ const PremiumFunnelChart = ({ metrics }) => {
           {/* Conversion Badge with Pulse */}
           <motion.div
             whileHover={{ scale: 1.08 }}
-            className="glassmorphism rounded-xl px-6 py-4 relative"
+            className="glassmorphism rounded-xl px-4 md:px-6 py-3 md:py-4 relative flex-shrink-0"
           >
             <div className="relative">
               <motion.div
@@ -109,10 +109,10 @@ const PremiumFunnelChart = ({ metrics }) => {
                 className="absolute -inset-2 bg-[#7c3aed] rounded-xl opacity-20"
               />
               <div className="relative z-10">
-                <p className="text-xs font-semibold text-slate-600 uppercase mb-1">
+                <p className="text-xs font-semibold text-slate-600 uppercase mb-0.5 md:mb-1">
                   Conversion Rate
                 </p>
-                <p className="text-3xl font-black text-[#7c3aed] font-jakarta">
+                <p className="text-2xl md:text-3xl font-black text-[#7c3aed] font-jakarta">
                   <CountUp
                     end={parseFloat(conversionRate)}
                     duration={2}
@@ -127,9 +127,9 @@ const PremiumFunnelChart = ({ metrics }) => {
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-              className="absolute -top-3 -right-3"
+              className="absolute -top-2 md:-top-3 -right-2 md:-right-3"
             >
-              <Zap className="w-6 h-6 text-[#7c3aed] fill-[#7c3aed]" />
+              <Zap className="w-5 md:w-6 h-5 md:h-6 text-[#7c3aed] fill-[#7c3aed]" />
             </motion.div>
           </motion.div>
         </div>
@@ -138,7 +138,7 @@ const PremiumFunnelChart = ({ metrics }) => {
       {/* Curved Stream Funnel Chart */}
       <motion.div
         variants={itemVariants}
-        className="neu-carved p-8 rounded-xl relative overflow-hidden"
+        className="neu-carved p-4 md:p-8 rounded-xl relative overflow-hidden"
       >
         {/* Subtle gradient overlay */}
         <div
@@ -150,29 +150,30 @@ const PremiumFunnelChart = ({ metrics }) => {
         />
 
         <div className="relative z-10">
-          <h3 className="text-lg font-bold text-slate-900 mb-6 font-jakarta">
+          <h3 className="text-base md:text-lg font-bold text-slate-900 mb-4 md:mb-6 font-jakarta">
             Funnel Flow Analysis
           </h3>
 
           {/* Custom Curved Funnel with AreaChart */}
-          <ResponsiveContainer width="100%" height={300}>
-            <ComposedChart data={funnelData} margin={{ top: 10, right: 30, left: 0, bottom: 10 }}>
+          <ResponsiveContainer width="100%" height={window.innerWidth < 640 ? 200 : 300}>
+            <ComposedChart data={funnelData} margin={{ top: 10, right: 20, left: -20, bottom: 10 }}>
               <defs>
                 <GradientFunnelArea />
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
               <XAxis
                 dataKey="stage"
-                tick={{ fill: '#64748b', fontSize: 12 }}
+                tick={{ fill: '#64748b', fontSize: 11 }}
                 axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
               />
-              <YAxis tick={{ fill: '#64748b', fontSize: 12 }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
+              <YAxis tick={{ fill: '#64748b', fontSize: 11 }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
               <Tooltip
                 contentStyle={{
                   backgroundColor: 'rgba(30, 30, 46, 0.95)',
                   border: '1px solid rgba(124, 58, 237, 0.3)',
                   borderRadius: '8px',
                   color: '#f1f5f9',
+                  fontSize: '12px',
                 }}
                 cursor={{ stroke: 'rgba(124, 58, 237, 0.3)', strokeWidth: 2 }}
               />
@@ -192,7 +193,7 @@ const PremiumFunnelChart = ({ metrics }) => {
       </motion.div>
 
       {/* Funnel Stage Cards with Pulse Indicators */}
-      <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-5 gap-2 md:gap-4">
         {funnelData.map((stage, index) => (
           <motion.div
             key={index}
@@ -200,7 +201,7 @@ const PremiumFunnelChart = ({ metrics }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
             whileHover={{ scale: 1.05 }}
-            className={`neu-elevated p-4 rounded-lg text-center group relative cursor-pointer ${
+            className={`neu-elevated p-3 md:p-4 rounded-lg text-center group relative cursor-pointer ${
               systemPulseIndex === index ? 'ring-2 ring-[#7c3aed]' : ''
             }`}
           >
@@ -214,7 +215,7 @@ const PremiumFunnelChart = ({ metrics }) => {
             )}
 
             <div className="relative z-10">
-              <p className="text-xs font-semibold text-slate-600 uppercase mb-2">
+              <p className="text-xs font-semibold text-slate-600 uppercase mb-1 md:mb-2">
                 {stage.stage}
               </p>
               <motion.div
@@ -222,7 +223,7 @@ const PremiumFunnelChart = ({ metrics }) => {
                 animate={{ scale: 1 }}
                 transition={{ delay: index * 0.1 + 0.2 }}
               >
-                <p className="text-2xl font-black text-[#7c3aed] font-jakarta mb-1">
+                <p className="text-lg md:text-2xl font-black text-[#7c3aed] font-jakarta mb-0.5 md:mb-1">
                   <CountUp end={stage.value} duration={2} separator="," />
                 </p>
               </motion.div>
@@ -236,7 +237,7 @@ const PremiumFunnelChart = ({ metrics }) => {
       </motion.div>
 
       {/* Key Metrics Summary */}
-      <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
         {[
           {
             label: 'Total Leads',
@@ -260,7 +261,7 @@ const PremiumFunnelChart = ({ metrics }) => {
           <motion.div
             key={idx}
             whileHover={{ y: -4 }}
-            className={`bg-gradient-to-br ${metric.color} rounded-xl p-6 text-white shadow-lg overflow-hidden relative group`}
+            className={`bg-gradient-to-br ${metric.color} rounded-lg md:rounded-xl p-4 md:p-6 text-white shadow-lg overflow-hidden relative group`}
           >
             {/* Animated background glow */}
             <motion.div
@@ -270,15 +271,15 @@ const PremiumFunnelChart = ({ metrics }) => {
             />
 
             <div className="relative z-10">
-              <div className="flex items-center justify-between mb-3">
-                <p className="text-sm font-semibold opacity-90">{metric.label}</p>
-                <span className="text-2xl">{metric.icon}</span>
+              <div className="flex items-center justify-between mb-2 md:mb-3">
+                <p className="text-xs md:text-sm font-semibold opacity-90">{metric.label}</p>
+                <span className="text-lg md:text-2xl">{metric.icon}</span>
               </div>
               <motion.p
                 initial={{ scale: 0.8 }}
                 animate={{ scale: 1 }}
                 transition={{ type: 'spring', stiffness: 200 }}
-                className="text-3xl font-black font-jakarta"
+                className="text-2xl md:text-3xl font-black font-jakarta"
               >
                 <CountUp end={typeof metric.value === 'string' ? 0 : metric.value} />
                 {typeof metric.value === 'string' && metric.value}

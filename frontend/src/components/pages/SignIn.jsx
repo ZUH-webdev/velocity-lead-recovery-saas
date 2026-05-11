@@ -68,12 +68,9 @@ export default function SignIn() {
       <div className="neumorphism-card" ref={cardRef}>
         {/* Header */}
         <div className="neumorphism-header">
-          <div className="neumorphism-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-              <circle cx="12" cy="7" r="4"/>
-            </svg>
-          </div>
+            <div className="neumorphism-icon">
+              <img src="/velocity-logo.webp" alt="Velocity logo" className="h-12 w-12 object-contain" />
+            </div>
           <h2>Welcome Back</h2>
           <p>Sign in to your Velocity account</p>
         </div>

@@ -54,20 +54,20 @@ const CalendarSyncStatus = ({ status, onSync, onSettings }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-      className="p-8 rounded-xl bg-white border border-slate-200 shadow-elite-md space-y-6"
+      className="p-4 md:p-6 lg:p-8 rounded-lg md:rounded-xl bg-white border border-slate-200 shadow-elite-md space-y-4 md:space-y-6"
     >
       {/* Header */}
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-4">
+      <div className="flex items-start justify-between gap-3 md:gap-4">
+        <div className="flex items-center gap-2 md:gap-4 min-w-0">
           <motion.div
-            className="p-3.5 rounded-lg bg-blue-50"
+            className="p-2 md:p-3.5 rounded-lg bg-blue-50 flex-shrink-0"
             whileHover={{ scale: 1.1 }}
           >
-            <Calendar className="w-6 h-6 text-blue-600" />
+            <Calendar className="w-5 md:w-6 h-5 md:h-6 text-blue-600" />
           </motion.div>
-          <div>
-            <h3 className="text-xl font-bold text-slate-900">Calendar Sync</h3>
-            <p className="text-sm text-slate-500 mt-0.5">Google Calendar Integration</p>
+          <div className="min-w-0">
+            <h3 className="text-lg md:text-xl font-bold text-slate-900 truncate">Calendar Sync</h3>
+            <p className="text-xs md:text-sm text-slate-500 mt-0.5 truncate">Google Calendar Integration</p>
           </div>
         </div>
 
@@ -75,7 +75,7 @@ const CalendarSyncStatus = ({ status, onSync, onSettings }) => {
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-200"
+            className="flex items-center gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-full bg-emerald-50 border border-emerald-200 flex-shrink-0 text-xs md:text-sm"
           >
             <motion.div
               className="w-2.5 h-2.5 bg-emerald-600 rounded-full"
