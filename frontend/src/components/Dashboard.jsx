@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Download, TrendingUp, BarChart3, Filter, ChevronDown, Search } from 'lucide-react';
 import { useMetrics } from '../hooks/useLeads';
-import { KPIGrid } from './KPICard';
+import StatsGrid from './StatsGrid';
+import PremiumFunnelChart from './PremiumFunnelChart';
 import { ActivityPulseFeed } from './ActivityPulseFeed';
-import RecoveryFunnel from './RecoveryFunnel';
 import CalendarSyncStatus from './CalendarSyncStatus';
 import LeadCard from './LeadCard';
 import { LivePulse } from './LiveIndicators';
@@ -84,17 +84,17 @@ const Dashboard = ({ onNavigate = () => {} }) => {
         </motion.button>
       </motion.div>
 
-      {/* KPI Grid */}
+      {/* KPI Grid - Elite Stats */}
       <motion.section variants={itemVariants}>
-        <KPIGrid
+        <StatsGrid
           metrics={metrics || generateMockRecoveryMetrics()}
           isLoading={metricsLoading}
         />
       </motion.section>
 
-      {/* Recovery Funnel Section */}
+      {/* Recovery Funnel Section - Premium Design */}
       <motion.section variants={itemVariants}>
-        <RecoveryFunnel metrics={metrics || generateMockRecoveryMetrics()} />
+        <PremiumFunnelChart metrics={metrics || generateMockRecoveryMetrics()} />
       </motion.section>
 
       {/* Two Column Layout: Leads + Activity Feed */}

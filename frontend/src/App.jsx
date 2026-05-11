@@ -9,6 +9,7 @@ import Dashboard from './components/Dashboard';
 import LeadsPage from './components/pages/LeadsPage';
 import CalendarPage from './components/pages/CalendarPage';
 import SettingsPage from './components/pages/SettingsPage';
+import HelpPage from './components/pages/HelpPage';
 import Home from './components/pages/Home';
 import SignIn from './components/pages/SignIn';
 import SignUp from './components/pages/SignUp';
@@ -85,6 +86,19 @@ function DashboardLayout() {
             <SettingsPage onNavigate={setCurrentPage} />
           </motion.div>
         );
+      case 'help':
+        return (
+          <motion.div
+            key="help"
+            variants={pageVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            transition={transitionSettings}
+          >
+            <HelpPage onNavigate={setCurrentPage} />
+          </motion.div>
+        );
       default:
         return (
           <motion.div
@@ -102,9 +116,9 @@ function DashboardLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Background */}
-      <div className="fixed inset-0 bg-gradient-to-br from-slate-50 via-white to-slate-50 -z-10" />
+    <div className="min-h-screen bg-[#e0e5ec]">
+      {/* Obsidian Soft Neumorphism Background */}
+      <div className="fixed inset-0 bg-gradient-to-br from-[#e0e5ec] via-[#e8edf5] to-[#e0e5ec] -z-10" />
       
       {/* Fixed Sidebar */}
       <Sidebar onNavigate={setCurrentPage} />

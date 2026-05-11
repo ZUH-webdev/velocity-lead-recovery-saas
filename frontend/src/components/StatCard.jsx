@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { CountUp } from 'react-countup';
+import CountUp from 'react-countup';
 
 const StatCard = ({
   icon: Icon,
@@ -12,26 +12,47 @@ const StatCard = ({
   isLoading = false,
   animateValue = false,
   endValue = null,
+  index = 0,
 }) => {
-  const colorClasses = {
-    indigo: 'bg-indigo-50 text-indigo-600',
-    purple: 'bg-purple-50 text-purple-600',
-    emerald: 'bg-emerald-50 text-emerald-600',
-    amber: 'bg-amber-50 text-amber-600',
-    blue: 'bg-blue-50 text-blue-600',
+  // Vivid Violet as primary accent with supporting colors
+  const colorGradients = {
+    indigo: 'from-violet-500 to-indigo-600',
+    purple: 'from-purple-500 to-violet-600',
+    emerald: 'from-emerald-500 to-teal-600',
+    amber: 'from-amber-500 to-orange-600',
+    blue: 'from-blue-500 to-cyan-600',
+  };
+
+  const containerVariants = {
+    hidden: { 
+      opacity: 0,
+      scale: 0.95,
+      y: 20,
+    },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      transition: {
+        type: 'spring',
+        stiffness: 120,
+        damping: 20,
+        delay: index * 0.08,
+      },
+    },
   };
 
   if (isLoading) {
     return (
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="p-5 rounded-xl bg-white border border-slate-200"
-        style={{ boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.05)' }}
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="neu-carved p-6 group overflow-hidden relative"
       >
-        <div className="space-y-3">
-          <div className="h-4 w-1/2 bg-gradient-to-r from-slate-200 to-slate-100 rounded animate-pulse" />
-          <div className="h-8 w-3/4 bg-gradient-to-r from-slate-200 to-slate-100 rounded animate-pulse" />
+        <div className="relative z-10 space-y-4">
+          <div className="h-3 w-24 bg-gradient-to-r from-slate-300 to-slate-200 rounded-full animate-pulse" />
+          <div className="h-10 w-32 bg-gradient-to-r from-slate-300 to-slate-200 rounded-lg animate-pulse" />
         </div>
       </motion.div>
     );
@@ -39,38 +60,90 @@ const StatCard = ({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ scale: 1.02, y: -4 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-      className="p-5 rounded-xl bg-white border border-slate-200 transition-all cursor-pointer group"
-      style={{ boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.05)' }}
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      whileHover={{ 
+        scale: 1.02,
+        transition: { type: 'spring', stiffness: 300, damping: 25 },
+      }}
+      className="neu-carved p-6 group overflow-hidden relative cursor-pointer transition-all duration-300"
     >
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <p className="text-slate-500 text-sm font-medium">{label}</p>
-          <div className="mt-3 flex items-baseline gap-1">
-            {prefix && <span className="text-slate-600 text-sm">{prefix}</span>}
-            {animateValue && endValue !== null ? (
-              <CountUp
-                end={endValue}
-                duration={2}
-                separator=","
-                className="text-3xl font-bold text-slate-900"
-              />
-            ) : (
-              <span className="text-3xl font-bold text-slate-900">{value}</span>
-            )}
-            {suffix && <span className="text-slate-600 text-sm">{suffix}</span>}
+      {/* Animated Background Glow */}
+      <motion.div
+        className={`absolute top-2 right-4 w-24 h-24 opacity-0 group-hover:opacity-20 bg-gradient-to-br ${colorGradients[color]} rounded-full blur-3xl transition-all duration-300`}
+        animate={{ scale: [1, 1.1, 1], rotate: [0, 45, 0] }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+      />
+
+      <div className="relative z-10">
+        {/* Header Section */}
+        <div className="flex items-start justify-between mb-6">
+          <div className="flex-1">
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: index * 0.08 + 0.1 }}
+              className="text-xs font-semibold text-slate-600 uppercase tracking-wider"
+            >
+              {label}
+            </motion.p>
           </div>
+
+          {/* Icon in Soft Pressed Tray */}
+          <motion.div
+            whileHover={{ scale: 1.12, rotate: 5 }}
+            whileTap={{ scale: 0.95 }}
+            className="neu-pressed p-3.5 flex items-center justify-center transition-all duration-200"
+          >
+            <motion.div
+              animate={{ rotate: [0, 5, -5, 0] }}
+              transition={{ duration: 4, repeat: Infinity, repeatType: 'reverse' }}
+            >
+              <Icon className="w-5 h-5 text-[#7c3aed]" />
+            </motion.div>
+          </motion.div>
         </div>
 
-        <motion.div
-          className={`p-3 rounded-lg ${colorClasses[color]} transition-all`}
-          whileHover={{ scale: 1.1 }}
-        >
-          <Icon className="w-6 h-6" />
-        </motion.div>
+        {/* Metric Value Section with Glassmorphism Overlay */}
+        <div className="relative">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.08 + 0.2 }}
+            className="glassmorphism rounded-lg p-4 mb-2 relative"
+          >
+            <div className="flex items-baseline gap-2">
+              {prefix && (
+                <span className="text-sm font-medium text-slate-600">{prefix}</span>
+              )}
+              {animateValue && endValue !== null ? (
+                <CountUp
+                  end={endValue}
+                  duration={2.5}
+                  separator=","
+                  decimals={0}
+                  className="text-3xl font-black text-[#7c3aed] font-jakarta tracking-tight"
+                />
+              ) : (
+                <span className="text-3xl font-black text-[#7c3aed] font-jakarta tracking-tight">
+                  {value}
+                </span>
+              )}
+              {suffix && (
+                <span className="text-sm font-medium text-slate-600">{suffix}</span>
+              )}
+            </div>
+          </motion.div>
+
+          {/* Subtle accent bar */}
+          <motion.div
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ delay: index * 0.08 + 0.4, duration: 0.6 }}
+            className={`h-1 bg-gradient-to-r ${colorGradients[color]} rounded-full origin-left`}
+          />
+        </div>
       </div>
     </motion.div>
   );

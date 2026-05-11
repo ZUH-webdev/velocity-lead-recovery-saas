@@ -34,10 +34,10 @@ export const generateMockRecoveryMetrics = () => ({
   weeklyConversionRate: 73.2,
   averageLeadScore: 68,
   funnelData: [
-    { stage: 'Missed Calls', value: 1247, fill: '#6b7280' },
-    { stage: 'AI Engaged', value: 1089, fill: '#8b5cf6' },
-    { stage: 'Qualified', value: 893, fill: '#6366f1' },
-    { stage: 'Booked', value: 456, fill: '#10b981' },
+    { stage: 'Missed Calls', value: 1247, fill: '#8b5cf6' },
+    { stage: 'AI Engaged', value: 1089, fill: '#f97316' },
+    { stage: 'Qualified', value: 893, fill: '#0ea5e9' },
+    { stage: 'Booked', value: 456, fill: '#06b6d4' },
   ],
 });
 
