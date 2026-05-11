@@ -60,16 +60,16 @@ const Dashboard = ({ onNavigate = () => {} }) => {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="space-y-8 pb-10 pt-4"
+      className="space-y-4 md:space-y-8 pb-10 pt-4"
     >
       {/* Page Header */}
-      <motion.div variants={itemVariants} className="flex items-center justify-between">
+      <motion.div variants={itemVariants} className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-bold text-slate-900 flex items-center gap-3 tracking-tight">
-            <TrendingUp className="w-9 h-9 text-indigo-500" />
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 flex items-center gap-2 md:gap-3 tracking-tight">
+            <TrendingUp className="w-6 md:w-9 h-6 md:h-9 text-indigo-500 flex-shrink-0" />
             Recovery Dashboard
           </h1>
-          <p className="text-slate-500 mt-2">
+          <p className="text-sm md:text-base text-slate-500 mt-2">
             Real-time lead recovery and appointment booking intelligence
           </p>
         </div>
@@ -77,7 +77,7 @@ const Dashboard = ({ onNavigate = () => {} }) => {
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="px-4 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white font-medium flex items-center gap-2 shadow-sm hover:shadow-md hover:shadow-indigo-500/20 transition-all"
+          className="px-4 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white font-medium flex items-center gap-2 shadow-sm hover:shadow-md hover:shadow-indigo-500/20 transition-all whitespace-nowrap"
         >
           <Download className="w-4 h-4" />
           Export Report
@@ -98,31 +98,31 @@ const Dashboard = ({ onNavigate = () => {} }) => {
       </motion.section>
 
       {/* Two Column Layout: Leads + Activity Feed */}
-      <motion.section variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <motion.section variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
         {/* Left: Live Leads Feed (2 columns) */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-3 md:space-y-6">
           {/* Section Header */}
-          <div className="flex items-end justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-                  <BarChart3 className="w-6 h-6 text-indigo-500" />
-                  Live Leads
+          <div className="flex items-start md:items-end justify-between gap-2 md:gap-4">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 md:gap-3 mb-1 md:mb-2 flex-wrap">
+                <h2 className="text-lg md:text-2xl font-bold text-slate-900 flex items-center gap-2">
+                  <BarChart3 className="w-5 md:w-6 h-5 md:h-6 text-indigo-500 flex-shrink-0" />
+                  <span className="truncate">Live Leads</span>
                 </h2>
                 <LivePulse />
               </div>
-              <p className="text-slate-500 text-sm">
+              <p className="text-xs md:text-sm text-slate-500 truncate">
                 {leads.length} active leads • Real-time AI engagement
               </p>
             </div>
 
-            {/* Filter Dropdown */}
-            <div className="relative">
+            {/* Filter Dropdown - Hide on mobile */}
+            <div className="relative hidden sm:block flex-shrink-0">
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setShowFilters(!showFilters)}
-                className="px-3 py-2 rounded-lg bg-white hover:bg-slate-100 text-slate-900 font-medium text-sm flex items-center gap-2 border border-slate-200 transition-colors shadow-sm"
+                className="px-3 py-2 rounded-lg bg-white hover:bg-slate-100 text-slate-900 font-medium text-xs md:text-sm flex items-center gap-2 border border-slate-200 transition-colors shadow-sm whitespace-nowrap"
               >
                 <Filter className="w-4 h-4" />
                 {filterState}
@@ -161,18 +161,18 @@ const Dashboard = ({ onNavigate = () => {} }) => {
 
           {/* Search Bar */}
           <motion.div whileHover={{ scale: 1.01 }} className="relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <Search className="absolute left-3 md:left-4 top-1/2 transform -translate-y-1/2 w-4 md:w-5 h-4 md:h-5 text-slate-400 flex-shrink-0" />
             <input
               type="text"
               placeholder="Search by name, phone..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/20 transition-all shadow-sm"
+              className="w-full pl-9 md:pl-12 pr-3 md:pr-4 py-2 md:py-3 rounded-lg md:rounded-xl bg-white border border-slate-200 text-slate-900 placeholder-slate-400 text-sm md:text-base focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/20 transition-all shadow-sm"
             />
           </motion.div>
 
           {/* Leads Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
             {leads.length > 0 ? (
               leads.map((lead, idx) => (
                 <motion.div
@@ -196,26 +196,26 @@ const Dashboard = ({ onNavigate = () => {} }) => {
             ) : (
               <motion.div
                 variants={itemVariants}
-                className="col-span-full text-center py-12"
+                className="col-span-full text-center py-8 md:py-12"
               >
-                <p className="text-slate-500">No leads found. Waiting for your first missed call to recover...</p>
+                <p className="text-slate-500 text-sm md:text-base">No leads found. Waiting for your first missed call to recover...</p>
               </motion.div>
             )}
           </div>
         </div>
 
         {/* Right: Activity Feed + Calendar (1 column) */}
-        <div className="space-y-6">
+        <div className="space-y-3 md:space-y-6">
           {/* Activity Feed Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="card-elite rounded-2xl p-6"
+            className="card-elite rounded-lg md:rounded-2xl p-4 md:p-6"
           >
-            <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <h3 className="text-base md:text-lg font-bold text-slate-900 mb-3 md:mb-4 flex items-center gap-2">
               <span>Activity Pulse</span>
-              <span className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse" />
+              <span className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse flex-shrink-0" />
             </h3>
             <ActivityPulseFeed
               activities={activities}

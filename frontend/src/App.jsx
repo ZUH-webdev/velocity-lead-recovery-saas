@@ -19,6 +19,7 @@ import './index.css';
 // Main dashboard layout component
 function DashboardLayout() {
   const { currentPage, setCurrentPage } = useAppStore();
+  const [sidebarOpen, setSidebarOpen] = React.useState(true);
 
   const pageVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -120,14 +121,25 @@ function DashboardLayout() {
       {/* Obsidian Soft Neumorphism Background */}
       <div className="fixed inset-0 bg-gradient-to-br from-[#e0e5ec] via-[#e8edf5] to-[#e0e5ec] -z-10" />
       
+      {/* Mobile Overlay */}
+      {sidebarOpen && (
+        <motion.div
+          className="fixed inset-0 bg-black/50 z-20 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        />
+      )}
+      
       {/* Fixed Sidebar */}
-      <Sidebar onNavigate={setCurrentPage} />
+      <Sidebar onNavigate={setCurrentPage} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       
       {/* Fixed Header */}
-      <Header />
+      <Header onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
       
       {/* Main Content Area */}
-      <main style={{ marginLeft: '288px', paddingTop: '104px' }} className="pb-10 min-h-screen px-8">
+      <main className="md:ml-72 pt-24 md:pt-28 pb-10 min-h-screen px-4 md:px-8">
         <div className="max-w-7xl mx-auto">
           <AnimatePresence mode="wait">{renderPage()}</AnimatePresence>
         </div>
