@@ -530,53 +530,274 @@
   }
 }
 
-/* Application class aliases: map existing app card/button classes to the neumorphism system
-   This allows the current Tailwind-based components (e.g. .card-elite, .lead-card-elite)
-   to receive the neumorphic look without changing many component files. */
+/* ============================================================================
+   APPLICATION NEUMORPHISM THEME SYSTEM
+   Maps existing Tailwind classes to comprehensive neumorphic styling
+   ============================================================================ */
+
+/* ─────────────────────────────────────────────────────────────────────────
+   CARD & CONTAINER STYLES
+   ───────────────────────────────────────────────────────────────────────── */
 
 .card-elite,
 .lead-card-elite,
-.stat-card-premium {
+.stat-card-premium,
+.glass-effect,
+.glass-sidebar {
   background: var(--neu-bg) !important;
-  border-radius: 16px !important;
   border: none !important;
   padding: 1rem !important;
   box-shadow: 18px 18px 40px var(--neu-dark), -18px -18px 40px var(--neu-light) !important;
-  transition: all 0.28s ease !important;
+  transition: all 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  border-radius: 16px !important;
 }
 
 .card-elite:hover,
 .lead-card-elite:hover,
 .stat-card-premium:hover {
-  transform: translateY(-6px) !important;
-  box-shadow: 22px 22px 50px var(--neu-dark), -22px -22px 50px var(--neu-light) !important;
+  transform: translateY(-8px) !important;
+  box-shadow: 24px 24px 60px var(--neu-dark), -24px -24px 60px var(--neu-light) !important;
 }
 
-/* Lead card specific tweaks */
 .lead-card-elite {
   cursor: pointer;
 }
 
-/* Buttons that previously used solid fills: provide a neumorphic button variant */
+.glass-sidebar {
+  backdrop-filter: none !important;
+  border-right: 1px solid var(--neu-light) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   BUTTON STYLES
+   ───────────────────────────────────────────────────────────────────────── */
+
 .btn-primary,
 .btn-secondary,
-.neumorphism-button {
+.neumorphism-button,
+button[type="submit"],
+button[type="button"] {
   background: var(--neu-bg) !important;
   color: var(--neu-text-dark) !important;
   border-radius: 12px !important;
   box-shadow: 10px 10px 24px var(--neu-dark), -10px -10px 24px var(--neu-light) !important;
   border: none !important;
+  transition: all 0.26s ease !important;
+  position: relative;
+  overflow: hidden;
 }
 
-.btn-primary:hover,
-.btn-secondary:hover,
-.neumorphism-button:hover {
-  transform: translateY(-3px) !important;
+.btn-primary:hover:not(:disabled),
+.btn-secondary:hover:not(:disabled),
+.neumorphism-button:hover:not(:disabled),
+button[type="submit"]:hover:not(:disabled),
+button[type="button"]:hover:not(:disabled) {
+  transform: translateY(-4px) !important;
   box-shadow: 14px 14px 34px var(--neu-dark), -14px -14px 34px var(--neu-light) !important;
 }
 
-/* Apply background for larger containers if the app uses .neumorphism-container elsewhere */
-.neumorphism-container {
-  background: linear-gradient(180deg, var(--neu-bg), #e8edf4) !important;
+.btn-primary:active:not(:disabled),
+.btn-secondary:active:not(:disabled),
+.neumorphism-button:active:not(:disabled),
+button[type="submit"]:active:not(:disabled),
+button[type="button"]:active:not(:disabled) {
+  transform: translateY(-1px) !important;
+  box-shadow: inset 6px 6px 16px var(--neu-dark), inset -6px -6px 16px var(--neu-light) !important;
+}
+
+.btn-primary:disabled,
+.btn-secondary:disabled,
+.neumorphism-button:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   INPUT & FORM STYLES
+   ───────────────────────────────────────────────────────────────────────── */
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="search"],
+textarea,
+select {
+  background: var(--neu-bg) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  color: var(--neu-text-dark) !important;
+  box-shadow: inset 6px 6px 14px var(--neu-dark), inset -6px -6px 14px var(--neu-light) !important;
+  padding: 12px 16px !important;
+  transition: all 0.24s ease !important;
+}
+
+input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+input[type="password"]::placeholder,
+input[type="number"]::placeholder,
+input[type="search"]::placeholder,
+textarea::placeholder {
+  color: var(--neu-text-light) !important;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="search"]:focus,
+textarea:focus,
+select:focus {
+  outline: none !important;
+  box-shadow: inset 4px 4px 8px var(--neu-dark), inset -4px -4px 8px var(--neu-light), 0 0 0 3px var(--neu-light) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   STATUS PILLS & BADGES
+   ───────────────────────────────────────────────────────────────────────── */
+
+.status-pill,
+.status-teal,
+.status-rose {
+  background: var(--neu-bg) !important;
+  box-shadow: 4px 4px 10px var(--neu-dark), -4px -4px 10px var(--neu-light) !important;
+  border: none !important;
+  border-radius: 20px !important;
+  transition: all 0.2s ease !important;
+  padding: 6px 14px !important;
+}
+
+.status-pill:hover,
+.status-teal:hover,
+.status-rose:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 6px 6px 14px var(--neu-dark), -6px -6px 14px var(--neu-light) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   CONTAINERS & SECTIONS
+   ───────────────────────────────────────────────────────────────────────── */
+
+.neumorphism-container,
+.whitespace-elite {
+  background: linear-gradient(135deg, var(--neu-bg) 0%, #e8edf4 100%) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   ICON BUTTONS & ACTION BUTTONS
+   ───────────────────────────────────────────────────────────────────────── */
+
+button.neumorphism-social,
+button[aria-label*="Toggle"],
+button[aria-label*="Delete"],
+button[aria-label*="Edit"],
+button[aria-label*="Add"],
+button.icon-button {
+  background: var(--neu-bg) !important;
+  border: none !important;
+  border-radius: 10px !important;
+  box-shadow: 6px 6px 14px var(--neu-dark), -6px -6px 14px var(--neu-light) !important;
+  color: var(--neu-text-muted) !important;
+  transition: all 0.2s ease !important;
+  padding: 8px 12px !important;
+}
+
+button.neumorphism-social:hover,
+button[aria-label*="Toggle"]:hover,
+button[aria-label*="Delete"]:hover,
+button[aria-label*="Edit"]:hover,
+button[aria-label*="Add"]:hover,
+button.icon-button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 8px 8px 18px var(--neu-dark), -8px -8px 18px var(--neu-light) !important;
+  color: var(--neu-text-dark) !important;
+}
+
+button.neumorphism-social:active,
+button[aria-label*="Toggle"]:active {
+  box-shadow: inset 3px 3px 8px var(--neu-dark), inset -3px -3px 8px var(--neu-light) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   SEARCH BAR & INPUT GROUPS
+   ───────────────────────────────────────────────────────────────────────── */
+
+.neumorphism-input-group,
+.search-group {
+  background: transparent !important;
+}
+
+.neumorphism-input-wrapper,
+.search-wrapper {
+  background: var(--neu-bg) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  box-shadow: inset 6px 6px 14px var(--neu-dark), inset -6px -6px 14px var(--neu-light) !important;
+}
+
+.neumorphism-input-wrapper:focus-within,
+.search-wrapper:focus-within {
+  box-shadow: inset 4px 4px 8px var(--neu-dark), inset -4px -4px 8px var(--neu-light) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   NOTIFICATION & ALERT STYLES
+   ───────────────────────────────────────────────────────────────────────── */
+
+.alert,
+.notification,
+.message-box {
+  background: var(--neu-bg) !important;
+  border: none !important;
+  border-radius: 14px !important;
+  box-shadow: 8px 8px 20px var(--neu-dark), -8px -8px 20px var(--neu-light) !important;
+  padding: 16px 20px !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   DROPDOWN & MENU ITEMS
+   ───────────────────────────────────────────────────────────────────────── */
+
+.dropdown,
+.menu,
+.popover {
+  background: var(--neu-bg) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  box-shadow: 12px 12px 30px var(--neu-dark), -12px -12px 30px var(--neu-light) !important;
+}
+
+.dropdown-item,
+.menu-item {
+  color: var(--neu-text-dark) !important;
+  transition: all 0.2s ease !important;
+  padding: 10px 16px !important;
+}
+
+.dropdown-item:hover,
+.menu-item:hover {
+  background: var(--neu-light) !important;
+  transform: translateX(4px) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   LOADING & SKELETON STATES
+   ───────────────────────────────────────────────────────────────────────── */
+
+.skeleton,
+.loading-placeholder {
+  background: var(--neu-bg) !important;
+  box-shadow: inset 4px 4px 10px var(--neu-dark), inset -4px -4px 10px var(--neu-light) !important;
+  border-radius: 8px !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   FOCUS STATES & ACCESSIBILITY
+   ───────────────────────────────────────────────────────────────────────── */
+
+:focus-visible {
+  outline: 2px solid var(--neu-text-muted) !important;
+  outline-offset: 3px !important;
+  border-radius: 6px !important;
 }
 

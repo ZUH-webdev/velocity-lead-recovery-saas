@@ -65,7 +65,7 @@ export const LeadsPage = ({ onNavigate }) => {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="space-y-8 pb-20"
+      className="space-y-8 pb-10 pt-4"
     >
       {/* Page Header */}
       <motion.div variants={itemVariants}>
