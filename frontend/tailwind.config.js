@@ -35,6 +35,19 @@ export default {
           600: '#16A34A',
           700: '#15803D',
         },
+        // Obsidian Soft Neumorphism Palette
+        neumorphic: {
+          background: '#e0e5ec',
+          elevated: '#f0f5ff',
+          dark: '#bec3cf',
+          light: '#ffffff',
+          shadow: 'rgb(163, 177, 198)',
+          highlight: 'rgb(255, 255, 255)',
+        },
+        'vivid-violet': '#7c3aed',
+      },
+      fontFamily: {
+        jakarta: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
       },
       backdropBlur: {
         xs: '2px',
@@ -64,12 +77,16 @@ export default {
         'elite-md': '0 10px 15px -3px rgb(0 0 0 / 0.08)',
         'elite-lg': '0 20px 25px -5px rgb(0 0 0 / 0.10)',
         'elite-glow': '0 0 20px -2px rgb(99 102 241 / 0.3)',
+        'neu-soft': '4px 4px 8px rgba(163, 177, 198, 0.6), -4px -4px 8px rgba(255, 255, 255, 0.6)',
+        'neu-inset': 'inset 4px 4px 8px rgba(163, 177, 198, 0.6), inset -4px -4px 8px rgba(255, 255, 255, 0.6)',
+        'neu-pressed': 'inset 2px 2px 5px rgba(163, 177, 198, 0.4), inset -2px -2px 5px rgba(255, 255, 255, 0.4)',
       },
       animation: {
         'pulse-soft': 'pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'skeleton-loading': 'skeleton-loading 2s infinite',
         'spin-slow': 'spin 3s linear infinite',
         'fade-in': 'fade-in 0.5s ease-in',
+        'ripple': 'ripple 0.6s ease-out',
       },
       keyframes: {
         'pulse-soft': {
@@ -79,6 +96,16 @@ export default {
         'skeleton-loading': {
           '0%': { backgroundPosition: '-1000px 0' },
           '100%': { backgroundPosition: '1000px 0' },
+        },
+        'ripple': {
+          '0%': {
+            transform: 'scale(1)',
+            opacity: '1',
+          },
+          '100%': {
+            transform: 'scale(4)',
+            opacity: '0',
+          },
         },
         'fade-in': {
           from: { opacity: '0' },

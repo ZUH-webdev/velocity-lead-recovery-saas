@@ -83,20 +83,49 @@ export const Header = ({ onSearch }) => {
 
       {/* Right: Actions */}
       <div className="flex items-center gap-4">
-        {/* Search Bar */}
-        <div
-          className="hidden lg:flex items-center gap-2 rounded-2xl px-4 py-2.5 border border-white/40 w-72"
-          style={neuInsetStyle}
+        {/* Search Bar - Enhanced */}
+        <motion.div
+          className="hidden lg:flex items-center gap-3 rounded-2xl px-4 py-2.5 border w-80 transition-all duration-300"
+          style={{
+            background: 'var(--neu-bg)',
+            borderColor: 'rgba(255, 255, 255, 0.4)',
+            boxShadow: 'inset 6px 6px 12px var(--neu-dark), inset -6px -6px 12px var(--neu-light)',
+          }}
+          whileHover={{
+            boxShadow: 'inset 4px 4px 8px var(--neu-dark), inset -4px -4px 8px var(--neu-light)',
+          }}
+          whileTap={{
+            boxShadow: 'inset 8px 8px 16px var(--neu-dark), inset -8px -8px 16px var(--neu-light)',
+          }}
         >
-          <Search className="w-4 h-4" style={{ color: 'var(--neu-text-light)' }} />
+          <Search className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--neu-text-light)' }} />
           <input
             type="text"
-            placeholder="Search leads..."
+            placeholder="Search leads by name or ID..."
             onChange={(e) => onSearch && onSearch(e.target.value)}
-            className="bg-transparent text-sm outline-none w-full"
-            style={{ color: 'var(--neu-text-dark)' }}
+            className="bg-transparent text-sm w-full transition-colors duration-200"
+            style={{
+              color: 'var(--neu-text-dark)',
+              outline: 'none',
+            }}
+            onFocus={(e) => {
+              e.target.style.color = 'var(--neu-text-dark)';
+            }}
+            onBlur={(e) => {
+              e.target.style.color = 'var(--neu-text-dark)';
+            }}
           />
-        </div>
+          <style>{`
+            input::placeholder {
+              color: var(--neu-text-light);
+              opacity: 0.6;
+              font-style: italic;
+            }
+            input:focus::placeholder {
+              opacity: 0.4;
+            }
+          `}</style>
+        </motion.div>
 
         {/* Notifications */}
         <motion.button

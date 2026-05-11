@@ -38,41 +38,72 @@ const RecoveryFunnel = ({ metrics }) => {
 
   const MetricCard = ({ icon: Icon, label, value, color = 'indigo', isAnimated = false }) => {
     const colorClasses = {
-      indigo: 'bg-indigo-50 text-indigo-600',
-      purple: 'bg-purple-50 text-purple-600',
-      emerald: 'bg-emerald-50 text-emerald-600',
-      amber: 'bg-amber-50 text-amber-600',
+      indigo: 'from-indigo-500 to-indigo-600',
+      purple: 'from-purple-500 to-purple-600',
+      emerald: 'from-emerald-500 to-emerald-600',
+      amber: 'from-amber-500 to-amber-600',
+    };
+
+    const colorShadow = {
+      indigo: 'rgba(99, 102, 241, 0.25)',
+      purple: 'rgba(168, 85, 247, 0.25)',
+      emerald: 'rgba(16, 185, 129, 0.25)',
+      amber: 'rgba(217, 119, 6, 0.25)',
     };
     
     return (
       <motion.div
         variants={itemVariants}
-        whileHover={{ scale: 1.02, y: -4 }}
-        className="p-6 rounded-xl bg-white border border-slate-200 transition-all"
-        style={{ boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.05)' }}
+        whileHover={{ scale: 1.05, y: -6 }}
+        className="rounded-2xl border group backdrop-blur-xl overflow-hidden transition-all"
+        style={{
+          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.45) 100%)',
+          borderColor: 'rgba(255, 255, 255, 0.5)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.8)',
+        }}
       >
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <p className="text-slate-500 text-sm font-medium">{label}</p>
-            <div className="mt-3">
-              {isAnimated && typeof value === 'number' ? (
-                <CountUp
-                  end={value}
-                  duration={2.5}
-                  separator=","
-                  className="text-2xl font-bold text-slate-900"
-                />
-              ) : (
-                <p className="text-2xl font-bold text-slate-900">{value}</p>
-              )}
+        {/* Animated Gradient Background */}
+        <motion.div
+          className={`absolute top-0 right-0 w-32 h-32 opacity-10 bg-gradient-to-br ${colorClasses[color]} rounded-full blur-3xl`}
+          animate={{ scale: [1, 1.1, 1], rotate: [0, 90, 0] }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+        />
+
+        {/* Premium Border Glow */}
+        <div 
+          className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+          style={{
+            background: `linear-gradient(135deg, ${color === 'indigo' ? '#818cf8' : color === 'purple' ? '#d8b4fe' : color === 'emerald' ? '#6ee7b7' : '#fde047'} 0%, transparent 50%)`,
+            padding: '1px',
+            borderRadius: '1rem',
+          }}
+        />
+
+        <div className="relative z-10 p-6">
+          <div className="flex items-start justify-between mb-4">
+            <div>
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest">{label}</p>
             </div>
+            <motion.div
+              whileHover={{ scale: 1.15, rotate: 5 }}
+              className={`p-3 rounded-xl bg-gradient-to-br ${colorClasses[color]} shadow-lg`}
+              style={{ boxShadow: `0 8px 16px ${colorShadow[color]}` }}
+            >
+              <Icon className="w-5 h-5 text-white" />
+            </motion.div>
           </div>
-          <motion.div
-            className={`p-3 rounded-lg ${colorClasses[color]}`}
-            whileHover={{ scale: 1.1 }}
-          >
-            <Icon className="w-6 h-6" />
-          </motion.div>
+          <div>
+            {isAnimated && typeof value === 'number' ? (
+              <CountUp
+                end={value}
+                duration={2.5}
+                separator=","
+                className="text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent"
+              />
+            ) : (
+              <p className="text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">{value}</p>
+            )}
+          </div>
         </div>
       </motion.div>
     );

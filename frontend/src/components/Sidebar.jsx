@@ -63,8 +63,14 @@ export const Sidebar = ({ onNavigate }) => {
 
   return (
     <div
-      className="fixed top-4 left-4 z-30 flex flex-col overflow-hidden bg-white rounded-3xl border border-slate-200 shadow-xl p-6"
-      style={{ width: '256px', height: 'calc(100vh - 2rem)' }}
+      className="fixed top-4 left-4 z-30 flex flex-col overflow-hidden rounded-3xl border p-6"
+      style={{
+        width: '256px',
+        height: 'calc(100vh - 2rem)',
+        background: 'var(--neu-bg)',
+        borderColor: 'rgba(255, 255, 255, 0.6)',
+        boxShadow: '18px 18px 36px var(--neu-dark), -18px -18px 36px var(--neu-light)',
+      }}
     >
       {/* Logo Section */}
       <motion.div
@@ -72,23 +78,36 @@ export const Sidebar = ({ onNavigate }) => {
         animate={{ opacity: 1, y: 0 }}
         className="mb-8 flex items-center gap-3"
       >
-        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-600 shadow-lg flex-shrink-0">
-          <Zap className="w-6 h-6 text-white" />
+        <div
+          className="flex h-11 w-11 items-center justify-center rounded-2xl flex-shrink-0"
+          style={{
+            background: 'linear-gradient(145deg, #d4d9e2, #eef3f8)',
+            boxShadow: '6px 6px 12px var(--neu-dark), -6px -6px 12px var(--neu-light)',
+          }}
+        >
+          <Zap className="w-6 h-6" style={{ color: 'var(--neu-text-dark)' }} />
         </div>
         <div>
-          <h1 className="text-lg font-bold text-slate-900 tracking-tight">
+          <h1 className="text-lg font-bold tracking-tight" style={{ color: 'var(--neu-text-dark)' }}>
             Velocity
           </h1>
-          <p className="text-xs text-slate-500">V2 Elite</p>
+          <p className="text-xs" style={{ color: 'var(--neu-text-light)' }}>V2 Elite</p>
         </div>
       </motion.div>
 
       {/* Business Name */}
-      <div className="mb-6 rounded-2xl px-4 py-3 bg-slate-50 border border-slate-200">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-slate-500">
+      <div
+        className="mb-6 rounded-2xl px-4 py-3 border"
+        style={{
+          background: 'var(--neu-bg)',
+          borderColor: 'rgba(255, 255, 255, 0.4)',
+          boxShadow: 'inset 6px 6px 12px var(--neu-dark), inset -6px -6px 12px var(--neu-light)',
+        }}
+      >
+        <p className="text-[10px] font-semibold uppercase tracking-[0.3em]" style={{ color: 'var(--neu-text-light)' }}>
           Clinic
         </p>
-        <p className="text-sm font-medium text-slate-900 mt-1 truncate">
+        <p className="text-sm font-medium mt-1 truncate" style={{ color: 'var(--neu-text-dark)' }}>
           {businessSettings?.businessName || 'Clinic Name'}
         </p>
       </div>
@@ -106,30 +125,36 @@ export const Sidebar = ({ onNavigate }) => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.08 }}
               onClick={() => handleNavigation(item.id)}
-              className={`w-full group relative text-left px-4 py-3 rounded-2xl transition-all duration-300 flex items-start gap-3 ${
-                isActive
-                  ? 'bg-indigo-50 border border-indigo-200'
-                  : 'hover:bg-slate-50 border border-transparent'
-              }`}
+              className="w-full group relative text-left px-4 py-3 rounded-2xl transition-all duration-300 flex items-start gap-3 border"
+              style={{
+                background: isActive ? 'var(--neu-bg)' : 'var(--neu-bg)',
+                borderColor: isActive ? 'rgba(99, 102, 241, 0.3)' : 'rgba(255, 255, 255, 0.2)',
+                boxShadow: isActive
+                  ? 'inset 6px 6px 12px var(--neu-dark), inset -6px -6px 12px var(--neu-light)'
+                  : 'none',
+              }}
             >
               <Icon
-                className={`w-5 h-5 mt-0.5 flex-shrink-0 transition-colors ${
-                  isActive ? 'text-indigo-600' : 'text-slate-600 group-hover:text-indigo-500'
-                }`}
+                className="w-5 h-5 mt-0.5 flex-shrink-0 transition-colors"
+                style={{
+                  color: isActive ? '#6366f1' : 'var(--neu-text-light)',
+                }}
               />
 
               <div className="flex-1 min-w-0">
                 <p
-                  className={`text-sm font-semibold transition-colors ${
-                    isActive ? 'text-indigo-900' : 'text-slate-900'
-                  }`}
+                  className="text-sm font-semibold transition-colors"
+                  style={{
+                    color: isActive ? '#6366f1' : 'var(--neu-text-dark)',
+                  }}
                 >
                   {item.label}
                 </p>
                 <p
-                  className={`text-xs transition-colors mt-0.5 ${
-                    isActive ? 'text-indigo-700' : 'text-slate-500'
-                  }`}
+                  className="text-xs transition-colors mt-0.5"
+                  style={{
+                    color: isActive ? 'rgba(99, 102, 241, 0.7)' : 'var(--neu-text-light)',
+                  }}
                 >
                   {item.description}
                 </p>
@@ -144,17 +169,36 @@ export const Sidebar = ({ onNavigate }) => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className="mt-6 space-y-2 border-t border-slate-200 pt-6"
+        className="mt-6 space-y-2 pt-6"
+        style={{
+          borderTop: '1px solid rgba(255, 255, 255, 0.3)',
+        }}
       >
-        <button className="w-full px-4 py-3 text-left text-sm font-medium text-slate-700 flex items-center gap-2 hover:bg-slate-50 rounded-lg transition-colors border border-transparent hover:border-slate-200">
+        <button
+          className="w-full px-4 py-3 text-left text-sm font-medium flex items-center gap-2 rounded-2xl transition-all duration-300 border"
+          style={{
+            color: 'var(--neu-text-dark)',
+            borderColor: 'rgba(255, 255, 255, 0.2)',
+            boxShadow: 'inset 4px 4px 8px rgba(190, 195, 207, 0.1)',
+          }}
+          onClick={() => handleNavigation('help')}
+        >
           <Settings className="w-4 h-4 flex-shrink-0" />
           <span>Help & Support</span>
         </button>
         <motion.button
-          whileHover={{ scale: 1.02 }}
+          whileHover={{
+            boxShadow: 'inset 4px 4px 8px rgba(190, 195, 207, 0.2)',
+          }}
           onClick={handleLogout}
           disabled={loggingOut}
-          className="w-full px-4 py-3 text-left text-sm font-medium text-rose-700 flex items-center gap-2 hover:bg-rose-50 rounded-lg transition-colors disabled:opacity-50 border border-transparent hover:border-rose-200"
+          className="w-full px-4 py-3 text-left text-sm font-medium flex items-center gap-2 rounded-2xl transition-all duration-300 disabled:opacity-50 border"
+          style={{
+            color: '#ff3b5c',
+            borderColor: 'rgba(255, 59, 92, 0.3)',
+            background: 'var(--neu-bg)',
+            boxShadow: 'inset 4px 4px 8px rgba(190, 195, 207, 0.1)',
+          }}
         >
           <LogOut className="w-4 h-4 flex-shrink-0" />
           <span>{loggingOut ? 'Signing out...' : 'Sign Out'}</span>
