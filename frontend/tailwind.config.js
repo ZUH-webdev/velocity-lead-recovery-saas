@@ -1,22 +1,22 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
-    "./index.html",
-    "./src/**/*.{js,jsx}",
+    './index.html',
+    './src/**/*.{js,jsx}',
   ],
   theme: {
     extend: {
       colors: {
         // Alpine Velocity Premium Light Palette
         alpine: {
-          background: '#F8FAFC',     // Slate 50
-          surface: '#FFFFFF',         // White
-          text: '#0F172A',            // Slate 900
-          textSecondary: '#64748B',  // Slate 500
-          border: '#E2E8F0',         // Slate 200
-          indigo: '#6366F1',         // Electric Indigo
-          teal: '#14B8A6',           // Soft Teal
-          rose: '#F43F5E',           // Rose for escalations
+          background: '#F8FAFC',
+          surface: '#FFFFFF',
+          text: '#0F172A',
+          textSecondary: '#64748B',
+          border: '#E2E8F0',
+          indigo: '#6366F1',
+          teal: '#14B8A6',
+          rose: '#F43F5E',
         },
         slate: {
           900: '#0F172A',
@@ -81,8 +81,8 @@ export default {
           '100%': { backgroundPosition: '1000px 0' },
         },
         'fade-in': {
-          'from': { opacity: '0' },
-          'to': { opacity: '1' },
+          from: { opacity: '0' },
+          to: { opacity: '1' },
         },
       },
       letterSpacing: {
@@ -90,25 +90,14 @@ export default {
         tight: '-0.025em',
       },
       backgroundImage: {
-        'skeleton': 'linear-gradient(90deg, rgba(226, 232, 240, 0.2) 0%, rgba(226, 232, 240, 0.4) 50%, rgba(226, 232, 240, 0.2) 100%)',
+        skeleton: 'linear-gradient(90deg, rgba(226, 232, 240, 0.2) 0%, rgba(226, 232, 240, 0.4) 50%, rgba(226, 232, 240, 0.2) 100%)',
         'dotted-grid': 'radial-gradient(circle, rgba(226, 232, 240, 0.3) 1px, transparent 1px)',
       },
       backgroundSize: {
-        'skeleton': '1000px 100%',
+        skeleton: '1000px 100%',
         'dotted-grid': '20px 20px',
       },
     },
   },
   plugins: [],
-}
-// tailwind.config.js
-module.exports = {
-  theme: {
-    extend: {
-      fontFamily: {
-        headline: ['"Plus Jakarta Sans"', 'sans-serif'],
-        content: ['Inter', 'sans-serif'],
-      },
-    },
-  },
-}
+};

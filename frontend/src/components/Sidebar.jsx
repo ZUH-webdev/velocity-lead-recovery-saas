@@ -7,7 +7,6 @@ import {
   Calendar,
   Settings,
   LogOut,
-  ChevronDown,
   Zap,
 } from 'lucide-react';
 import { useAppStore } from '../store/appStore';
@@ -63,15 +62,18 @@ export const Sidebar = ({ onNavigate }) => {
   };
 
   return (
-    <div className="glass-sidebar fixed left-0 top-0 h-screen w-64 flex flex-col py-6 px-4 border-r border-slate-200/50">
+    <div
+      className="fixed top-4 left-4 z-30 flex flex-col overflow-hidden bg-white rounded-3xl border border-slate-200 shadow-xl p-6"
+      style={{ width: '256px', height: 'calc(100vh - 2rem)' }}
+    >
       {/* Logo Section */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-8 flex items-center gap-3 px-2"
+        className="mb-8 flex items-center gap-3"
       >
-        <div className="p-2 rounded-lg bg-indigo-500/10 backdrop-blur-sm">
-          <Zap className="w-6 h-6 text-indigo-600" />
+        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-600 shadow-lg flex-shrink-0">
+          <Zap className="w-6 h-6 text-white" />
         </div>
         <div>
           <h1 className="text-lg font-bold text-slate-900 tracking-tight">
@@ -82,17 +84,17 @@ export const Sidebar = ({ onNavigate }) => {
       </motion.div>
 
       {/* Business Name */}
-      <div className="mb-6 px-2 py-3 bg-slate-50/50 rounded-lg border border-slate-200/30">
-        <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest">
+      <div className="mb-6 rounded-2xl px-4 py-3 bg-slate-50 border border-slate-200">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-slate-500">
           Clinic
         </p>
         <p className="text-sm font-medium text-slate-900 mt-1 truncate">
-          {businessSettings.businessName}
+          {businessSettings?.businessName || 'Clinic Name'}
         </p>
       </div>
 
       {/* Navigation Items */}
-      <nav className="flex-1 space-y-2">
+      <nav className="flex-1 space-y-2 overflow-y-auto">
         {navItems.map((item, index) => {
           const Icon = item.icon;
           const isActive = currentPage === item.id;
@@ -104,20 +106,12 @@ export const Sidebar = ({ onNavigate }) => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.08 }}
               onClick={() => handleNavigation(item.id)}
-              className={`w-full group relative text-left px-4 py-3 rounded-xl transition-all duration-300 flex items-start gap-3 ${
+              className={`w-full group relative text-left px-4 py-3 rounded-2xl transition-all duration-300 flex items-start gap-3 ${
                 isActive
-                  ? 'bg-indigo-50 border border-indigo-200/50'
-                  : 'hover:bg-slate-100/50 text-slate-700'
+                  ? 'bg-indigo-50 border border-indigo-200'
+                  : 'hover:bg-slate-50 border border-transparent'
               }`}
             >
-              {isActive && (
-                <motion.div
-                  layoutId="activeNav"
-                  className="absolute inset-0 bg-indigo-500/5 rounded-xl"
-                  transition={{ type: 'spring', stiffness: 380, damping: 40 }}
-                />
-              )}
-
               <Icon
                 className={`w-5 h-5 mt-0.5 flex-shrink-0 transition-colors ${
                   isActive ? 'text-indigo-600' : 'text-slate-600 group-hover:text-indigo-500'
@@ -150,22 +144,24 @@ export const Sidebar = ({ onNavigate }) => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className="pt-6 border-t border-slate-200/30 space-y-2"
+        className="mt-6 space-y-2 border-t border-slate-200 pt-6"
       >
-        <button className="w-full px-4 py-3 rounded-xl text-slate-700 hover:bg-slate-100/50 transition-all duration-300 flex items-center gap-2 text-sm font-medium">
-          <Settings className="w-4 h-4" />
+        <button className="w-full px-4 py-3 text-left text-sm font-medium text-slate-700 flex items-center gap-2 hover:bg-slate-50 rounded-lg transition-colors border border-transparent hover:border-slate-200">
+          <Settings className="w-4 h-4 flex-shrink-0" />
           <span>Help & Support</span>
         </button>
-
-        <button
+        <motion.button
+          whileHover={{ scale: 1.02 }}
           onClick={handleLogout}
           disabled={loggingOut}
-          className="w-full px-4 py-3 rounded-xl text-slate-700 hover:bg-rose-50 transition-all duration-300 flex items-center gap-2 text-sm font-medium hover:text-rose-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full px-4 py-3 text-left text-sm font-medium text-rose-700 flex items-center gap-2 hover:bg-rose-50 rounded-lg transition-colors disabled:opacity-50 border border-transparent hover:border-rose-200"
         >
-          <LogOut className="w-4 h-4" />
+          <LogOut className="w-4 h-4 flex-shrink-0" />
           <span>{loggingOut ? 'Signing out...' : 'Sign Out'}</span>
-        </button>
+        </motion.button>
       </motion.div>
     </div>
   );
 };
+
+export default Sidebar;

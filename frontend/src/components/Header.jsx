@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { Bell, Search, ChevronDown, Zap } from 'lucide-react';
+import { Bell, Search, ChevronDown } from 'lucide-react';
 import { useAppStore } from '../store/appStore';
 
 // CSS for ripple animation (will be imported from index.css)
@@ -26,17 +26,31 @@ export const Header = ({ onSearch }) => {
     unreadMessageCount,
   } = useAppStore();
 
+  const neuShellStyle = {
+    background: 'var(--neu-bg)',
+    border: '1px solid rgba(255, 255, 255, 0.6)',
+    boxShadow: '18px 18px 36px var(--neu-dark), -18px -18px 36px var(--neu-light)',
+  };
+
+  const neuInsetStyle = {
+    background: 'var(--neu-bg)',
+    boxShadow: 'inset 8px 8px 16px var(--neu-dark), inset -8px -8px 16px var(--neu-light)',
+  };
+
   return (
-    <div className="fixed top-0 left-64 right-0 h-16 bg-white/80 backdrop-blur-sm border-b border-slate-200/30 flex items-center justify-between px-8 z-40">
+    <div
+      className="fixed top-4 left-[17rem] right-4 h-20 flex items-center justify-between px-8 z-40 rounded-[24px]"
+      style={neuShellStyle}
+    >
       <style>{pulseStyle}</style>
 
       {/* Left: Clinic Name & Pulse */}
       <div className="flex items-center gap-4">
         <div>
-          <p className="text-xs uppercase tracking-widest text-slate-500 font-semibold">
+          <p className="text-xs uppercase tracking-widest font-semibold" style={{ color: 'var(--neu-text-light)' }}>
             Current Clinic
           </p>
-          <p className="text-sm font-semibold text-slate-900">
+          <p className="text-sm font-semibold" style={{ color: 'var(--neu-text-dark)' }}>
             {businessSettings.businessName}
           </p>
         </div>
@@ -47,7 +61,10 @@ export const Header = ({ onSearch }) => {
           animate={{ opacity: 1, scale: 1 }}
           className="ml-4 flex items-center gap-2"
         >
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50/50 rounded-full border border-emerald-200/50">
+          <div
+            className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/40"
+            style={neuInsetStyle}
+          >
             <div
               className="w-2 h-2 bg-emerald-500 rounded-full"
               style={{
@@ -67,13 +84,17 @@ export const Header = ({ onSearch }) => {
       {/* Right: Actions */}
       <div className="flex items-center gap-4">
         {/* Search Bar */}
-        <div className="hidden lg:flex items-center gap-2 bg-slate-100/50 rounded-lg px-3 py-2 border border-slate-200/50 w-64">
-          <Search className="w-4 h-4 text-slate-500" />
+        <div
+          className="hidden lg:flex items-center gap-2 rounded-2xl px-4 py-2.5 border border-white/40 w-72"
+          style={neuInsetStyle}
+        >
+          <Search className="w-4 h-4" style={{ color: 'var(--neu-text-light)' }} />
           <input
             type="text"
             placeholder="Search leads..."
             onChange={(e) => onSearch && onSearch(e.target.value)}
-            className="bg-transparent text-sm text-slate-900 placeholder-slate-500 outline-none w-full"
+            className="bg-transparent text-sm outline-none w-full"
+            style={{ color: 'var(--neu-text-dark)' }}
           />
         </div>
 
@@ -81,14 +102,16 @@ export const Header = ({ onSearch }) => {
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="relative p-2 hover:bg-slate-100/50 rounded-lg transition-colors"
+          className="relative w-11 h-11 flex items-center justify-center rounded-2xl border border-white/40 transition-all"
+          style={neuInsetStyle}
         >
-          <Bell className="w-5 h-5 text-slate-700" />
+          <Bell className="w-5 h-5" style={{ color: 'var(--neu-text-dark)' }} />
           {unreadMessageCount > 0 && (
             <motion.span
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              className="absolute top-1 right-1 w-4 h-4 bg-rose-500 text-white text-xs font-bold rounded-full flex items-center justify-center"
+              className="absolute top-0.5 right-0.5 w-4 h-4 text-white text-xs font-bold rounded-full flex items-center justify-center"
+              style={{ background: 'var(--neu-error)', boxShadow: '0 6px 12px rgba(255, 59, 92, 0.25)' }}
             >
               {unreadMessageCount > 9 ? '9+' : unreadMessageCount}
             </motion.span>
@@ -96,11 +119,20 @@ export const Header = ({ onSearch }) => {
         </motion.button>
 
         {/* Profile */}
-        <button className="flex items-center gap-2 px-3 py-2 hover:bg-slate-100/50 rounded-lg transition-colors group">
-          <div className="w-8 h-8 bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-lg flex items-center justify-center">
-            <span className="text-xs font-bold text-white">Z</span>
+        <button
+          className="flex items-center gap-3 px-3 py-2.5 rounded-2xl border border-white/40 transition-all group"
+          style={neuInsetStyle}
+        >
+          <div
+            className="w-8 h-8 rounded-xl flex items-center justify-center"
+            style={{
+              background: 'linear-gradient(145deg, #d4d9e2, #eef3f8)',
+              boxShadow: '6px 6px 12px var(--neu-dark), -6px -6px 12px var(--neu-light)',
+            }}
+          >
+            <span className="text-xs font-bold" style={{ color: 'var(--neu-text-dark)' }}>Z</span>
           </div>
-          <ChevronDown className="w-4 h-4 text-slate-500 group-hover:text-slate-700 transition-colors" />
+          <ChevronDown className="w-4 h-4 transition-colors" style={{ color: 'var(--neu-text-light)' }} />
         </button>
       </div>
     </div>

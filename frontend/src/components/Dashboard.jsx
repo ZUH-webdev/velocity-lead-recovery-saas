@@ -27,7 +27,6 @@ const Dashboard = ({ onNavigate = () => {} }) => {
   useEffect(() => {
     setActivityLoading(true);
     setTimeout(() => {
-      const mockMetrics = generateMockRecoveryMetrics();
       const mockActivities = generateMockActivities(5);
       const mockLeads = generateMockLeads(6);
       setActivities(mockActivities);
@@ -61,7 +60,7 @@ const Dashboard = ({ onNavigate = () => {} }) => {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="space-y-8 pb-20"
+      className="space-y-8 pb-10 pt-4"
     >
       {/* Page Header */}
       <motion.div variants={itemVariants} className="flex items-center justify-between">
@@ -231,7 +230,7 @@ const Dashboard = ({ onNavigate = () => {} }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <CalendarSyncStatus status={null} />
+            <CalendarSyncStatus status={calendarStatus} />
           </motion.div>
         </div>
       </motion.section>
