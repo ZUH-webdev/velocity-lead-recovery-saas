@@ -20,6 +20,7 @@ import './index.css';
 function DashboardLayout() {
   const { currentPage, setCurrentPage } = useAppStore();
   const [sidebarOpen, setSidebarOpen] = React.useState(true);
+  const [headerSearchTerm, setHeaderSearchTerm] = React.useState('');
 
   const pageVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -45,7 +46,11 @@ function DashboardLayout() {
             exit="exit"
             transition={transitionSettings}
           >
-            <Dashboard onNavigate={setCurrentPage} />
+            <Dashboard
+              onNavigate={setCurrentPage}
+              searchTerm={headerSearchTerm}
+              onSearchChange={setHeaderSearchTerm}
+            />
           </motion.div>
         );
       case 'leads':
@@ -58,7 +63,11 @@ function DashboardLayout() {
             exit="exit"
             transition={transitionSettings}
           >
-            <LeadsPage onNavigate={setCurrentPage} />
+            <LeadsPage
+              onNavigate={setCurrentPage}
+              searchTerm={headerSearchTerm}
+              onSearchChange={setHeaderSearchTerm}
+            />
           </motion.div>
         );
       case 'calendar':
@@ -110,7 +119,11 @@ function DashboardLayout() {
             exit="exit"
             transition={transitionSettings}
           >
-            <Dashboard onNavigate={setCurrentPage} />
+            <Dashboard
+              onNavigate={setCurrentPage}
+              searchTerm={headerSearchTerm}
+              onSearchChange={setHeaderSearchTerm}
+            />
           </motion.div>
         );
     }
@@ -136,7 +149,11 @@ function DashboardLayout() {
       <Sidebar onNavigate={setCurrentPage} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       
       {/* Fixed Header */}
-      <Header onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
+      <Header
+        onMenuClick={() => setSidebarOpen(!sidebarOpen)}
+        searchValue={headerSearchTerm}
+        onSearch={setHeaderSearchTerm}
+      />
       
       {/* Main Content Area */}
       <main className="md:ml-72 pt-24 md:pt-28 pb-10 min-h-screen px-4 md:px-8">
