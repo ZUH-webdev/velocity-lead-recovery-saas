@@ -13,12 +13,15 @@ import { useLeads, useLeadDetail } from '../../hooks/useLeads';
 import LeadCard from '../LeadCard';
 import { generateMockLeads, generateMockConversation } from '../../utils/mockData';
 
-export const LeadsPage = ({ onNavigate }) => {
+export const LeadsPage = ({ onNavigate, searchTerm: externalSearchTerm, onSearchChange }) => {
   const { leads: apiLeads, loading: leadsLoading } = useLeads();
   const [leads, setLeads] = useState([]);
   const [selectedLeadId, setSelectedLeadId] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
   const [filterState, setFilterState] = useState('all');
+  const [localSearchTerm, setLocalSearchTerm] = useState('');
+
+  const searchTerm = externalSearchTerm !== undefined ? externalSearchTerm : localSearchTerm;
+  const updateSearchTerm = onSearchChange || setLocalSearchTerm;
 
   const { lead: selectedLead, conversation } = useLeadDetail(selectedLeadId);
 
@@ -92,7 +95,7 @@ export const LeadsPage = ({ onNavigate }) => {
               type="text"
               placeholder="Search leads..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => updateSearchTerm(e.target.value)}
               className="flex-1 px-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/20 transition-all shadow-sm"
             />
 

@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Bell, Search, ChevronDown, Menu } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Bell, Search, ChevronDown, Menu, MessageSquare, CalendarCheck2, Sparkles, X } from 'lucide-react';
 import { useAppStore } from '../store/appStore';
 
 // CSS for ripple animation (will be imported from index.css)
@@ -19,13 +19,46 @@ const pulseStyle = `
   }
 `;
 
-export const Header = ({ onSearch, onMenuClick }) => {
+export const Header = ({ onSearch, onMenuClick, searchValue }) => {
   const {
     businessSettings,
     systemPulse,
     connectionStatus,
     unreadMessageCount,
+    clearUnreadMessages,
   } = useAppStore();
+
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [localSearchValue, setLocalSearchValue] = useState('');
+  const isSearchControlled = searchValue !== undefined;
+  const currentSearchValue = isSearchControlled ? searchValue : localSearchValue;
+
+  const notifications = [
+    {
+      id: 'notif-1',
+      icon: MessageSquare,
+      title: 'New SMS conversation',
+      description: 'Lead #65 replied to the AI follow-up sequence.',
+      time: '2m ago',
+      tone: 'violet',
+    },
+    {
+      id: 'notif-2',
+      icon: CalendarCheck2,
+      title: 'Calendar sync updated',
+      description: '3 appointments were confirmed and synced.',
+      time: '14m ago',
+      tone: 'emerald',
+    },
+    {
+      id: 'notif-3',
+      icon: Sparkles,
+      title: 'High intent lead detected',
+      description: 'Lead #82 is ready for a callback today.',
+      time: '28m ago',
+      tone: 'indigo',
+    },
+  ];
 
   const neuShellStyle = {
     background: 'var(--neu-bg)',
@@ -36,6 +69,21 @@ export const Header = ({ onSearch, onMenuClick }) => {
   const neuInsetStyle = {
     background: 'var(--neu-bg)',
     boxShadow: 'inset 8px 8px 16px var(--neu-dark), inset -8px -8px 16px var(--neu-light)',
+  };
+
+  const handleSearchChange = (value) => {
+    if (onSearch) {
+      onSearch(value);
+    }
+
+    if (!isSearchControlled) {
+      setLocalSearchValue(value);
+    }
+  };
+
+  const openNotifications = () => {
+    setIsNotificationOpen(true);
+    clearUnreadMessages();
   };
 
   return (
@@ -97,46 +145,34 @@ export const Header = ({ onSearch, onMenuClick }) => {
       <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
         {/* Search Bar - Enhanced */}
         <motion.div
-          className="hidden lg:flex items-center gap-3 rounded-2xl px-4 py-2.5 border w-48 xl:w-80 transition-all duration-300"
+          className="hidden lg:flex header-search-shell items-center rounded-[22px] px-5 py-3 border w-48 xl:w-80 transition-all duration-300"
           style={{
-            background: 'var(--neu-bg)',
-            borderColor: 'rgba(255, 255, 255, 0.4)',
-            boxShadow: 'inset 6px 6px 12px var(--neu-dark), inset -6px -6px 12px var(--neu-light)',
+            background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.72) 0%, rgba(247, 249, 252, 0.95) 100%)',
+            borderColor: 'rgba(255, 255, 255, 0.6)',
+            boxShadow: '0 12px 30px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.75)',
+            backdropFilter: 'blur(20px) saturate(135%)',
+            WebkitBackdropFilter: 'blur(20px) saturate(135%)',
           }}
           whileHover={{
-            boxShadow: 'inset 4px 4px 8px var(--neu-dark), inset -4px -4px 8px var(--neu-light)',
+            boxShadow: '0 14px 34px rgba(15, 23, 42, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
           }}
           whileTap={{
-            boxShadow: 'inset 8px 8px 16px var(--neu-dark), inset -8px -8px 16px var(--neu-light)',
+            boxShadow: '0 10px 24px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.72)',
           }}
         >
-          <Search className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--neu-text-light)' }} />
+          <Search className="w-5 h-5 flex-shrink-0 mr-3" style={{ color: 'var(--neu-text-light)' }} />
           <input
             type="text"
             placeholder="Search leads..."
-            onChange={(e) => onSearch && onSearch(e.target.value)}
-            className="bg-transparent text-sm w-full transition-colors duration-200"
+            value={currentSearchValue}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            aria-label="Search leads"
+            className="header-search-input bg-transparent text-[15px] w-full transition-colors duration-200"
             style={{
               color: 'var(--neu-text-dark)',
               outline: 'none',
             }}
-            onFocus={(e) => {
-              e.target.style.color = 'var(--neu-text-dark)';
-            }}
-            onBlur={(e) => {
-              e.target.style.color = 'var(--neu-text-dark)';
-            }}
           />
-          <style>{`
-            input::placeholder {
-              color: var(--neu-text-light);
-              opacity: 0.6;
-              font-style: italic;
-            }
-            input:focus::placeholder {
-              opacity: 0.4;
-            }
-          `}</style>
         </motion.div>
 
         {/* Notifications */}
@@ -145,6 +181,8 @@ export const Header = ({ onSearch, onMenuClick }) => {
           whileTap={{ scale: 0.95 }}
           className="relative w-9 md:w-11 h-9 md:h-11 flex items-center justify-center rounded-xl md:rounded-2xl border border-white/40 transition-all flex-shrink-0"
           style={neuInsetStyle}
+          onClick={openNotifications}
+          aria-label="Open notifications"
         >
           <Bell className="w-4 md:w-5 h-4 md:h-5" style={{ color: 'var(--neu-text-dark)' }} />
           {unreadMessageCount > 0 && (
@@ -181,6 +219,82 @@ export const Header = ({ onSearch, onMenuClick }) => {
           <img src="/velocity-logo.webp" alt="Velocity" className="h-8 w-8 object-contain" />
         </Link>
       </div>
+
+      <AnimatePresence>
+        {isNotificationOpen && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-start justify-center bg-slate-950/20 px-4 pt-24 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsNotificationOpen(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 24, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 16, scale: 0.98 }}
+              transition={{ type: 'spring', stiffness: 280, damping: 24 }}
+              onClick={(event) => event.stopPropagation()}
+              className="w-full max-w-md overflow-hidden rounded-[28px] border border-white/60 bg-[linear-gradient(180deg,rgba(255,255,255,0.92)_0%,rgba(249,250,252,0.98)_100%)] shadow-[0_24px_70px_rgba(15,23,42,0.18)] backdrop-blur-xl"
+            >
+              <div className="flex items-center justify-between border-b border-slate-200/60 px-5 py-4">
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-400">
+                    Notifications
+                  </p>
+                  <h3 className="text-lg font-black tracking-tight text-slate-900">
+                    System Activity
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsNotificationOpen(false)}
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/60 bg-white/70 text-slate-500 shadow-[0_8px_20px_rgba(15,23,42,0.06)]"
+                  aria-label="Close notifications"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+
+              <div className="max-h-[70vh] space-y-3 overflow-y-auto px-5 py-4">
+                {notifications.map((notification) => {
+                  const Icon = notification.icon;
+                  const toneClasses = {
+                    violet: 'bg-violet-500/10 text-violet-600',
+                    emerald: 'bg-emerald-500/10 text-emerald-600',
+                    indigo: 'bg-indigo-500/10 text-indigo-600',
+                  };
+
+                  return (
+                    <motion.div
+                      key={notification.id}
+                      whileHover={{ y: -2 }}
+                      className="flex items-start gap-3 rounded-2xl border border-white/60 bg-white/75 p-4 shadow-[0_10px_24px_rgba(15,23,42,0.05)]"
+                    >
+                      <div className={`flex h-10 w-10 items-center justify-center rounded-2xl ${toneClasses[notification.tone]}`}>
+                        <Icon className="h-4 w-4" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-3">
+                          <p className="truncate text-sm font-semibold text-slate-900">
+                            {notification.title}
+                          </p>
+                          <span className="flex-shrink-0 text-xs font-medium text-slate-400">
+                            {notification.time}
+                          </span>
+                        </div>
+                        <p className="mt-1 text-sm leading-5 text-slate-500">
+                          {notification.description}
+                        </p>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

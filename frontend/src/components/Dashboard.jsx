@@ -10,7 +10,7 @@ import LeadCard from './LeadCard';
 import { LivePulse } from './LiveIndicators';
 import { generateMockRecoveryMetrics, generateMockActivities, generateMockLeads } from '../utils/mockData';
 
-const Dashboard = ({ onNavigate = () => {} }) => {
+const Dashboard = ({ onNavigate = () => {}, searchTerm: externalSearchTerm, onSearchChange }) => {
   const { metrics, loading: metricsLoading } = useMetrics();
   const [activities, setActivities] = useState([]);
   const [activityLoading, setActivityLoading] = useState(true);
@@ -18,8 +18,11 @@ const Dashboard = ({ onNavigate = () => {} }) => {
   const [selectedLead, setSelectedLead] = useState(null);
   const [calendarStatus, setCalendarStatus] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
   const [filterState, setFilterState] = useState('All');
+
+  const [localSearchTerm, setLocalSearchTerm] = useState('');
+  const searchTerm = externalSearchTerm !== undefined ? externalSearchTerm : localSearchTerm;
+  const updateSearchTerm = onSearchChange || setLocalSearchTerm;
 
   const conversationStates = ['All', 'Greeting', 'Qualification', 'Booking', 'Confirmed'];
 
@@ -54,6 +57,16 @@ const Dashboard = ({ onNavigate = () => {} }) => {
       transition: { type: 'spring', stiffness: 300, damping: 30 },
     },
   };
+
+  const filteredLeads = leads.filter((lead) => {
+    const searchValue = searchTerm.toLowerCase();
+    return (
+      lead.name.toLowerCase().includes(searchValue) ||
+      lead.phone.toLowerCase().includes(searchValue) ||
+      lead.state.toLowerCase().includes(searchValue) ||
+      lead.source.toLowerCase().includes(searchValue)
+    );
+  });
 
   return (
     <motion.main
@@ -98,9 +111,9 @@ const Dashboard = ({ onNavigate = () => {} }) => {
       </motion.section>
 
       {/* Two Column Layout: Leads + Activity Feed */}
-      <motion.section variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
+      <motion.section variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] gap-4 md:gap-8">
         {/* Left: Live Leads Feed (2 columns) */}
-        <div className="lg:col-span-2 space-y-3 md:space-y-6">
+        <div className="min-w-0 space-y-3 md:space-y-6">
           {/* Section Header */}
           <div className="flex items-start md:items-end justify-between gap-2 md:gap-4">
             <div className="min-w-0 flex-1">
@@ -166,15 +179,15 @@ const Dashboard = ({ onNavigate = () => {} }) => {
               type="text"
               placeholder="Search by name, phone..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => updateSearchTerm(e.target.value)}
               className="w-full pl-9 md:pl-12 pr-3 md:pr-4 py-2 md:py-3 rounded-lg md:rounded-xl bg-white/65 backdrop-blur-md border border-white/50 text-slate-900 placeholder-slate-400 text-sm md:text-base focus:outline-none focus:border-violet-400 focus:ring-1 focus:ring-violet-400/20 transition-all shadow-[0_10px_24px_rgba(15,23,42,0.06)]"
             />
           </motion.div>
 
           {/* Leads Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
-            {leads.length > 0 ? (
-              leads.map((lead, idx) => (
+            {filteredLeads.length > 0 ? (
+              filteredLeads.map((lead, idx) => (
                 <motion.div
                   key={lead.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -205,7 +218,7 @@ const Dashboard = ({ onNavigate = () => {} }) => {
         </div>
 
         {/* Right: Activity Feed + Calendar (1 column) */}
-        <div className="space-y-3 md:space-y-6">
+        <div className="min-w-0 space-y-3 md:space-y-6">
           {/* Activity Feed Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -229,6 +242,7 @@ const Dashboard = ({ onNavigate = () => {} }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
+            className="w-full"
           >
             <CalendarSyncStatus status={calendarStatus} />
           </motion.div>
