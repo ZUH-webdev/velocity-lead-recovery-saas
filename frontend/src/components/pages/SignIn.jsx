@@ -108,7 +108,7 @@ export default function SignIn() {
 
           {/* Password */}
           <div className="neumorphism-input-group">
-            <div className="neumorphism-input-wrapper" style={{ paddingRight: '50px' }}>
+            <div className="neumorphism-input-wrapper">
               <div className="neumorphism-input-icon">
                 <Lock size={20} />
               </div>
