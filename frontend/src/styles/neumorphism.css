@@ -176,32 +176,30 @@
   right: 18px;
   top: 50%;
   transform: translateY(-50%);
-  background: var(--neu-bg);
+  background: transparent;
   border: none;
-  width: 35px;
-  height: 35px;
-  border-radius: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--neu-text-light);
-  box-shadow: 
-    4px 4px 10px var(--neu-dark),
-    -4px -4px 10px var(--neu-light);
-  transition: all 0.3s ease;
+  box-shadow: none;
+  transition: color 0.2s ease, transform 0.2s ease;
   padding: 0;
   z-index: 3; /* keep above input and label */
 }
 
+
 .neumorphism-password-toggle:hover {
   color: var(--neu-text-muted);
+  transform: translateY(-50%) scale(1.02);
 }
 
 .neumorphism-password-toggle:active {
-  box-shadow: 
-    inset 2px 2px 5px var(--neu-dark),
-    inset -2px -2px 5px var(--neu-light);
+  transform: translateY(-50%) scale(0.98);
 }
 
 .neumorphism-password-toggle svg {
