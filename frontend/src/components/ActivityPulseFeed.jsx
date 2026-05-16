@@ -67,7 +67,7 @@ export const ActivityEvent = ({ event, index }) => {
         whileHover={{ x: 4 }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       >
-        <div className={`p-3 rounded-lg border ${config.bgColor} ${config.borderColor} transition-all group-hover:shadow-md`}>
+        <div className="p-3 rounded-2xl border border-white/50 bg-white/65 backdrop-blur-md shadow-[0_10px_24px_rgba(15,23,42,0.05)] transition-all group-hover:shadow-[0_16px_40px_rgba(15,23,42,0.08)]">
           <div className="flex items-start justify-between mb-1">
             <div className="flex items-center gap-2">
               <Icon className={`w-4 h-4 ${config.textColor} flex-shrink-0`} />
@@ -90,7 +90,7 @@ export const ActivityEvent = ({ event, index }) => {
 
           {event.metadata && (
             <div className="mt-2 flex items-center gap-2 text-xs text-slate-500">
-              <span className={`px-2 py-1 rounded-full ${config.bgColor} ${config.textColor}`}>
+              <span className={`px-2 py-1 rounded-full border border-white/50 bg-white/70 backdrop-blur-md ${config.textColor}`}>
                 {event.metadata}
               </span>
             </div>
@@ -126,7 +126,7 @@ export const ActivityPulseFeed = ({
           <div key={i} className="flex gap-4">
             <div className="w-3 h-3 rounded-full bg-slate-200 flex-shrink-0 mt-1 animate-pulse" />
             <div className="flex-1">
-              <div className="h-20 bg-slate-100 rounded-lg animate-pulse" />
+              <div className="h-20 rounded-2xl bg-white/50 backdrop-blur-md border border-white/40 animate-pulse" />
             </div>
           </div>
         ))}

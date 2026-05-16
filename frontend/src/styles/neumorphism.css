@@ -98,6 +98,7 @@
     inset 8px 8px 16px var(--neu-dark),
     inset -8px -8px 16px var(--neu-light);
   transition: all 0.3s ease;
+  overflow: visible; /* allow positioned children (password toggle) to render correctly */
 }
 
 .neumorphism-input-wrapper:focus-within {
@@ -114,11 +115,17 @@
   border: none;
   padding: 20px 24px;
   padding-left: 55px;
+  padding-right: 24px; /* base right padding; overridden for password inputs below */
   color: var(--neu-text-dark);
   font-size: 16px;
   font-weight: 500;
   outline: none;
   transition: all 0.3s ease;
+}
+
+/* Ensure password inputs leave room for the toggle button */
+.neumorphism-input-wrapper input[type="password"] {
+  padding-right: 64px;
 }
 
 .neumorphism-input-wrapper input::placeholder {
@@ -166,7 +173,7 @@
 /* Password Toggle */
 .neumorphism-password-toggle {
   position: absolute;
-  right: 15px;
+  right: 18px;
   top: 50%;
   transform: translateY(-50%);
   background: var(--neu-bg);
@@ -184,6 +191,7 @@
     -4px -4px 10px var(--neu-light);
   transition: all 0.3s ease;
   padding: 0;
+  z-index: 3; /* keep above input and label */
 }
 
 .neumorphism-password-toggle:hover {
@@ -504,6 +512,10 @@
     padding-left: 50px;
   }
 
+  .neumorphism-input-wrapper input[type="password"] {
+    padding-right: 56px;
+  }
+
   .neumorphism-input-wrapper label {
     left: 50px;
   }
@@ -544,10 +556,11 @@
 .stat-card-premium,
 .glass-effect,
 .glass-sidebar {
-  background: var(--neu-bg) !important;
-  border: none !important;
-  padding: 1rem !important;
-  box-shadow: 18px 18px 40px var(--neu-dark), -18px -18px 40px var(--neu-light) !important;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(248, 250, 252, 0.9) 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.55) !important;
+  backdrop-filter: blur(22px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(140%) !important;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
   transition: all 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
   border-radius: 16px !important;
 }
@@ -555,8 +568,8 @@
 .card-elite:hover,
 .lead-card-elite:hover,
 .stat-card-premium:hover {
-  transform: translateY(-8px) !important;
-  box-shadow: 24px 24px 60px var(--neu-dark), -24px -24px 60px var(--neu-light) !important;
+  transform: translateY(-6px) !important;
+  box-shadow: 0 22px 54px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(124, 58, 237, 0.08) !important;
 }
 
 .lead-card-elite {
@@ -564,8 +577,9 @@
 }
 
 .glass-sidebar {
-  backdrop-filter: none !important;
-  border-right: 1px solid var(--neu-light) !important;
+  backdrop-filter: blur(24px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(140%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.55) !important;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────

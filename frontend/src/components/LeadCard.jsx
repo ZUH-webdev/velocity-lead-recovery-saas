@@ -53,7 +53,7 @@ const LeadCard = ({ lead, onClick, isSelected = false }) => {
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       onClick={onClick}
       className={clsx(
-        'relative p-6 rounded-xl border cursor-pointer lead-card-elite group',
+        'relative p-6 rounded-2xl border cursor-pointer lead-card-elite group',
         isSelected && 'ring-2 ring-indigo-500 shadow-elite-glow border-indigo-400'
       )}
     >
@@ -61,7 +61,7 @@ const LeadCard = ({ lead, onClick, isSelected = false }) => {
       <div
         className={clsx(
           'absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100',
-          'bg-gradient-to-br from-indigo-500/5 to-transparent transition-opacity duration-300',
+          'bg-gradient-to-br from-violet-500/10 via-transparent to-emerald-500/8 transition-opacity duration-300',
           'pointer-events-none'
         )}
       />
@@ -78,7 +78,7 @@ const LeadCard = ({ lead, onClick, isSelected = false }) => {
           {/* Lead Score Badge - Premium Style */}
           <motion.div
             className={clsx(
-              'flex-shrink-0 px-3 py-2 rounded-lg border flex items-center gap-1.5',
+              'flex-shrink-0 px-3 py-2 rounded-xl border flex items-center gap-1.5 backdrop-blur-md',
               'font-bold text-sm',
               getLeadScoreBg(lead.score),
               getLeadScoreColor(lead.score)
@@ -94,7 +94,7 @@ const LeadCard = ({ lead, onClick, isSelected = false }) => {
         <div className="flex items-center gap-2 flex-wrap">
           <motion.div
             className={clsx(
-              'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border',
+              'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border backdrop-blur-md',
               getStateColor(lead.state)
             )}
             whileHover={{ scale: 1.05 }}
