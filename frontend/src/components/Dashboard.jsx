@@ -77,7 +77,7 @@ const Dashboard = ({ onNavigate = () => {} }) => {
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="px-4 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white font-medium flex items-center gap-2 shadow-sm hover:shadow-md hover:shadow-indigo-500/20 transition-all whitespace-nowrap"
+          className="px-4 py-2.5 rounded-xl bg-white/65 hover:bg-white/80 backdrop-blur-md border border-white/50 text-slate-800 font-semibold flex items-center gap-2 shadow-[0_10px_30px_rgba(15,23,42,0.08)] hover:shadow-[0_16px_40px_rgba(15,23,42,0.12)] transition-all whitespace-nowrap"
         >
           <Download className="w-4 h-4" />
           Export Report
@@ -122,7 +122,7 @@ const Dashboard = ({ onNavigate = () => {} }) => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setShowFilters(!showFilters)}
-                className="px-3 py-2 rounded-lg bg-white hover:bg-slate-100 text-slate-900 font-medium text-xs md:text-sm flex items-center gap-2 border border-slate-200 transition-colors shadow-sm whitespace-nowrap"
+                className="px-3 py-2 rounded-lg bg-white/60 hover:bg-white/80 backdrop-blur-md text-slate-800 font-semibold text-xs md:text-sm flex items-center gap-2 border border-white/50 transition-colors shadow-[0_10px_24px_rgba(15,23,42,0.06)] whitespace-nowrap"
               >
                 <Filter className="w-4 h-4" />
                 {filterState}
@@ -135,7 +135,7 @@ const Dashboard = ({ onNavigate = () => {} }) => {
                 <motion.div
                   initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-lg shadow-lg z-10"
+                  className="absolute right-0 mt-2 w-48 rounded-xl border border-white/50 bg-white/75 backdrop-blur-md shadow-[0_16px_40px_rgba(15,23,42,0.12)] z-10 overflow-hidden"
                 >
                   {conversationStates.map((state) => (
                     <motion.button
@@ -147,8 +147,8 @@ const Dashboard = ({ onNavigate = () => {} }) => {
                       }}
                       className={`block w-full text-left px-4 py-2 text-sm font-medium transition-colors ${
                         filterState === state
-                          ? 'bg-indigo-50 text-indigo-700'
-                          : 'text-slate-700 hover:bg-slate-100'
+                          ? 'bg-violet-500/10 text-violet-700'
+                          : 'text-slate-700 hover:bg-white/70'
                       }`}
                     >
                       {state}
@@ -167,7 +167,7 @@ const Dashboard = ({ onNavigate = () => {} }) => {
               placeholder="Search by name, phone..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 md:pl-12 pr-3 md:pr-4 py-2 md:py-3 rounded-lg md:rounded-xl bg-white border border-slate-200 text-slate-900 placeholder-slate-400 text-sm md:text-base focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/20 transition-all shadow-sm"
+              className="w-full pl-9 md:pl-12 pr-3 md:pr-4 py-2 md:py-3 rounded-lg md:rounded-xl bg-white/65 backdrop-blur-md border border-white/50 text-slate-900 placeholder-slate-400 text-sm md:text-base focus:outline-none focus:border-violet-400 focus:ring-1 focus:ring-violet-400/20 transition-all shadow-[0_10px_24px_rgba(15,23,42,0.06)]"
             />
           </motion.div>
 

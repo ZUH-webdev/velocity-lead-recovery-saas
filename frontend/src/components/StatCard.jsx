@@ -48,7 +48,7 @@ const StatCard = ({
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="neu-carved p-4 md:p-6 group overflow-hidden relative"
+        className="card-elite p-4 md:p-6 group overflow-hidden relative"
       >
         <div className="relative z-10 space-y-3 md:space-y-4">
           <div className="h-3 w-20 md:w-24 bg-gradient-to-r from-slate-300 to-slate-200 rounded-full animate-pulse" />
@@ -67,7 +67,7 @@ const StatCard = ({
         scale: 1.02,
         transition: { type: 'spring', stiffness: 300, damping: 25 },
       }}
-      className="neu-carved p-4 md:p-6 group overflow-hidden relative cursor-pointer transition-all duration-300"
+      className="card-elite p-4 md:p-6 group overflow-hidden relative cursor-pointer transition-all duration-300"
     >
       {/* Animated Background Glow */}
       <motion.div
@@ -111,7 +111,7 @@ const StatCard = ({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.08 + 0.2 }}
-            className="glassmorphism rounded-lg p-3 md:p-4 mb-2 relative"
+            className="glassmorphism rounded-xl p-3 md:p-4 mb-2 relative"
           >
             <div className="flex items-baseline gap-2 flex-wrap">
               {prefix && (

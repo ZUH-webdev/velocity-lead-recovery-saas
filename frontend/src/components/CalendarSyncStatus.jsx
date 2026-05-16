@@ -54,13 +54,13 @@ const CalendarSyncStatus = ({ status, onSync, onSettings }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-      className="p-4 md:p-6 lg:p-8 rounded-lg md:rounded-xl bg-white border border-slate-200 shadow-elite-md space-y-4 md:space-y-6"
+      className="p-4 md:p-6 lg:p-8 rounded-2xl bg-white/70 border border-white/50 shadow-[0_16px_40px_rgba(15,23,42,0.08)] backdrop-blur-md space-y-4 md:space-y-6"
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-3 md:gap-4">
         <div className="flex items-center gap-2 md:gap-4 min-w-0">
           <motion.div
-            className="p-2 md:p-3.5 rounded-lg bg-blue-50 flex-shrink-0"
+            className="p-2 md:p-3.5 rounded-xl bg-white/60 border border-white/50 backdrop-blur-md flex-shrink-0"
             whileHover={{ scale: 1.1 }}
           >
             <Calendar className="w-5 md:w-6 h-5 md:h-6 text-blue-600" />
@@ -75,7 +75,7 @@ const CalendarSyncStatus = ({ status, onSync, onSettings }) => {
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="flex items-center gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-full bg-emerald-50 border border-emerald-200 flex-shrink-0 text-xs md:text-sm"
+            className="flex items-center gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-full bg-emerald-500/10 border border-white/50 backdrop-blur-md flex-shrink-0 text-xs md:text-sm"
           >
             <motion.div
               className="w-2.5 h-2.5 bg-emerald-600 rounded-full"
@@ -90,7 +90,7 @@ const CalendarSyncStatus = ({ status, onSync, onSettings }) => {
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="flex items-center gap-2 px-4 py-2 rounded-full bg-rose-50 border border-rose-200"
+            className="flex items-center gap-2 px-4 py-2 rounded-full bg-rose-500/10 border border-white/50 backdrop-blur-md"
           >
             <AlertTriangle className="w-4 h-4 text-rose-600" />
             <span className="text-xs font-bold text-rose-700">Disconnected</span>
@@ -100,7 +100,7 @@ const CalendarSyncStatus = ({ status, onSync, onSettings }) => {
 
       {/* Status Grid */}
       <div className="grid grid-cols-3 gap-4">
-        <div className="p-4 rounded-lg bg-slate-50 border border-slate-200">
+        <div className="p-4 rounded-2xl bg-white/55 border border-white/45 backdrop-blur-md">
           <div className="flex items-center gap-2 mb-2">
             <Globe className="w-4 h-4 text-slate-600" />
             <p className="text-xs font-semibold text-slate-600">Timezone</p>
@@ -108,7 +108,7 @@ const CalendarSyncStatus = ({ status, onSync, onSettings }) => {
           <p className="text-sm font-bold text-slate-900">{status?.timezone}</p>
         </div>
 
-        <div className="p-4 rounded-lg bg-slate-50 border border-slate-200">
+        <div className="p-4 rounded-2xl bg-white/55 border border-white/45 backdrop-blur-md">
           <div className="flex items-center gap-2 mb-2">
             <Clock className="w-4 h-4 text-slate-600" />
             <p className="text-xs font-semibold text-slate-600">Last Sync</p>
@@ -123,7 +123,7 @@ const CalendarSyncStatus = ({ status, onSync, onSettings }) => {
           </motion.p>
         </div>
 
-        <div className="p-4 rounded-lg bg-indigo-50 border border-indigo-200">
+        <div className="p-4 rounded-2xl bg-indigo-500/10 border border-white/45 backdrop-blur-md">
           <div className="text-xs font-semibold text-indigo-600 mb-2">
             Upcoming
           </div>
@@ -137,7 +137,7 @@ const CalendarSyncStatus = ({ status, onSync, onSettings }) => {
       </div>
 
       {/* Business Details */}
-      <div className="p-4 rounded-lg bg-gradient-to-r from-slate-50 to-slate-50 border border-slate-200">
+      <div className="p-4 rounded-2xl bg-white/55 border border-white/45 backdrop-blur-md">
         <p className="text-xs font-semibold text-slate-600 mb-1">Business</p>
         <p className="text-lg font-bold text-slate-900">{status?.businessName}</p>
       </div>
@@ -149,7 +149,7 @@ const CalendarSyncStatus = ({ status, onSync, onSettings }) => {
           whileTap={{ scale: 0.98 }}
           onClick={handleSync}
           disabled={isRefreshing}
-          className="flex-1 px-4 py-3 rounded-lg bg-blue-500 hover:bg-blue-600 disabled:bg-slate-200 text-white disabled:text-slate-400 font-semibold text-sm transition-all shadow-elite-sm hover:shadow-elite-md flex items-center justify-center gap-2"
+          className="flex-1 px-4 py-3 rounded-xl bg-white/70 hover:bg-white/85 disabled:bg-slate-200 text-slate-800 disabled:text-slate-400 font-semibold text-sm transition-all shadow-[0_10px_24px_rgba(15,23,42,0.08)] hover:shadow-[0_16px_40px_rgba(15,23,42,0.12)] border border-white/50 backdrop-blur-md flex items-center justify-center gap-2"
         >
           <motion.div
             animate={isRefreshing ? { rotate: 360 } : {}}
@@ -164,7 +164,7 @@ const CalendarSyncStatus = ({ status, onSync, onSettings }) => {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={onSettings}
-          className="flex-1 px-4 py-3 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-900 font-semibold text-sm transition-all shadow-elite-sm flex items-center justify-center gap-2 border border-slate-200"
+          className="flex-1 px-4 py-3 rounded-xl bg-white/60 hover:bg-white/80 text-slate-800 font-semibold text-sm transition-all shadow-[0_10px_24px_rgba(15,23,42,0.06)] flex items-center justify-center gap-2 border border-white/50 backdrop-blur-md"
         >
           <Settings className="w-4 h-4" />
           Settings
