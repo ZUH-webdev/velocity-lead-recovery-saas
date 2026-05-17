@@ -1,7 +1,7 @@
 {
-  "name": "leadbooster-backend",
+  "name": "Velocity-backend",
   "version": "0.1.0",
-  "description": "LeadBooster backend - appointment booking and lead recovery SaaS",
+  "description": "Velocity backend - appointment booking and lead recovery SaaS",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",

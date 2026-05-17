@@ -1,5 +1,7 @@
+"use client";
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
+import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Bell, Search, ChevronDown, Menu, MessageSquare, CalendarCheck2, Sparkles, X } from 'lucide-react';
 import { useAppStore } from '../store/appStore';
@@ -215,8 +217,8 @@ export const Header = ({ onSearch, onMenuClick, searchValue }) => {
         </button>
 
         {/* Mobile Logo (far right end) */}
-        <Link to="/dashboard" className="md:hidden flex-shrink-0 ml-1">
-          <img src="/velocity-logo.webp" alt="Velocity" className="h-8 w-8 object-contain" />
+        <Link href="/dashboard" className="md:hidden flex-shrink-0 ml-1">
+          <Image src="/velocity-logo.webp" alt="Velocity" width={32} height={32} className="object-contain" />
         </Link>
       </div>
 

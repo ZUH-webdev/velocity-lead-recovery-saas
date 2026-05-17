@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+"use client";
+import Link from 'next/link';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
@@ -19,7 +22,7 @@ const SidebarContent = ({ navItems, currentPage, handleNavigation, businessSetti
       animate={{ opacity: 1, y: 0 }}
       className="mb-6 md:mb-8 flex items-center gap-3"
     >
-      <Link to="/dashboard" className="flex items-center gap-3 no-underline">
+      <Link href="/dashboard" className="flex items-center gap-3 no-underline">
         <div
           className="flex h-11 w-11 items-center justify-center rounded-2xl flex-shrink-0 overflow-hidden"
           style={{
@@ -27,7 +30,7 @@ const SidebarContent = ({ navItems, currentPage, handleNavigation, businessSetti
             boxShadow: '6px 6px 12px var(--neu-dark), -6px -6px 12px var(--neu-light)',
           }}
         >
-          <img src="/velocity-logo.webp" alt="Velocity" className="h-8 w-8 object-contain" />
+          <Image src="/velocity-logo.webp" alt="Velocity" width={32} height={32} className="object-contain" />
         </div>
         <div>
           <h1 className="text-lg font-bold tracking-tight" style={{ color: 'var(--neu-text-dark)' }}>
@@ -153,16 +156,17 @@ const SidebarContent = ({ navItems, currentPage, handleNavigation, businessSetti
 export const Sidebar = ({ onNavigate, isOpen = true, onClose }) => {
   const { currentPage, setCurrentPage, businessSettings } = useAppStore();
   const { logout } = useAuth();
-  const navigate = useNavigate();
+  const router = useRouter();
   const [loggingOut, setLoggingOut] = useState(false);
 
   const handleLogout = async () => {
     setLoggingOut(true);
     try {
       await logout();
-      navigate('/signin', { replace: true });
+      router.replace('/signin');
     } catch (error) {
       console.error('Logout error:', error);
+    } finally {
       setLoggingOut(false);
     }
   };

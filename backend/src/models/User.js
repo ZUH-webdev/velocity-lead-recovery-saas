@@ -13,6 +13,7 @@ const SALT_ROUNDS = 10;
 
 const UserSchema = new mongoose.Schema(
   {
+    fullName: { type: String, trim: true, default: '' },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     password: { type: String, required: true, select: false },
     businessId: { type: mongoose.Schema.Types.ObjectId, ref: 'Business', index: true },

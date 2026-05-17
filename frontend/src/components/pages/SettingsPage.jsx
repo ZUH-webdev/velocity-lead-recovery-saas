@@ -1,5 +1,6 @@
+"use client";
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
   Settings,
@@ -17,7 +18,7 @@ import { useAuth } from '../../context/AuthContext';
 export const SettingsPage = ({ onNavigate }) => {
   const { businessSettings, setBusinessSettings } = useAppStore();
   const { logout } = useAuth();
-  const navigate = useNavigate();
+  const router = useRouter();
   const [businessName, setBusinessName] = useState(businessSettings.businessName);
   const [timezone, setTimezone] = useState(businessSettings.timezone);
   const [smsEnabled, setSmsEnabled] = useState(businessSettings.smsEnabled);
@@ -28,9 +29,10 @@ export const SettingsPage = ({ onNavigate }) => {
     setLoggingOut(true);
     try {
       await logout();
-      navigate('/signin', { replace: true });
+      router.replace('/signin');
     } catch (error) {
       console.error('Logout error:', error);
+    } finally {
       setLoggingOut(false);
     }
   };
