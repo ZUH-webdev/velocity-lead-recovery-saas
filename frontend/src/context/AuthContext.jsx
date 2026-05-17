@@ -1,15 +1,13 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import api from '../utils/api';
 import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  signInWithPopup,
-  updateProfile,
-} from 'firebase/auth';
-import { auth, googleProvider } from '../config/firebase';
+  clearAuthSession,
+  getStoredAuthSession,
+  setAuthSession,
+  subscribeAuthSession,
+} from '../utils/authSession';
 
-const AuthContext = createContext({});
+const AuthContext = createContext(undefined);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -21,83 +19,122 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [accessToken, setAccessToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Set up auth state listener
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
+    // Subscribe to cross-tab session changes (safe to register on client only)
+    const unsubscribe = subscribeAuthSession((session) => {
+      setUser(session?.user || null);
+      setAccessToken(session?.accessToken || null);
     });
 
-    return unsubscribe;
+    let active = true;
+
+    const bootstrapSession = async () => {
+      // Only access localStorage/session helpers on the client
+      const initialSession = typeof window !== 'undefined' ? getStoredAuthSession() : null;
+
+      if (initialSession?.accessToken) {
+        setUser(initialSession.user || null);
+        setAccessToken(initialSession.accessToken || null);
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await api.post('/auth/refresh', {}, { skipAuthRefresh: true });
+        const payload = response.data?.data || {};
+
+        if (payload.accessToken) {
+          setAuthSession({
+            user: payload.user || null,
+            accessToken: payload.accessToken,
+            remember: true,
+          });
+        }
+      } catch (bootstrapError) {
+        // clear any possibly stale session state on failure
+        if (typeof window !== 'undefined') clearAuthSession();
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
+      }
+    };
+
+    // Only run bootstrap on client
+    if (typeof window !== 'undefined') bootstrapSession();
+
+    return () => {
+      active = false;
+      unsubscribe();
+    };
   }, []);
 
-  // Sign up with email and password
-  const signUp = async (email, password, displayName) => {
+  const signUp = async (email, password, fullName, options = {}) => {
     try {
       setError(null);
-      const result = await createUserWithEmailAndPassword(auth, email, password);
+      const response = await api.post('/auth/register', { email, password, fullName }, { skipAuthRefresh: true });
+      const payload = response.data?.data || {};
 
-      // Update profile with display name
-      if (displayName) {
-        await updateProfile(result.user, {
-          displayName,
+      if (payload.accessToken) {
+        setAuthSession({
+          user: payload.user || null,
+          accessToken: payload.accessToken,
+          remember: options.remember ?? true,
         });
       }
 
-      return result.user;
+      return payload.user || null;
     } catch (err) {
-      setError(err.message);
+      setError(err.response?.data?.error || err.message);
       throw err;
     }
   };
 
-  // Sign in with email and password
-  const signIn = async (email, password) => {
+  const signIn = async (email, password, options = {}) => {
     try {
       setError(null);
-      const result = await signInWithEmailAndPassword(auth, email, password);
-      return result.user;
+      const response = await api.post('/auth/login', { email, password }, { skipAuthRefresh: true });
+      const payload = response.data?.data || {};
+
+      if (payload.accessToken) {
+        setAuthSession({
+          user: payload.user || null,
+          accessToken: payload.accessToken,
+          remember: options.remember ?? false,
+        });
+      }
+
+      return payload.user || null;
     } catch (err) {
-      setError(err.message);
+      setError(err.response?.data?.error || err.message);
       throw err;
     }
   };
 
-  // Sign in with Google
-  const signInWithGoogle = async () => {
-    try {
-      setError(null);
-      const result = await signInWithPopup(auth, googleProvider);
-      return result.user;
-    } catch (err) {
-      setError(err.message);
-      throw err;
-    }
-  };
-
-  // Sign out
   const logout = async () => {
     try {
       setError(null);
-      await signOut(auth);
+      await api.post('/auth/logout', {}, { skipAuthRefresh: true });
     } catch (err) {
-      setError(err.message);
-      throw err;
+      setError(err.response?.data?.error || err.message);
+    } finally {
+      clearAuthSession();
     }
   };
 
   const value = {
     user,
+    accessToken,
     loading,
     error,
     signUp,
     signIn,
-    signInWithGoogle,
     logout,
-    isAuthenticated: !!user,
+    isAuthenticated: !!accessToken,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -1,9 +1,17 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
+"use client";
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
 
 export const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      router.replace('/signin');
+    }
+  }, [loading, isAuthenticated, router]);
 
   if (loading) {
     return (
@@ -13,9 +21,9 @@ export const ProtectedRoute = ({ children }) => {
     );
   }
 
-  if (!user) {
-    return <Navigate to="/signin" replace />;
-  }
+  if (!isAuthenticated) return null;
 
   return children;
 };
+
+export default ProtectedRoute;
