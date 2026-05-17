@@ -1,0 +1,852 @@
+/* Neumorphism Design System */
+
+:root {
+  --neu-bg: #e0e5ec;
+  --neu-dark: #bec3cf;
+  --neu-light: #ffffff;
+  --neu-text-dark: #3d4468;
+  --neu-text-light: #9499b7;
+  --neu-text-muted: #6c7293;
+  --neu-success: #00c896;
+  --neu-error: #ff3b5c;
+}
+
+/* Base Neumorphism Container */
+.neumorphism-container {
+  background: var(--neu-bg);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.neumorphism-card {
+  background: var(--neu-bg);
+  border-radius: 30px;
+  padding: 50px 40px;
+  box-shadow: 
+    20px 20px 60px var(--neu-dark),
+    -20px -20px 60px var(--neu-light);
+  position: relative;
+  transition: all 0.3s ease;
+  max-width: 420px;
+  width: 100%;
+}
+
+.neumorphism-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Header */
+.neumorphism-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.neumorphism-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 24px;
+  background: var(--neu-bg);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    8px 8px 20px var(--neu-dark),
+    -8px -8px 20px var(--neu-light),
+    inset 0 0 0 var(--neu-dark),
+    inset 0 0 0 var(--neu-light);
+  transition: all 0.3s ease;
+}
+
+.neumorphism-icon:hover {
+  box-shadow: 
+    4px 4px 10px var(--neu-dark),
+    -4px -4px 10px var(--neu-light),
+    inset 4px 4px 10px var(--neu-dark),
+    inset -4px -4px 10px var(--neu-light);
+}
+
+.neumorphism-header h1,
+.neumorphism-header h2 {
+  color: var(--neu-text-dark);
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.neumorphism-header p {
+  color: var(--neu-text-light);
+  font-size: 15px;
+  font-weight: 400;
+}
+
+/* Input Field */
+.neumorphism-input-group {
+  margin-bottom: 28px;
+  position: relative;
+}
+
+.neumorphism-input-wrapper {
+  position: relative;
+  background: var(--neu-bg);
+  border-radius: 15px;
+  box-shadow: 
+    inset 8px 8px 16px var(--neu-dark),
+    inset -8px -8px 16px var(--neu-light);
+  transition: all 0.3s ease;
+  overflow: visible; /* allow positioned children (password toggle) to render correctly */
+}
+
+.neumorphism-input-wrapper:focus-within {
+  box-shadow: 
+    inset 4px 4px 8px var(--neu-dark),
+    inset -4px -4px 8px var(--neu-light);
+}
+
+.neumorphism-input-wrapper input,
+.neumorphism-input-wrapper textarea,
+.neumorphism-input-wrapper select {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 20px 24px;
+  padding-left: 55px;
+  padding-right: 24px; /* base right padding; overridden for password inputs below */
+  color: var(--neu-text-dark);
+  font-size: 16px;
+  font-weight: 500;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+/* Ensure password inputs leave room for the toggle button */
+.neumorphism-input-wrapper input[type="password"] {
+  padding-right: 64px;
+}
+
+.neumorphism-input-wrapper input::placeholder {
+  color: transparent;
+}
+
+.neumorphism-input-wrapper label {
+  position: absolute;
+  left: 55px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--neu-text-light);
+  font-size: 16px;
+  font-weight: 400;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.neumorphism-input-wrapper input:focus + label,
+.neumorphism-input-wrapper input:not(:placeholder-shown) + label {
+  top: 8px;
+  font-size: 12px;
+  color: var(--neu-text-muted);
+  transform: translateY(0);
+}
+
+.neumorphism-input-icon {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  color: var(--neu-text-light);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.neumorphism-input-wrapper:focus-within .neumorphism-input-icon {
+  color: var(--neu-text-muted);
+}
+
+/* Password Toggle */
+.neumorphism-password-toggle {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--neu-text-light);
+  box-shadow: none;
+  transition: color 0.2s ease, transform 0.2s ease;
+  padding: 0;
+  z-index: 3; /* keep above input and label */
+}
+
+
+.neumorphism-password-toggle:hover {
+  color: var(--neu-text-muted);
+  transform: translateY(-50%) scale(1.02);
+}
+
+.neumorphism-password-toggle:active {
+  transform: translateY(-50%) scale(0.98);
+}
+
+.neumorphism-password-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Checkbox */
+.neumorphism-checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.neumorphism-checkbox-wrapper input[type="checkbox"] {
+  display: none;
+}
+
+.neumorphism-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+  color: var(--neu-text-muted);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.neumorphism-checkbox {
+  width: 22px;
+  height: 22px;
+  background: var(--neu-bg);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    3px 3px 8px var(--neu-dark),
+    -3px -3px 8px var(--neu-light);
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.neumorphism-checkbox-wrapper input[type="checkbox"]:checked + .neumorphism-checkbox-label .neumorphism-checkbox {
+  box-shadow: 
+    inset 2px 2px 5px var(--neu-dark),
+    inset -2px -2px 5px var(--neu-light);
+}
+
+.neumorphism-checkbox svg {
+  width: 14px;
+  height: 14px;
+  color: var(--neu-success);
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.3s ease;
+}
+
+.neumorphism-checkbox-wrapper input[type="checkbox"]:checked + .neumorphism-checkbox-label .neumorphism-checkbox svg {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Form Options */
+.neumorphism-form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 35px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.neumorphism-forgot-link {
+  color: var(--neu-text-muted);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.neumorphism-forgot-link:hover {
+  color: var(--neu-text-dark);
+}
+
+/* Button */
+.neumorphism-button {
+  width: 100%;
+  background: var(--neu-bg);
+  border: none;
+  border-radius: 15px;
+  padding: 18px 32px;
+  color: var(--neu-text-dark);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  margin-bottom: 30px;
+  box-shadow: 
+    8px 8px 20px var(--neu-dark),
+    -8px -8px 20px var(--neu-light);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.neumorphism-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+.neumorphism-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 
+    12px 12px 30px var(--neu-dark),
+    -12px -12px 30px var(--neu-light);
+}
+
+.neumorphism-button:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.neumorphism-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 
+    inset 4px 4px 10px var(--neu-dark),
+    inset -4px -4px 10px var(--neu-light);
+}
+
+.neumorphism-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.neumorphism-button-text {
+  position: relative;
+  z-index: 1;
+  transition: opacity 0.3s ease;
+}
+
+.neumorphism-button-loader {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.neumorphism-spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid var(--neu-dark);
+  border-top: 3px solid var(--neu-text-muted);
+  border-radius: 50%;
+  animation: neumorphism-spin 1s linear infinite;
+}
+
+@keyframes neumorphism-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.neumorphism-button.loading .neumorphism-button-text {
+  opacity: 0;
+}
+
+.neumorphism-button.loading .neumorphism-button-loader {
+  opacity: 1;
+}
+
+/* Divider */
+.neumorphism-divider {
+  display: flex;
+  align-items: center;
+  margin: 30px 0;
+  gap: 16px;
+}
+
+.neumorphism-divider-line {
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--neu-dark), transparent);
+}
+
+.neumorphism-divider span {
+  color: var(--neu-text-light);
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Social Button */
+.neumorphism-social {
+  width: 50px;
+  height: 50px;
+  background: var(--neu-bg);
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--neu-text-muted);
+  box-shadow: 
+    6px 6px 15px var(--neu-dark),
+    -6px -6px 15px var(--neu-light);
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.neumorphism-social:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    8px 8px 20px var(--neu-dark),
+    -8px -8px 20px var(--neu-light);
+}
+
+.neumorphism-social:active {
+  transform: translateY(0);
+  box-shadow: 
+    inset 3px 3px 8px var(--neu-dark),
+    inset -3px -3px 8px var(--neu-light);
+}
+
+.neumorphism-social svg {
+  width: 22px;
+  height: 22px;
+}
+
+.neumorphism-social-group {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+/* Link Text */
+.neumorphism-link {
+  color: var(--neu-text-muted);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.neumorphism-link:hover {
+  color: var(--neu-text-dark);
+}
+
+.neumorphism-signup-link {
+  text-align: center;
+  margin-top: 25px;
+}
+
+.neumorphism-signup-link p {
+  color: var(--neu-text-light);
+  font-size: 14px;
+}
+
+/* Error Message */
+.neumorphism-error-message {
+  color: var(--neu-error);
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 8px;
+  margin-left: 20px;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+}
+
+.neumorphism-error-message.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.neumorphism-input-group.error .neumorphism-input-wrapper {
+  box-shadow: 
+    inset 8px 8px 16px #ffb8c4,
+    inset -8px -8px 16px var(--neu-light),
+    0 0 0 2px var(--neu-error);
+}
+
+/* Mobile Responsive */
+@media (max-width: 480px) {
+  .neumorphism-card {
+    padding: 35px 25px;
+    border-radius: 20px;
+  }
+
+  .neumorphism-header h1,
+  .neumorphism-header h2 {
+    font-size: 1.75rem;
+  }
+
+  .neumorphism-input-wrapper input {
+    padding: 18px 20px;
+    padding-left: 50px;
+  }
+
+  .neumorphism-input-wrapper input[type="password"] {
+    padding-right: 56px;
+  }
+
+  .neumorphism-input-wrapper label {
+    left: 50px;
+  }
+
+  .neumorphism-form-options {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* Accessibility */
+:focus-visible {
+  outline: 2px solid var(--neu-text-muted);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================================================
+   APPLICATION NEUMORPHISM THEME SYSTEM
+   Maps existing Tailwind classes to comprehensive neumorphic styling
+   ============================================================================ */
+
+/* ─────────────────────────────────────────────────────────────────────────
+   CARD & CONTAINER STYLES
+   ───────────────────────────────────────────────────────────────────────── */
+
+.card-elite,
+.lead-card-elite,
+.stat-card-premium,
+.glass-effect,
+.glass-sidebar {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(248, 250, 252, 0.9) 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.55) !important;
+  backdrop-filter: blur(22px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(140%) !important;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
+  transition: all 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  border-radius: 16px !important;
+}
+
+.card-elite:hover,
+.lead-card-elite:hover,
+.stat-card-premium:hover {
+  transform: translateY(-6px) !important;
+  box-shadow: 0 22px 54px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(124, 58, 237, 0.08) !important;
+}
+
+.lead-card-elite {
+  cursor: pointer;
+}
+
+.glass-sidebar {
+  backdrop-filter: blur(24px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(140%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.55) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   BUTTON STYLES
+   ───────────────────────────────────────────────────────────────────────── */
+
+.btn-primary,
+.btn-secondary,
+.neumorphism-button,
+button[type="submit"],
+button[type="button"] {
+  background: var(--neu-bg) !important;
+  color: var(--neu-text-dark) !important;
+  border-radius: 12px !important;
+  box-shadow: 10px 10px 24px var(--neu-dark), -10px -10px 24px var(--neu-light) !important;
+  border: none !important;
+  transition: all 0.26s ease !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary:hover:not(:disabled),
+.btn-secondary:hover:not(:disabled),
+.neumorphism-button:hover:not(:disabled),
+button[type="submit"]:hover:not(:disabled),
+button[type="button"]:hover:not(:disabled) {
+  transform: translateY(-4px) !important;
+  box-shadow: 14px 14px 34px var(--neu-dark), -14px -14px 34px var(--neu-light) !important;
+}
+
+.btn-primary:active:not(:disabled),
+.btn-secondary:active:not(:disabled),
+.neumorphism-button:active:not(:disabled),
+button[type="submit"]:active:not(:disabled),
+button[type="button"]:active:not(:disabled) {
+  transform: translateY(-1px) !important;
+  box-shadow: inset 6px 6px 16px var(--neu-dark), inset -6px -6px 16px var(--neu-light) !important;
+}
+
+.btn-primary:disabled,
+.btn-secondary:disabled,
+.neumorphism-button:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   INPUT & FORM STYLES
+   ───────────────────────────────────────────────────────────────────────── */
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="search"],
+textarea,
+select {
+  background: var(--neu-bg) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  color: var(--neu-text-dark) !important;
+  box-shadow: inset 6px 6px 14px var(--neu-dark), inset -6px -6px 14px var(--neu-light) !important;
+  padding: 12px 16px !important;
+  transition: all 0.24s ease !important;
+}
+
+input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+input[type="password"]::placeholder,
+input[type="number"]::placeholder,
+input[type="search"]::placeholder,
+textarea::placeholder {
+  color: var(--neu-text-light) !important;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="search"]:focus,
+textarea:focus,
+select:focus {
+  outline: none !important;
+  box-shadow: inset 4px 4px 8px var(--neu-dark), inset -4px -4px 8px var(--neu-light), 0 0 0 3px var(--neu-light) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   STATUS PILLS & BADGES
+   ───────────────────────────────────────────────────────────────────────── */
+
+.status-pill,
+.status-teal,
+.status-rose {
+  background: var(--neu-bg) !important;
+  box-shadow: 4px 4px 10px var(--neu-dark), -4px -4px 10px var(--neu-light) !important;
+  border: none !important;
+  border-radius: 20px !important;
+  transition: all 0.2s ease !important;
+  padding: 6px 14px !important;
+}
+
+.status-pill:hover,
+.status-teal:hover,
+.status-rose:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 6px 6px 14px var(--neu-dark), -6px -6px 14px var(--neu-light) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   CONTAINERS & SECTIONS
+   ───────────────────────────────────────────────────────────────────────── */
+
+.neumorphism-container,
+.whitespace-elite {
+  background: linear-gradient(135deg, var(--neu-bg) 0%, #e8edf4 100%) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   ICON BUTTONS & ACTION BUTTONS
+   ───────────────────────────────────────────────────────────────────────── */
+
+button.neumorphism-social,
+button[aria-label*="Toggle"],
+button[aria-label*="Delete"],
+button[aria-label*="Edit"],
+button[aria-label*="Add"],
+button.icon-button {
+  background: var(--neu-bg) !important;
+  border: none !important;
+  border-radius: 10px !important;
+  box-shadow: 6px 6px 14px var(--neu-dark), -6px -6px 14px var(--neu-light) !important;
+  color: var(--neu-text-muted) !important;
+  transition: all 0.2s ease !important;
+  padding: 8px 12px !important;
+}
+
+button.neumorphism-social:hover,
+button[aria-label*="Toggle"]:hover,
+button[aria-label*="Delete"]:hover,
+button[aria-label*="Edit"]:hover,
+button[aria-label*="Add"]:hover,
+button.icon-button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 8px 8px 18px var(--neu-dark), -8px -8px 18px var(--neu-light) !important;
+  color: var(--neu-text-dark) !important;
+}
+
+button.neumorphism-social:active,
+button[aria-label*="Toggle"]:active {
+  box-shadow: inset 3px 3px 8px var(--neu-dark), inset -3px -3px 8px var(--neu-light) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   SEARCH BAR & INPUT GROUPS
+   ───────────────────────────────────────────────────────────────────────── */
+
+.neumorphism-input-group,
+.search-group {
+  background: transparent !important;
+}
+
+.neumorphism-input-wrapper,
+.search-wrapper {
+  background: var(--neu-bg) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  box-shadow: inset 6px 6px 14px var(--neu-dark), inset -6px -6px 14px var(--neu-light) !important;
+}
+
+.neumorphism-input-wrapper:focus-within,
+.search-wrapper:focus-within {
+  box-shadow: inset 4px 4px 8px var(--neu-dark), inset -4px -4px 8px var(--neu-light) !important;
+}
+
+.header-search-shell {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.68) 0%, rgba(248, 250, 252, 0.92) 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.55) !important;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.72) !important;
+  backdrop-filter: blur(22px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(140%) !important;
+}
+
+.header-search-shell:hover {
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.11), inset 0 1px 0 rgba(255, 255, 255, 0.76) !important;
+}
+
+.header-search-shell:active,
+.header-search-shell:focus-within {
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
+}
+
+.header-search-input {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  min-width: 0;
+}
+
+.header-search-input::placeholder {
+  color: var(--neu-text-light) !important;
+  opacity: 0.55 !important;
+  font-style: italic;
+}
+
+.header-search-input:focus {
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   NOTIFICATION & ALERT STYLES
+   ───────────────────────────────────────────────────────────────────────── */
+
+.alert,
+.notification,
+.message-box {
+  background: var(--neu-bg) !important;
+  border: none !important;
+  border-radius: 14px !important;
+  box-shadow: 8px 8px 20px var(--neu-dark), -8px -8px 20px var(--neu-light) !important;
+  padding: 16px 20px !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   DROPDOWN & MENU ITEMS
+   ───────────────────────────────────────────────────────────────────────── */
+
+.dropdown,
+.menu,
+.popover {
+  background: var(--neu-bg) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  box-shadow: 12px 12px 30px var(--neu-dark), -12px -12px 30px var(--neu-light) !important;
+}
+
+.dropdown-item,
+.menu-item {
+  color: var(--neu-text-dark) !important;
+  transition: all 0.2s ease !important;
+  padding: 10px 16px !important;
+}
+
+.dropdown-item:hover,
+.menu-item:hover {
+  background: var(--neu-light) !important;
+  transform: translateX(4px) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   LOADING & SKELETON STATES
+   ───────────────────────────────────────────────────────────────────────── */
+
+.skeleton,
+.loading-placeholder {
+  background: var(--neu-bg) !important;
+  box-shadow: inset 4px 4px 10px var(--neu-dark), inset -4px -4px 10px var(--neu-light) !important;
+  border-radius: 8px !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   FOCUS STATES & ACCESSIBILITY
+   ───────────────────────────────────────────────────────────────────────── */
+
+:focus-visible {
+  outline: 2px solid var(--neu-text-muted) !important;
+  outline-offset: 3px !important;
+  border-radius: 6px !important;
+}
+

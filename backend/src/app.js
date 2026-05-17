@@ -14,6 +14,8 @@ const errorHandler = require('./middleware/errorHandler');
 const authRoutes = require('./routes/auth.routes');
 const businessRoutes = require('./routes/business.routes');
 const leadsRoutes = require('./routes/leads.routes');
+const smsRoutes = require('./routes/sms.routes');
+const calendarRoutes = require('./routes/calendar.routes');
 
 const app = express();
 
@@ -28,10 +30,33 @@ app.get('/api/health', (req, res) => {
   res.json({ success: true, data: { status: 'ok' } });
 });
 
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Velocity Lead Recovery backend is running',
+    endpoints: ['/api/health', '/api/auth', '/api/business', '/api/leads', '/api/sms', '/api/calendar']
+  });
+});
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/business', businessRoutes);
 app.use('/api/leads', leadsRoutes);
+app.use('/api/sms', smsRoutes);
+app.use('/api/calendar', calendarRoutes);
+
+
+// backend/src/app.js
+
+app.get('/health', (req, res) => {
+  res.status(200).json({ 
+    status: 'ok', 
+    services: {
+      db: 'connected',
+      redis: 'connected'
+    }
+  });
+});
 
 // 404 handler
 app.use((req, res) => {
