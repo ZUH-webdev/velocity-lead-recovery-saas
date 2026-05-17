@@ -1,7 +1,9 @@
 #!/bin/bash
 
 # Test Calendar Integration
-TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWZhMzQ1ZDc5MmMxOWUzNjk0NWU2M2QiLCJpYXQiOjE3NzgwMDUwODUsImV4cCI6MTc3ODYwOTg4NX0.JHW23ROneC-KqJ9aUeNxAJDwdx8x0dTZE87Wph8zDFk"
+# Provide a valid JWT in the TOKEN environment variable before running.
+# Example: export TOKEN="$(cat token.txt)"
+TOKEN="${TOKEN:-}"
 
 echo ""
 echo "=========================================="
