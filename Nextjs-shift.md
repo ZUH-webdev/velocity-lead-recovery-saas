@@ -113,6 +113,31 @@ Notes & next steps
 - If deploying behind HTTPS, ensure the refresh cookie is set with `Secure: true` and consider stricter `SameSite` settings.
 - Add integration tests for `/api/auth` endpoints and the axios refresh flow to prevent regressions.
 
+Secrets audit — what I did
+--------------------------
+- Scanned the repository for hard-coded secrets and common key patterns (API keys, JWTs, client secrets).
+- Found a committed `backend/.env` containing `GOOGLE_CLIENT_SECRET`, `JWT_SECRET`, and other placeholders/values.
+- Removed the committed file from the working tree and replaced it with a safe template: `[backend/.env.example](backend/.env.example#L1-L20)`.
+- Added repository root and frontend templates: `[.env.example](.env.example#L1-L15)` and `[frontend/.env.example](frontend/.env.example#L1-L5)`.
+- Updated `backend/test-calendar-api.sh` to read `TOKEN` from the environment instead of a hard-coded JWT.
+- Purged `backend/.env` from git history (history rewrite) and ran repo garbage collection; force-pushed rewritten branches. Note: this rewrites history — collaborators must rebase or re-clone.
+- Attempted to run tests; both `backend` and `frontend` do not define `npm test` scripts.
+
+Commands run (local):
+```bash
+git add -A
+git commit -m "Add env examples; remove hard-coded token in test script"
+# Purge backend/.env from history (ran locally; filter-branch used)
+git filter-branch --force --index-filter "git rm --cached --ignore-unmatch backend/.env" --prune-empty --tag-name-filter cat -- --all
+rm -rf .git/refs/original/
+git reflog expire --expire=now --all
+git gc --prune=now --aggressive
+git push origin --force --all
+git push origin --force --tags
+```
+
+Recommendation: consider using `git filter-repo` for safer history rewrites and ensure all collaborators rebase or freshly clone after the forced push.
+
 Contact
 -------
 For questions or follow-ups about the migration or to add tests, ping the repository maintainer or leave a PR with test coverage.
