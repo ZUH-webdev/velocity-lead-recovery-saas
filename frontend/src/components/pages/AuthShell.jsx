@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 import { Globe } from '../ui/Globe';
+import { dmSans } from './authFonts';
 
 export default function AuthShell({ children, stats = [] }) {
   return (
@@ -61,7 +62,7 @@ export default function AuthShell({ children, stats = [] }) {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: 'easeOut' }}
-            className="w-full max-w-[560px] rounded-[32px] border border-slate-200/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.98)_0%,rgba(248,250,252,0.95)_100%)] p-6 text-slate-900 shadow-[0_28px_120px_rgba(15,23,42,0.22)] backdrop-blur-xl sm:p-8 lg:p-10"
+            className={`${dmSans.className} w-full max-w-[560px] rounded-[34px] border border-slate-200/80 bg-white p-6 text-slate-900 shadow-[0_30px_120px_rgba(15,23,42,0.18)] backdrop-blur-xl sm:p-8 lg:p-10`}
           >
             {children}
           </motion.div>
