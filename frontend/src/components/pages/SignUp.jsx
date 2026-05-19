@@ -1,11 +1,12 @@
 "use client";
+
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
-import { AnimatePresence, motion } from 'framer-motion';
-import { AlertCircle, ArrowRight, Building2, Eye, EyeOff, HeartPulse, Lock, Mail, Phone, Sparkles, User } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { ArrowRight, Building2, Eye, EyeOff, HeartPulse, Lock, Mail, Phone, Sparkles, User } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { dmSerif } from './authFonts';
+import AuthShell from './AuthShell';
 
 const industryOptions = [
   'Medical Practice',
@@ -16,6 +17,12 @@ const industryOptions = [
   'Specialty Clinic',
   'Home Health',
   'Other Clinical Practice',
+];
+
+const stats = [
+  { label: 'Follow-up coverage', value: '98%', subtext: 'AI outreach across the workday' },
+  { label: 'Recovery lift', value: '3.1x', subtext: 'Faster missed-call conversion' },
+  { label: 'Live conversations', value: '24/7', subtext: 'Inbound intent never sleeps' },
 ];
 
 export default function SignUp() {
@@ -81,198 +88,176 @@ export default function SignUp() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 px-4 py-10 text-slate-900 sm:px-6 lg:px-12">
-      <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-7xl gap-8 lg:grid-cols-[0.95fr_1.05fr] items-center">
-        <section className="relative hidden lg:flex lg:items-center lg:justify-center">
-          <div className="relative w-full max-w-2xl">
-            <div className="rounded-3xl bg-gradient-to-b from-white to-blue-50/50 p-6 shadow-[0_30px_60px_rgba(15,23,42,0.06)] border border-slate-100">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-slate-100 bg-white">
-                    <Image src="/velocity-logo.webp" alt="Velocity" width={36} height={36} className="h-8 w-8 object-contain" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-slate-700">Velocity</p>
-                    <p className="text-xs text-slate-500">Workspace preview</p>
-                  </div>
-                </div>
-                <div className="text-sm text-slate-500">Secure • Fast • Clinical</div>
-              </div>
+    <AuthShell stats={stats}>
+      <div className="flex items-center justify-between">
+        <div className="grid h-12 w-12 place-items-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-[0_12px_30px_rgba(15,23,42,0.08)]">
+          <HeartPulse className="h-5 w-5" />
+        </div>
+        <div className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500">
+          Create workspace
+        </div>
+      </div>
 
-              <div className="mt-6 grid gap-4 grid-cols-1 md:grid-cols-2">
-                <div className="rounded-2xl bg-white p-4 shadow-sm border border-slate-100">
-                  <p className="text-xs text-slate-500 uppercase tracking-[0.12em]">Total Revenue</p>
-                  <p className="mt-3 text-3xl font-extrabold text-slate-900">$8,023,030</p>
-                  <p className="mt-2 text-sm text-slate-500">Total premiums collected</p>
-                </div>
+      <div className="mt-8">
+        <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400">
+          <Sparkles className="h-4 w-4 text-[#388BFD]" />
+          Premium onboarding
+        </div>
+        <h1 className={`${dmSerif.className} mt-4 text-[clamp(2.2rem,5vw,3.4rem)] leading-[0.94] tracking-[-0.04em] text-slate-950`}>
+          Create an account.
+        </h1>
+      </div>
 
-                <div className="rounded-2xl bg-white p-4 shadow-sm border border-slate-100">
-                  <p className="text-xs text-slate-500 uppercase tracking-[0.12em]">Active Staff</p>
-                  <p className="mt-3 text-3xl font-extrabold text-slate-900">54</p>
-                  <p className="mt-2 text-sm text-slate-500">Clinic users online</p>
-                </div>
+      {banner ? (
+        <div className={`mt-6 rounded-2xl border px-4 py-3 text-sm ${banner.type === 'error' ? 'border-rose-100 bg-rose-50 text-rose-700' : 'border-emerald-100 bg-emerald-50 text-emerald-700'}`}>
+          {banner.message}
+        </div>
+      ) : null}
 
-                <div className="md:col-span-2 mt-2 rounded-2xl bg-gradient-to-r from-slate-50 to-white p-4 border border-slate-100 shadow-sm">
-                  <p className="text-xs text-slate-500 uppercase tracking-[0.12em]">Overview</p>
-                  <div className="mt-3 flex items-baseline gap-3">
-                    <p className="text-2xl font-semibold text-slate-900">Dashboard ready</p>
-                    <p className="text-sm text-slate-500">Last update 3 days ago</p>
-                  </div>
-                </div>
-              </div>
+      <form onSubmit={handleSignUp} className="mt-8 space-y-5">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="space-y-[6px]">
+            <label className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Full name</label>
+            <div className="relative">
+              <User className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder="Dr. Maya Chen"
+                disabled={loading}
+                autoComplete="name"
+                className="h-12 w-full rounded-2xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-[14px] text-slate-900 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-[border-color,box-shadow,transform] duration-150 placeholder:text-slate-400 focus:border-[#388BFD] focus:outline-none focus:ring-4 focus:ring-[#388BFD]/10"
+              />
             </div>
           </div>
-        </section>
 
-        <section className="flex items-center justify-center">
-          <motion.div
-            initial={{ y: 12, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.32, ease: 'circOut' }}
-            className="w-full max-w-md rounded-3xl bg-white p-8 shadow-[0_30px_60px_rgba(15,23,42,0.06)] border border-slate-100 xl:p-10"
-          >
-            <div className="flex justify-center">
-              <div className="h-14 w-14 rounded-xl bg-slate-50 grid place-items-center border border-slate-100">
-                <svg className="h-7 w-7 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                  <circle cx="12" cy="7" r="4" />
-                </svg>
-              </div>
-            </div>
-
-            <div className="text-center mt-4 mb-6">
-              <h3 className="text-3xl font-semibold text-slate-900">Create an account</h3>
-              <p className="mt-2 text-sm text-slate-500">Empower your projects. Simplify your success.</p>
-            </div>
-
-            <AnimatePresence>
-              {banner ? (
-                <motion.div
-                  key={banner.message}
-                  initial={{ y: 10, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: -8, opacity: 0 }}
-                  className={`mb-4 rounded-lg px-4 py-3 text-sm ${banner.type === 'error' ? 'bg-rose-50 border border-rose-100 text-rose-700' : 'bg-emerald-50 border border-emerald-100 text-emerald-700'}`}
-                >
-                  {banner.message}
-                </motion.div>
-              ) : null}
-            </AnimatePresence>
-
-            <form onSubmit={handleSignUp} className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs text-slate-600">Full name</label>
-                  <input
-                    type="text"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    placeholder="Dr. Maya Chen"
-                    disabled={loading}
-                    autoComplete="name"
-                    className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs text-slate-600">Email</label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="you@clinic.com"
-                    disabled={loading}
-                    autoComplete="email"
-                    className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="text-xs text-slate-600">Password</label>
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Minimum 8 characters"
-                  disabled={loading}
-                  autoComplete="new-password"
-                  className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs text-slate-600">Company name</label>
-                  <input
-                    type="text"
-                    value={companyName}
-                    onChange={(e) => setCompanyName(e.target.value)}
-                    placeholder="Northlake Family Clinic"
-                    disabled={loading}
-                    autoComplete="organization"
-                    className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs text-slate-600">Phone</label>
-                  <input
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="(555) 123-4567"
-                    disabled={loading}
-                    autoComplete="tel"
-                    className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="text-xs text-slate-600">Industry</label>
-                <select
-                  value={industry}
-                  onChange={(e) => setIndustry(e.target.value)}
-                  disabled={loading}
-                  className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                >
-                  {industryOptions.map((option) => (
-                    <option key={option} value={option}>{option}</option>
-                  ))}
-                </select>
-              </div>
-
-              <button
-                type="submit"
+          <div className="space-y-[6px]">
+            <label className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Email</label>
+            <div className="relative">
+              <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@clinic.com"
                 disabled={loading}
-                className="w-full rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-md hover:bg-blue-700 disabled:opacity-70"
-              >
-                {loading ? 'Creating workspace...' : 'Create account'}
-              </button>
-            </form>
-
-            <div className="mt-4">
-              <button
-                type="button"
-                onClick={handleGoogle}
-                className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 shadow-sm"
-              >
-                <span className="h-5 w-5 grid place-items-center rounded-full bg-white ring-1 ring-slate-200">
-                  <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden="true">
-                    <path fill="#4285F4" d="M21.35 11.1h-9.18v2.96h5.27c-.23 1.38-1.49 4.05-5.27 4.05a5.86 5.86 0 0 1 0-11.71c1.69 0 2.83.72 3.48 1.34l2.37-2.29C16.51 4 14.67 3 12.17 3 7.6 3 4 6.58 4 11.01s3.6 8.01 8.17 8.01c4.78 0 7.95-3.36 7.95-8.1 0-.54-.06-.95-.13-1.38Z" />
-                  </svg>
-                </span>
-                Sign up with Google
-              </button>
+                autoComplete="email"
+                className="h-12 w-full rounded-2xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-[14px] text-slate-900 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-[border-color,box-shadow,transform] duration-150 placeholder:text-slate-400 focus:border-[#388BFD] focus:outline-none focus:ring-4 focus:ring-[#388BFD]/10"
+              />
             </div>
+          </div>
+        </div>
 
-            <div className="mt-5 text-center text-sm text-slate-500">
-              Already have an account? <Link href="/signin" className="font-medium text-slate-900">Sign in</Link>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="space-y-[6px]">
+            <label className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Company name</label>
+            <div className="relative">
+              <Building2 className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+                placeholder="Northlake Family Clinic"
+                disabled={loading}
+                autoComplete="organization"
+                className="h-12 w-full rounded-2xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-[14px] text-slate-900 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-[border-color,box-shadow,transform] duration-150 placeholder:text-slate-400 focus:border-[#388BFD] focus:outline-none focus:ring-4 focus:ring-[#388BFD]/10"
+              />
             </div>
-          </motion.div>
-        </section>
+          </div>
+
+          <div className="space-y-[6px]">
+            <label className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Phone</label>
+            <div className="relative">
+              <Phone className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <input
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="(555) 123-4567"
+                disabled={loading}
+                autoComplete="tel"
+                className="h-12 w-full rounded-2xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-[14px] text-slate-900 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-[border-color,box-shadow,transform] duration-150 placeholder:text-slate-400 focus:border-[#388BFD] focus:outline-none focus:ring-4 focus:ring-[#388BFD]/10"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-[6px]">
+          <label className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Industry</label>
+          <select
+            value={industry}
+            onChange={(e) => setIndustry(e.target.value)}
+            disabled={loading}
+            className="h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-[14px] text-slate-900 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-[border-color,box-shadow,transform] duration-150 focus:border-[#388BFD] focus:outline-none focus:ring-4 focus:ring-[#388BFD]/10"
+          >
+            {industryOptions.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="space-y-[6px]">
+          <div className="flex items-center justify-between gap-3">
+            <label className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Password</label>
+            <span className="text-[12px] font-medium text-slate-400">Minimum 8 characters</span>
+          </div>
+          <div className="relative">
+            <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <input
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Create a secure password"
+              disabled={loading}
+              autoComplete="new-password"
+              className="h-12 w-full rounded-2xl border border-slate-200 bg-white py-3 pl-11 pr-12 text-[14px] text-slate-900 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-[border-color,box-shadow,transform] duration-150 placeholder:text-slate-400 focus:border-[#388BFD] focus:outline-none focus:ring-4 focus:ring-[#388BFD]/10"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((current) => !current)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 transition hover:text-slate-700"
+              aria-label="Toggle password visibility"
+              disabled={loading}
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#0F172A] px-6 text-sm font-semibold text-white shadow-[0_16px_34px_rgba(15,23,42,0.18)] transition duration-150 hover:bg-[#111c33] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70"
+        >
+          {loading ? 'Creating workspace...' : 'Create account'}
+          {!loading ? <ArrowRight className="h-4 w-4" /> : null}
+        </button>
+      </form>
+
+      <div className="mt-5">
+        <button
+          type="button"
+          onClick={handleGoogle}
+          className="flex h-12 w-full items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 text-[14px] font-semibold text-slate-700 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition hover:border-slate-300 hover:bg-slate-50"
+        >
+          <span className="grid h-5 w-5 place-items-center">
+            <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
+              <path fill="#4285F4" d="M21.35 11.1h-9.18v2.96h5.27c-.23 1.38-1.49 4.05-5.27 4.05a5.86 5.86 0 0 1 0-11.71c1.69 0 2.83.72 3.48 1.34l2.37-2.29C16.51 4 14.67 3 12.17 3 7.6 3 4 6.58 4 11.01s3.6 8.01 8.17 8.01c4.78 0 7.95-3.36 7.95-8.1 0-.54-.06-.95-.13-1.38Z" />
+            </svg>
+          </span>
+          Sign up with Google
+        </button>
       </div>
-    </main>
+
+      <div className="mt-6 text-center text-[13px] text-slate-500">
+        Already have an account?{' '}
+        <Link href="/signin" className="font-semibold text-[#388BFD] transition hover:text-[#1d6fe0]">
+          Sign in
+        </Link>
+      </div>
+    </AuthShell>
   );
 }
