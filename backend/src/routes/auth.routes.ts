@@ -5,9 +5,10 @@ import { authenticateToken } from "../middleware/auth.middleware";
 const router = Router();
 
 router.post("/register", AuthController.register);
-router.post("/login",    AuthController.login);
-router.post("/refresh",  AuthController.refresh);
-router.post("/logout",   AuthController.logout);
-router.get("/me",        authenticateToken, AuthController.me);
+router.post("/verify", AuthController.verifyEmail);
+router.post("/login", AuthController.login);
+router.post("/refresh", AuthController.refresh);
+router.post("/logout", AuthController.logout);
+router.get("/me", authenticateToken, AuthController.me);
 
 export default router;
