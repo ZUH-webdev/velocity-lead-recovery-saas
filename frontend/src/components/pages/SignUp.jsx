@@ -3,9 +3,9 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, Building2, Eye, EyeOff, HeartPulse, Lock, Mail, Phone, Sparkles, User } from 'lucide-react';
+import { ArrowRight, Building2, Eye, EyeOff, HeartPulse, Lock, Mail, Phone, User } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { dmSerif } from './authFonts';
+import { dmSans, dmSerif } from './authFonts';
 import AuthShell from './AuthShell';
 
 const industryOptions = [
@@ -89,6 +89,7 @@ export default function SignUp() {
 
   return (
     <AuthShell stats={stats}>
+      <div className={dmSans.className}>
       <div className="flex items-center justify-between">
         <div className="grid h-12 w-12 place-items-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-[0_12px_30px_rgba(15,23,42,0.08)]">
           <HeartPulse className="h-5 w-5" />
@@ -99,13 +100,16 @@ export default function SignUp() {
       </div>
 
       <div className="mt-8">
-        <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400">
+        {/* <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400">
           <Sparkles className="h-4 w-4 text-[#388BFD]" />
           Premium onboarding
-        </div>
-        <h1 className={`${dmSerif.className} mt-4 text-[clamp(2.2rem,5vw,3.4rem)] leading-[0.94] tracking-[-0.04em] text-slate-950`}>
+        </div> */}
+        <h1 className={`${dmSerif.className} mt-4 whitespace-nowrap text-[clamp(2.35rem,5vw,3.75rem)] font-normal leading-[0.9] tracking-[-0.05em] text-slate-950`}>
           Create an account.
         </h1>
+        {/* <p className="mt-4 max-w-[34rem] text-[15px] leading-8 text-slate-500">
+          Set up your workspace with a refined registration flow that keeps every field clear, calm, and quick to complete.
+        </p> */}
       </div>
 
       {banner ? (
@@ -117,7 +121,7 @@ export default function SignUp() {
       <form onSubmit={handleSignUp} className="mt-8 space-y-5">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="space-y-[6px]">
-            <label className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Full name</label>
+            <label className="block text-[10px] font-semibold uppercase tracking-[0.26em] text-slate-500">Full name</label>
             <div className="relative">
               <User className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <input
@@ -127,13 +131,13 @@ export default function SignUp() {
                 placeholder="Dr. Maya Chen"
                 disabled={loading}
                 autoComplete="name"
-                className="h-12 w-full rounded-2xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-[14px] text-slate-900 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-[border-color,box-shadow,transform] duration-150 placeholder:text-slate-400 focus:border-[#388BFD] focus:outline-none focus:ring-4 focus:ring-[#388BFD]/10"
+                className="h-12 w-full rounded-[18px] border border-slate-200 bg-white py-3 pl-11 pr-4 text-[15px] text-slate-900 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-[border-color,box-shadow,transform] duration-150 placeholder:text-slate-400 focus:border-[#388BFD] focus:outline-none focus:ring-4 focus:ring-[#388BFD]/10"
               />
             </div>
           </div>
 
           <div className="space-y-[6px]">
-            <label className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Email</label>
+            <label className="block text-[10px] font-semibold uppercase tracking-[0.26em] text-slate-500">Email</label>
             <div className="relative">
               <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <input
@@ -143,7 +147,7 @@ export default function SignUp() {
                 placeholder="you@clinic.com"
                 disabled={loading}
                 autoComplete="email"
-                className="h-12 w-full rounded-2xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-[14px] text-slate-900 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-[border-color,box-shadow,transform] duration-150 placeholder:text-slate-400 focus:border-[#388BFD] focus:outline-none focus:ring-4 focus:ring-[#388BFD]/10"
+                className="h-12 w-full rounded-[18px] border border-slate-200 bg-white py-3 pl-11 pr-4 text-[15px] text-slate-900 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-[border-color,box-shadow,transform] duration-150 placeholder:text-slate-400 focus:border-[#388BFD] focus:outline-none focus:ring-4 focus:ring-[#388BFD]/10"
               />
             </div>
           </div>
@@ -151,7 +155,7 @@ export default function SignUp() {
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="space-y-[6px]">
-            <label className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Company name</label>
+            <label className="block text-[10px] font-semibold uppercase tracking-[0.26em] text-slate-500">Company name</label>
             <div className="relative">
               <Building2 className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <input
@@ -161,13 +165,13 @@ export default function SignUp() {
                 placeholder="Northlake Family Clinic"
                 disabled={loading}
                 autoComplete="organization"
-                className="h-12 w-full rounded-2xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-[14px] text-slate-900 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-[border-color,box-shadow,transform] duration-150 placeholder:text-slate-400 focus:border-[#388BFD] focus:outline-none focus:ring-4 focus:ring-[#388BFD]/10"
+                className="h-12 w-full rounded-[18px] border border-slate-200 bg-white py-3 pl-11 pr-4 text-[15px] text-slate-900 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-[border-color,box-shadow,transform] duration-150 placeholder:text-slate-400 focus:border-[#388BFD] focus:outline-none focus:ring-4 focus:ring-[#388BFD]/10"
               />
             </div>
           </div>
 
           <div className="space-y-[6px]">
-            <label className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Phone</label>
+            <label className="block text-[10px] font-semibold uppercase tracking-[0.26em] text-slate-500">Phone</label>
             <div className="relative">
               <Phone className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <input
@@ -177,19 +181,19 @@ export default function SignUp() {
                 placeholder="(555) 123-4567"
                 disabled={loading}
                 autoComplete="tel"
-                className="h-12 w-full rounded-2xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-[14px] text-slate-900 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-[border-color,box-shadow,transform] duration-150 placeholder:text-slate-400 focus:border-[#388BFD] focus:outline-none focus:ring-4 focus:ring-[#388BFD]/10"
+                className="h-12 w-full rounded-[18px] border border-slate-200 bg-white py-3 pl-11 pr-4 text-[15px] text-slate-900 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-[border-color,box-shadow,transform] duration-150 placeholder:text-slate-400 focus:border-[#388BFD] focus:outline-none focus:ring-4 focus:ring-[#388BFD]/10"
               />
             </div>
           </div>
         </div>
 
         <div className="space-y-[6px]">
-          <label className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Industry</label>
+          <label className="block text-[10px] font-semibold uppercase tracking-[0.26em] text-slate-500">Industry</label>
           <select
             value={industry}
             onChange={(e) => setIndustry(e.target.value)}
             disabled={loading}
-            className="h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-[14px] text-slate-900 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-[border-color,box-shadow,transform] duration-150 focus:border-[#388BFD] focus:outline-none focus:ring-4 focus:ring-[#388BFD]/10"
+            className="h-12 w-full rounded-[18px] border border-slate-200 bg-white px-4 text-[15px] text-slate-900 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-[border-color,box-shadow,transform] duration-150 focus:border-[#388BFD] focus:outline-none focus:ring-4 focus:ring-[#388BFD]/10"
           >
             {industryOptions.map((option) => (
               <option key={option} value={option}>
@@ -201,7 +205,7 @@ export default function SignUp() {
 
         <div className="space-y-[6px]">
           <div className="flex items-center justify-between gap-3">
-            <label className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Password</label>
+            <label className="block text-[10px] font-semibold uppercase tracking-[0.26em] text-slate-500">Password</label>
             <span className="text-[12px] font-medium text-slate-400">Minimum 8 characters</span>
           </div>
           <div className="relative">
@@ -213,7 +217,7 @@ export default function SignUp() {
               placeholder="Create a secure password"
               disabled={loading}
               autoComplete="new-password"
-              className="h-12 w-full rounded-2xl border border-slate-200 bg-white py-3 pl-11 pr-12 text-[14px] text-slate-900 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-[border-color,box-shadow,transform] duration-150 placeholder:text-slate-400 focus:border-[#388BFD] focus:outline-none focus:ring-4 focus:ring-[#388BFD]/10"
+              className="h-12 w-full rounded-[18px] border border-slate-200 bg-white py-3 pl-11 pr-12 text-[15px] text-slate-900 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-[border-color,box-shadow,transform] duration-150 placeholder:text-slate-400 focus:border-[#388BFD] focus:outline-none focus:ring-4 focus:ring-[#388BFD]/10"
             />
             <button
               type="button"
@@ -230,7 +234,7 @@ export default function SignUp() {
         <button
           type="submit"
           disabled={loading}
-          className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#0F172A] px-6 text-sm font-semibold text-white shadow-[0_16px_34px_rgba(15,23,42,0.18)] transition duration-150 hover:bg-[#111c33] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70"
+          className="flex h-12 w-full items-center justify-center gap-2 rounded-[18px] bg-[#0F172A] px-6 text-[14px] font-semibold tracking-[0.02em] text-white shadow-[0_16px_34px_rgba(15,23,42,0.18)] transition duration-150 hover:bg-[#111c33] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70"
         >
           {loading ? 'Creating workspace...' : 'Create account'}
           {!loading ? <ArrowRight className="h-4 w-4" /> : null}
@@ -241,7 +245,7 @@ export default function SignUp() {
         <button
           type="button"
           onClick={handleGoogle}
-          className="flex h-12 w-full items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 text-[14px] font-semibold text-slate-700 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition hover:border-slate-300 hover:bg-slate-50"
+          className="flex h-12 w-full items-center justify-center gap-3 rounded-[18px] border border-slate-200 bg-white px-4 text-[14px] font-semibold text-slate-700 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition hover:border-slate-300 hover:bg-slate-50"
         >
           <span className="grid h-5 w-5 place-items-center">
             <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
@@ -257,6 +261,7 @@ export default function SignUp() {
         <Link href="/signin" className="font-semibold text-[#388BFD] transition hover:text-[#1d6fe0]">
           Sign in
         </Link>
+      </div>
       </div>
     </AuthShell>
   );

@@ -3,9 +3,9 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, Eye, EyeOff, Mail, Shield, Sparkles } from 'lucide-react';
+import { ArrowRight, Eye, EyeOff, Mail, Shield,} from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { dmSerif } from './authFonts';
+import { dmSans, dmSerif } from './authFonts';
 import AuthShell from './AuthShell';
 
 const stats = [
@@ -51,6 +51,7 @@ export default function SignIn() {
 
   return (
     <AuthShell stats={stats}>
+      <div className={dmSans.className}>
       <div className="flex items-center justify-between">
         <div className="grid h-12 w-12 place-items-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-[0_12px_30px_rgba(15,23,42,0.08)]">
           <Shield className="h-5 w-5" />
@@ -61,16 +62,16 @@ export default function SignIn() {
       </div>
 
       <div className="mt-8">
-        <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400">
+        {/* <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400">
           <Sparkles className="h-4 w-4 text-[#388BFD]" />
           Premium login
-        </div>
-        <h1 className={`${dmSerif.className} mt-4 text-[clamp(2.2rem,5vw,3.4rem)] leading-[0.94] tracking-[-0.04em] text-slate-950`}>
+        </div> */}
+        <h1 className={`${dmSerif.className} mt-4 whitespace-nowrap text-[clamp(2.35rem,5vw,3.75rem)] font-normal leading-[0.9] tracking-[-0.05em] text-slate-950`}>
           Welcome back.
         </h1>
-        <p className="mt-4 max-w-[34rem] text-[15px] leading-7 text-slate-500">
+        {/* <p className="mt-4 max-w-[34rem] text-[15px] leading-8 text-slate-500">
           Sign in to reopen your clinic workflow, recover every missed lead, and keep high-intent conversations moving.
-        </p>
+        </p> */}
       </div>
 
       {banner ? (
@@ -81,7 +82,7 @@ export default function SignIn() {
 
       <form onSubmit={handleSignIn} className="mt-8 space-y-5">
         <div className="space-y-[6px]">
-          <label className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Email address</label>
+          <label className="block text-[10px] font-semibold uppercase tracking-[0.26em] text-slate-500">Email address</label>
           <div className="relative">
             <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
@@ -91,15 +92,15 @@ export default function SignIn() {
               placeholder="you@clinic.com"
               disabled={loading}
               autoComplete="email"
-              className="h-12 w-full rounded-2xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-[14px] text-slate-900 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-[border-color,box-shadow,transform] duration-150 placeholder:text-slate-400 focus:border-[#388BFD] focus:outline-none focus:ring-4 focus:ring-[#388BFD]/10"
+              className="h-12 w-full rounded-[18px] border border-slate-200 bg-white py-3 pl-11 pr-4 text-[15px] text-slate-900 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-[border-color,box-shadow,transform] duration-150 placeholder:text-slate-400 focus:border-[#388BFD] focus:outline-none focus:ring-4 focus:ring-[#388BFD]/10"
             />
           </div>
         </div>
 
         <div className="space-y-[6px]">
           <div className="flex items-center justify-between gap-3">
-            <label className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Password</label>
-            <Link href="#" className="text-[12px] font-medium text-[#388BFD] transition hover:text-[#1d6fe0]">
+            <label className="block text-[10px] font-semibold uppercase tracking-[0.26em] text-slate-500">Password</label>
+            <Link href="#" className="text-[12px] font-semibold text-[#388BFD] transition hover:text-[#1d6fe0]">
               Forgot password?
             </Link>
           </div>
@@ -111,7 +112,7 @@ export default function SignIn() {
               placeholder="••••••••"
               disabled={loading}
               autoComplete="current-password"
-              className="h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 pr-12 text-[14px] text-slate-900 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-[border-color,box-shadow,transform] duration-150 placeholder:text-slate-400 focus:border-[#388BFD] focus:outline-none focus:ring-4 focus:ring-[#388BFD]/10"
+              className="h-12 w-full rounded-[18px] border border-slate-200 bg-white px-4 pr-12 text-[15px] text-slate-900 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-[border-color,box-shadow,transform] duration-150 placeholder:text-slate-400 focus:border-[#388BFD] focus:outline-none focus:ring-4 focus:ring-[#388BFD]/10"
             />
             <button
               type="button"
@@ -128,7 +129,7 @@ export default function SignIn() {
         <button
           type="submit"
           disabled={loading}
-          className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#0F172A] px-6 text-sm font-semibold text-white shadow-[0_16px_34px_rgba(15,23,42,0.18)] transition duration-150 hover:bg-[#111c33] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70"
+          className="flex h-12 w-full items-center justify-center gap-2 rounded-[18px] bg-[#0F172A] px-6 text-[14px] font-semibold tracking-[0.02em] text-white shadow-[0_16px_34px_rgba(15,23,42,0.18)] transition duration-150 hover:bg-[#111c33] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70"
         >
           {loading ? 'Signing in...' : 'Sign In'}
           {!loading ? <ArrowRight className="h-4 w-4" /> : null}
@@ -144,7 +145,7 @@ export default function SignIn() {
       <button
         type="button"
         onClick={handleGoogle}
-        className="flex h-12 w-full items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 text-[14px] font-semibold text-slate-700 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition hover:border-slate-300 hover:bg-slate-50"
+        className="flex h-12 w-full items-center justify-center gap-3 rounded-[18px] border border-slate-200 bg-white px-4 text-[14px] font-semibold text-slate-700 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition hover:border-slate-300 hover:bg-slate-50"
       >
         <span className="grid h-5 w-5 place-items-center">
           <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
@@ -159,6 +160,7 @@ export default function SignIn() {
         <Link href="/signup" className="font-semibold text-[#388BFD] transition hover:text-[#1d6fe0]">
           Create account
         </Link>
+      </div>
       </div>
     </AuthShell>
   );
