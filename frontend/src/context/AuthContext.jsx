@@ -73,17 +73,41 @@ export const AuthProvider = ({ children }) => {
     };
   }, []);
 
-  const signUp = async (email, password, fullName, options = {}) => {
+  const signUp = async (inputOrEmail, password, fullName, options = {}) => {
     try {
       setError(null);
-      const response = await api.post('/auth/register', { email, password, fullName }, { skipAuthRefresh: true });
+      const isObjectPayload = inputOrEmail !== null && typeof inputOrEmail === 'object';
+      const registrationInput = isObjectPayload
+        ? inputOrEmail
+        : {
+            email: inputOrEmail,
+            password,
+            fullName,
+            ...options,
+          };
+
+      const response = await api.post(
+        '/auth/register',
+        {
+          email: registrationInput.email,
+          password: registrationInput.password ?? password,
+          fullName: registrationInput.fullName ?? fullName,
+          companyName: registrationInput.companyName,
+          phone: registrationInput.phone,
+          industry: registrationInput.industry,
+          tenant: registrationInput.tenant,
+          workspace: registrationInput.workspace,
+          businessId: registrationInput.businessId,
+        },
+        { skipAuthRefresh: true },
+      );
       const payload = response.data?.data || {};
 
       if (payload.accessToken) {
         setAuthSession({
           user: payload.user || null,
           accessToken: payload.accessToken,
-          remember: options.remember ?? true,
+          remember: (isObjectPayload ? registrationInput.remember : options.remember) ?? true,
         });
       }
 
