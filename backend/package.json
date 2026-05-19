@@ -2,7 +2,7 @@
   "name": "leadbooster-backend",
   "version": "0.1.0",
   "description": "LeadBooster backend - appointment booking and lead recovery SaaS",
-  "main": "src/server.ts",
+  "main": "dist/server.js",
   "scripts": {
     "start": "tsc && node dist/server.js",
     "dev": "tsc && node dist/server.js",
