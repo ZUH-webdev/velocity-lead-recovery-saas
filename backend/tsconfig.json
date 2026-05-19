@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "./dist",
+
+    "module": "commonjs",       // ← was "nodenext"
+    "target": "es2022",         // ← was "esnext" (es2022 is safe for Node 18+)
+    "lib": ["es2022"],          // ← match target
+    "types": ["node"],
+
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
+    "strict": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "skipLibCheck": true,
+
+    // Remove "jsx" and "verbatimModuleSyntax" — not needed for a pure backend
+    // "verbatimModuleSyntax" is incompatible with commonjs anyway
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "prisma.config.ts"]
+}

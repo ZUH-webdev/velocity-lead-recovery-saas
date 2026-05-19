@@ -1,9 +1,9 @@
 /**
  * Basic rate limiting middleware using express-rate-limit
  */
-const rateLimit = require('express-rate-limit');
+import rateLimit from 'express-rate-limit';
 
-const limiter = rateLimit({
+export const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100,
   standardHeaders: true,
@@ -12,5 +12,3 @@ const limiter = rateLimit({
     res.status(429).json({ error: 'Too many requests', code: 'RATE_LIMIT' });
   }
 });
-
-module.exports = limiter;
