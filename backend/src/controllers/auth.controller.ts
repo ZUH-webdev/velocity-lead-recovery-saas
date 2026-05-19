@@ -12,6 +12,20 @@ export class AuthController {
     }
   }
 
+  static async verifyEmail(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { token } = req.query as { token?: string };
+      if (!token) {
+        HttpResponse.badRequest("Verification token required").send(res);
+        return;
+      }
+      const result = await AuthService.verifyEmail(token);
+      result.send(res);
+    } catch (err) {
+      next(err);
+    }
+  }
+
   static async login(req: Request, res: Response, next: NextFunction) {
     try {
       const result = await AuthService.login(req.body);
