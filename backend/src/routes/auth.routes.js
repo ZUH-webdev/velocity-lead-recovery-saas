@@ -8,7 +8,7 @@ const protectRoute = require('../middleware/protectRoute');
 
 /**
  * POST /api/auth/register
- * body: { email, password, fullName }
+ * body: { email, password, fullName, companyName, phone, industry }
  */
 router.post('/register', authController.register);
 router.post('/signup', authController.register);

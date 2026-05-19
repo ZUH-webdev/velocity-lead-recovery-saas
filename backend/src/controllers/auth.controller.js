@@ -1,4 +1,5 @@
 const AuthService = require('../services/AuthService');
+const Business = require('../models/Business');
 const env = require('../config/environment');
 
 const refreshCookieOptions = {
@@ -33,8 +34,35 @@ function clearRefreshCookie(res) {
 
 async function register(req, res, next) {
   try {
-    const { email, password, fullName, businessId } = req.body;
-    const result = await AuthService.signup({ email, password, fullName, businessId });
+    const tenantPayload = req.body.tenant || req.body.workspace || {};
+    const companyName = req.body.companyName || tenantPayload.name || tenantPayload.companyName;
+    const phone = req.body.phone || tenantPayload.phone || '';
+    const industry = req.body.industry || tenantPayload.industry || '';
+    const { email, password, fullName } = req.body;
+
+    if (!companyName) {
+      throw { status: 400, message: 'Company name is required' };
+    }
+
+    const business = await Business.create({
+      name: companyName,
+      phone,
+      industry,
+    });
+
+    let result;
+
+    try {
+      result = await AuthService.signup({
+        email,
+        password,
+        fullName,
+        businessId: business._id,
+      });
+    } catch (signupError) {
+      await Business.findByIdAndDelete(business._id).catch(() => {});
+      throw signupError;
+    }
 
     setRefreshCookie(res, result.refreshToken);
 
