@@ -4,40 +4,13 @@ export type ActivityType = 'message' | 'call' | 'booking' | 'alert' | 'schedulin
 
 export type LeadSender = 'ai' | 'lead' | string;
 
-export interface AuthUser {
-  id?: string;
-  email?: string;
-  fullName?: string;
-  name?: string;
-  businessId?: string;
-  [key: string]: unknown;
-}
-
-export interface AuthSession {
-  user: AuthUser | null;
-  accessToken: string | null;
-  remember: boolean;
-  updatedAt: number;
-}
-
-export interface AuthSessionInput {
-  user?: AuthUser | null;
-  accessToken?: string | null;
-  remember?: boolean;
-}
-
-export type AuthSessionListener = (session: AuthSession | null) => void;
+export * from './auth';
 
 export interface ApiEnvelope<T> {
   success?: boolean;
   data?: T;
   message?: string;
   error?: string;
-}
-
-export interface AuthPayload {
-  user?: AuthUser | null;
-  accessToken?: string | null;
 }
 
 export interface Lead {

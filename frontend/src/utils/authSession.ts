@@ -61,10 +61,11 @@ export function getAccessToken() {
   return getStoredAuthSession()?.accessToken || null;
 }
 
-export function setAuthSession({ user, accessToken, remember = false }: AuthSessionInput): AuthSession {
+export function setAuthSession({ user, accessToken, refreshToken, remember = false }: AuthSessionInput): AuthSession {
   currentSession = {
     user: user || null,
     accessToken: accessToken || null,
+    refreshToken: refreshToken ?? currentSession?.refreshToken ?? null,
     remember: Boolean(remember),
     updatedAt: Date.now(),
   };
