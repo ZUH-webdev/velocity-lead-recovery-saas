@@ -11,6 +11,7 @@ const env = require('../config/environment');
 const redis = new Redis(process.env.REDIS_URL);
 const REFRESH_TOKEN_KEY_PREFIX = 'refresh-token:';
 const REFRESH_TOKEN_TTL_SECONDS = env.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60;
+const EMAIL_VERIFICATION_TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 
 function sanitizeUser(user) {
   const userObject = typeof user.toObject === 'function' ? user.toObject() : { ...user };
@@ -20,6 +21,14 @@ function sanitizeUser(user) {
 
 function hashRefreshToken(refreshToken) {
   return crypto.createHash('sha256').update(refreshToken).digest('hex');
+}
+
+function hashVerificationToken(token) {
+  return crypto.createHash('sha256').update(token).digest('hex');
+}
+
+function generateVerificationToken() {
+  return crypto.randomBytes(32).toString('hex');
 }
 
 function generateAccessToken(user) {
@@ -57,6 +66,18 @@ async function persistRefreshToken(user, refreshToken) {
   return refreshToken;
 }
 
+async function persistVerificationToken(user) {
+  const verificationToken = generateVerificationToken();
+
+  user.emailVerified = false;
+  user.emailVerificationTokenHash = hashVerificationToken(verificationToken);
+  user.emailVerificationExpiresAt = new Date(Date.now() + EMAIL_VERIFICATION_TOKEN_TTL_MS);
+
+  await user.save();
+
+  return verificationToken;
+}
+
 /**
  * Sign up a new user
  * @param {{email:string,password:string,fullName?:string,businessId?:string}} input
@@ -68,7 +89,30 @@ async function signup({ email, password, fullName, businessId }) {
   const existing = await User.findOne({ email });
   if (existing) throw { status: 400, message: 'Email already registered' };
 
-  const user = await User.create({ email, password, fullName, businessId });
+  const user = await User.create({ email, password, fullName, businessId, emailVerified: false });
+  const verificationToken = await persistVerificationToken(user);
+
+  return { user: sanitizeUser(user), verificationToken };
+}
+
+async function verifyEmail({ token }) {
+  if (!token) throw { status: 400, message: 'Verification token required' };
+
+  const tokenHash = hashVerificationToken(token);
+  const user = await User.findOne({
+    emailVerificationTokenHash: tokenHash,
+    emailVerificationExpiresAt: { $gt: new Date() },
+  }).select('+password +emailVerificationTokenHash +emailVerificationExpiresAt');
+
+  if (!user) {
+    throw { status: 400, message: 'Invalid or expired verification token' };
+  }
+
+  user.emailVerified = true;
+  user.emailVerificationTokenHash = undefined;
+  user.emailVerificationExpiresAt = undefined;
+  await user.save();
+
   const accessToken = generateAccessToken(user);
   const refreshToken = await persistRefreshToken(user, generateRefreshToken());
 
@@ -81,6 +125,10 @@ async function signup({ email, password, fullName, businessId }) {
 async function login({ email, password }) {
   const user = await User.findOne({ email }).select('+password');
   if (!user) throw { status: 401, message: 'Invalid credentials' };
+
+  if (!user.emailVerified) {
+    throw { status: 403, message: 'Please verify your email before signing in' };
+  }
 
   const match = await bcrypt.compare(password, user.password);
   if (!match) throw { status: 401, message: 'Invalid credentials' };
@@ -109,6 +157,8 @@ async function refreshToken({ refreshToken }) {
 
     if (!user) throw { status: 401, message: 'Invalid refresh token' };
 
+    if (!user.emailVerified) throw { status: 403, message: 'Please verify your email before signing in' };
+
     await redis.del(key);
 
     const accessToken = generateAccessToken(user);
@@ -133,4 +183,4 @@ async function logout({ refreshToken }) {
   return true;
 }
 
-module.exports = { signup, login, refreshToken, logout, generateAccessToken };
+module.exports = { signup, verifyEmail, login, refreshToken, logout, generateAccessToken };

@@ -76,9 +76,7 @@ Response: { "success": true, "escalatedTo": "support@clinic.com" }
 
 ### Environment Variables (.env)
 ```
-VITE_API_URL=http://localhost:3001/api
-VITE_APP_NAME=Velocity V2
-VITE_DEBUG=false
+NEXT_PUBLIC_API_URL=http://localhost:3001/api
 ```
 
 ### API Client Setup (src/utils/api.js)
@@ -146,7 +144,7 @@ http://localhost:3000
 | CORS errors | Add CORS headers in backend middleware |
 | API 404 errors | Verify backend routes match frontend API calls |
 | Timeout errors | Increase timeout in `src/utils/api.js` |
-| Mock data showing | Check VITE_API_URL is correctly set in .env |
+| Mock data showing | Check NEXT_PUBLIC_API_URL is correctly set in .env.local |
 
 ---
 

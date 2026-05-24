@@ -18,7 +18,10 @@ const UserSchema = new mongoose.Schema(
     password: { type: String, required: true, select: false },
     businessId: { type: mongoose.Schema.Types.ObjectId, ref: 'Business', index: true },
     role: { type: String, enum: ['admin', 'manager', 'agent'], default: 'admin' },
-    subscriptionTier: { type: String, enum: ['free', 'starter', 'pro'], default: 'free' }
+    subscriptionTier: { type: String, enum: ['free', 'starter', 'pro'], default: 'free' },
+    emailVerified: { type: Boolean, default: false },
+    emailVerificationTokenHash: { type: String, select: false },
+    emailVerificationExpiresAt: { type: Date, select: false }
   },
   { timestamps: true }
 );

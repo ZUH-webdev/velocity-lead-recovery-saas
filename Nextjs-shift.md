@@ -49,9 +49,7 @@ Frontend — details
   - `SignIn` / `SignUp` pages updated to call backend endpoints and align validation rules.
 
 Next.js migration progress
---------------------------
-- Removed Vite configuration and adapters (deleted `frontend/vite.config.js`).
-- Converted frontend environment lookups from Vite to Next.js format (replaced `import.meta.env.VITE_API_URL` with `process.env.NEXT_PUBLIC_API_URL` in `frontend/src/utils/api.js`).
+- Historical note: this section records the migration path from the legacy Vite frontend to the current Next.js app.
 - Updated `frontend/package.json` scripts to use Next.js (`dev`, `build`, `start`, `lint`) and added `next` dependency.
 - Added Next.js App Router scaffold under `frontend/app`:
   - Root layout: `app/layout.tsx` (global CSS import + background color)

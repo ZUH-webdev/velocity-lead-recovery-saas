@@ -350,7 +350,7 @@ export const systemAPI = {
 ```
 
 **Configuration:**
-- Base URL: `VITE_API_URL` env variable
+- Base URL: `NEXT_PUBLIC_API_URL` env variable
 - Timeout: 10 seconds
 - Headers: Automatic content-type
 - Error handling: Centralized logging

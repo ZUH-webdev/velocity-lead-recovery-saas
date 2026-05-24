@@ -64,9 +64,32 @@ async function register(req, res, next) {
       throw signupError;
     }
 
-    setRefreshCookie(res, result.refreshToken);
+    const frontendBaseUrl = (env.CORS_ORIGIN || 'http://localhost:3000').split(',')[0].trim();
+    const verificationLink = `${frontendBaseUrl}/verify?token=${encodeURIComponent(result.verificationToken)}`;
 
     return res.status(201).json({
+      success: true,
+      data: {
+        user: result.user,
+        verificationRequired: true,
+        verificationToken: result.verificationToken,
+        verificationLink,
+        message: 'Check your email to verify your account',
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+}
+
+async function verifyEmail(req, res, next) {
+  try {
+    const token = req.body.token || req.query.token;
+    const result = await AuthService.verifyEmail({ token });
+
+    setRefreshCookie(res, result.refreshToken);
+
+    return res.status(200).json({
       success: true,
       data: {
         user: result.user,
@@ -139,4 +162,4 @@ function me(req, res) {
   });
 }
 
-module.exports = { register, login, refresh, logout, me };
+module.exports = { register, verifyEmail, login, refresh, logout, me };

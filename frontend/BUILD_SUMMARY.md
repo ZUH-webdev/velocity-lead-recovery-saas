@@ -40,12 +40,9 @@ frontend/
 │   ├── utils/
 │   │   ├── api.js                       # API client
 │   │   └── mockData.js                  # Mock data generator
-│   ├── App.jsx                          # Root component
-│   ├── main.jsx                         # Entry point
-│   └── index.css                        # Global styles
+├── app/                                 # Next.js app router pages/layout
+├── src/                                 # Shared components, hooks, and utilities
 ├── public/                              # Static assets
-├── index.html                           # HTML page
-├── vite.config.js                       # Vite configuration
 ├── tailwind.config.js                   # Tailwind CSS config
 ├── postcss.config.js                    # PostCSS config
 ├── .eslintrc.json                       # ESLint config
@@ -89,7 +86,7 @@ npm run dev
 
 ## 📊 Technology Stack
 
-React 18 • Vite 5 • Tailwind CSS 3 • Framer Motion 10 • Recharts 2 • Lucide Icons • Axios
+React 19 • Next.js 16 • Tailwind CSS 3 • Framer Motion 10 • Recharts 2 • Lucide Icons • Axios
 
 ---
 

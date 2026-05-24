@@ -14,6 +14,12 @@ router.post('/register', authController.register);
 router.post('/signup', authController.register);
 
 /**
+ * POST /api/auth/verify-email
+ * body: { token }
+ */
+router.post('/verify-email', authController.verifyEmail);
+
+/**
  * POST /api/auth/login
  */
 router.post('/login', authController.login);

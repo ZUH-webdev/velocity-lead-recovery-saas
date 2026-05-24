@@ -9,12 +9,12 @@ export const metadata = {
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div>
-      <SidebarClient />
-      <HeaderClient />
-      <ProtectedRoute>
+    <ProtectedRoute>
+      <div>
+        <SidebarClient />
+        <HeaderClient />
         <main style={{ marginLeft: 280, padding: '2rem' }}>{children}</main>
-      </ProtectedRoute>
-    </div>
+      </div>
+    </ProtectedRoute>
   );
 }

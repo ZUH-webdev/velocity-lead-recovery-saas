@@ -250,7 +250,7 @@ Cards feature animated gradient glows on hover:
 
 **Development Server:**
 ```
-✓ VITE v5.4.21 ready
+✓ VITE v5.4.21 ready (historical build log)
 ✓ Running on http://localhost:3001/
 ✓ No compilation errors
 ✓ Ready for development and testing
@@ -408,6 +408,6 @@ The Velocity V2 dashboard is now a world-class SaaS product that communicates au
 ---
 
 **Implementation by**: GitHub Copilot
-**Framework**: Vite + React + Tailwind CSS v3 + Framer Motion
+**Framework**: Vite + React + Tailwind CSS v3 + Framer Motion (historical snapshot before the Next.js migration)
 **Release Date**: May 11, 2024
 **Version**: 2.0

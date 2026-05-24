@@ -14,7 +14,7 @@ npm install
 npm run dev
 ```
 
-2) Start frontend (Vite will pick an available port, commonly `3000` or `3002`)
+2) Start frontend (Next.js uses port `3000` by default)
 
 ```bash
 cd frontend
@@ -22,13 +22,13 @@ npm install
 npm run dev
 ```
 
-Open the dashboard at the URL Vite prints (e.g. http://localhost:3000 or http://localhost:3002).
+Open the dashboard at http://localhost:3000.
 
 ## Build for Production
 
 ```bash
 npm run build
-npm run preview
+npm run start
 ```
 
 ## Architecture
@@ -87,11 +87,11 @@ Currently using React local state. Can be upgraded to Redux, Zustand, or Recoil 
 
 ### Environment Variables
 
-Create a `.env` file in `frontend/` (optional, Vite falls back to the default):
+Create a `.env.local` file in `frontend/` (optional, Next.js falls back to the default):
 
 ```
-VITE_API_URL=http://localhost:3001/api
-VITE_APP_NAME=Velocity V2
+NEXT_PUBLIC_API_URL=http://localhost:3001/api
+NODE_ENV=development
 ```
 
 ### Quick API test (optional)
@@ -102,7 +102,7 @@ From the `frontend/` directory you can run the included Node test that simulates
 # install if needed
 npm install axios
 
-# run the test (uses VITE_API_URL or defaults to http://localhost:3001/api)
+# run the test (uses NEXT_PUBLIC_API_URL or defaults to http://localhost:3001/api)
 node test-api.js
 ```
 

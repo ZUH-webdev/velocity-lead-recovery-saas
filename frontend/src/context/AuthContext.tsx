@@ -9,13 +9,13 @@ import {
 } from '../utils/authSession';
 import type { AxiosError } from 'axios';
 import type { AuthRequestConfig } from '../lib/apiClient';
-import type { AuthPayload, AuthUser, AuthSession } from '../types';
+import type { AuthRegisterResponse, AuthPayload, AuthUser, AuthSession } from '../types';
 
 interface SignUpInput {
   email: string;
   password: string;
   fullName: string;
-  companyName?: string;
+  companyName: string;
   phone?: string;
   industry?: string;
   tenant?: unknown;
@@ -34,7 +34,7 @@ interface AuthContextValue {
     password?: string,
     fullName?: string,
     options?: Partial<SignUpInput>,
-  ) => Promise<AuthUser | null>;
+  ) => Promise<AuthRegisterResponse | null>;
   signIn: (email: string, password: string, options?: { remember?: boolean }) => Promise<AuthUser | null>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
@@ -120,7 +120,7 @@ export const AuthProvider = ({ children }: Props) => {
     password?: string,
     fullName?: string,
     options: Partial<SignUpInput> = {},
-  ): Promise<AuthUser | null> => {
+  ): Promise<AuthRegisterResponse | null> => {
     try {
       setError(null);
       const isObjectPayload = inputOrEmail !== null && typeof inputOrEmail === 'object';
@@ -133,7 +133,7 @@ export const AuthProvider = ({ children }: Props) => {
             ...options,
           };
 
-      const response = await api.post<AuthPayload>(
+      const response = await api.post<AuthRegisterResponse>(
         '/auth/register',
         {
           email: registrationInput.email,
@@ -148,17 +148,7 @@ export const AuthProvider = ({ children }: Props) => {
         },
         { skipAuthRefresh: true } as AuthRequestConfig,
       );
-      const payload = extractAuthData(response.data) as AuthPayload;
-
-      if (payload.accessToken) {
-        setAuthSession({
-          user: payload.user || null,
-          accessToken: payload.accessToken,
-          remember: (isObjectPayload ? registrationInput.remember : options.remember) ?? true,
-        });
-      }
-
-      return payload.user || null;
+      return extractAuthData(response.data) as AuthRegisterResponse;
     } catch (err: unknown) {
       setError(getAuthErrorMessage(err));
       throw err;
