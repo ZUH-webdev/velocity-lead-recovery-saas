@@ -143,7 +143,7 @@ const StatsGrid = ({ metrics = {}, isLoading = false }: Props) => {
             value={stat.value}
             prefix={stat.prefix}
             suffix={stat.suffix}
-            color={stat.color}
+            color={stat.color as 'indigo' | 'purple' | 'emerald' | 'amber' | 'blue'}
             isLoading={isLoading}
             animateValue={stat.animateValue}
             endValue={stat.endValue}

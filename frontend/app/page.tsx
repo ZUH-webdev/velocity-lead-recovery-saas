@@ -41,6 +41,8 @@ const valuePillars = [
   },
 ];
 
+const AnimatedSection = motion.div as any;
+
 interface SectionKickerProps {
   children: React.ReactNode;
 }
@@ -161,7 +163,7 @@ export default function RootPage() {
         <HeroSection />
 
         <section id="features" className="mx-auto max-w-7xl px-4 pt-14 sm:px-6 lg:px-8">
-          <motion.div
+          <AnimatedSection
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.3 }}
@@ -270,11 +272,11 @@ export default function RootPage() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </AnimatedSection>
         </section>
 
         <section id="how-it-works" className="mx-auto max-w-7xl px-4 pt-14 sm:px-6 lg:px-8">
-          <motion.div
+          <AnimatedSection
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.25 }}
@@ -298,11 +300,11 @@ export default function RootPage() {
                 </div>
               );
             })}
-          </motion.div>
+          </AnimatedSection>
         </section>
 
         <section id="pricing" className="mx-auto max-w-7xl px-4 pt-14 sm:px-6 lg:px-8">
-          <motion.div
+          <AnimatedSection
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
@@ -344,7 +346,7 @@ export default function RootPage() {
                 </div>
               ))}
             </div>
-          </motion.div>
+          </AnimatedSection>
         </section>
       </main>
     </div>

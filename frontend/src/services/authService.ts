@@ -1,5 +1,5 @@
 import type { AxiosError } from 'axios';
-import { apiClient, extractAuthData, getAuth, postAuth, setAuthTokenStorage, type AuthRequestConfig } from '../lib/apiClient';
+import { apiClient, extractAuthData, getAuth, postAuth, getAuthTokenStorage, type AuthRequestConfig } from '../lib/apiClient';
 import type {
   AuthMessageResponse,
   AuthTokenResponse,
@@ -28,7 +28,7 @@ function rethrowAuthError(error: unknown): never {
 }
 
 function syncStoredTokens(payload: AuthTokenResponse): void {
-  setAuthTokenStorage({
+  getAuthTokenStorage().setTokens({
     user: payload.user,
     accessToken: payload.accessToken,
     refreshToken: payload.refreshToken,
@@ -89,10 +89,10 @@ export async function refresh(input: RefreshRequest, config?: AuthRequestConfig)
 export async function logout(input: LogoutRequest, config?: AuthRequestConfig): Promise<AuthMessageResponse> {
   try {
     const payload = await postAuth<LogoutRequest, AuthMessageResponse>('/auth/logout', input, config);
-    setAuthTokenStorage({ accessToken: null, refreshToken: null, user: null });
+    getAuthTokenStorage().setTokens({ accessToken: null, refreshToken: null, user: null });
     return payload;
   } catch (error) {
-    setAuthTokenStorage({ accessToken: null, refreshToken: null, user: null });
+    getAuthTokenStorage().setTokens({ accessToken: null, refreshToken: null, user: null });
     rethrowAuthError(error);
   }
 }

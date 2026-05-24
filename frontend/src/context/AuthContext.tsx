@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import api from '../utils/api';
+import { extractAuthData } from '../lib/apiClient';
 import {
   clearAuthSession,
   getStoredAuthSession,
@@ -7,6 +8,7 @@ import {
   subscribeAuthSession,
 } from '../utils/authSession';
 import type { AxiosError } from 'axios';
+import type { AuthRequestConfig } from '../lib/apiClient';
 import type { AuthPayload, AuthUser, AuthSession } from '../types';
 
 interface SignUpInput {
@@ -84,8 +86,8 @@ export const AuthProvider = ({ children }: Props) => {
       }
 
       try {
-        const response = await api.post<AuthPayload>('/auth/refresh', {}, { skipAuthRefresh: true });
-        const payload = response.data?.data || {};
+        const response = await api.post<AuthPayload>('/auth/refresh', {}, { skipAuthRefresh: true } as AuthRequestConfig);
+        const payload = extractAuthData(response.data) as AuthPayload;
 
         if (payload.accessToken) {
           setAuthSession({
@@ -144,9 +146,9 @@ export const AuthProvider = ({ children }: Props) => {
           workspace: registrationInput.workspace,
           businessId: registrationInput.businessId,
         },
-        { skipAuthRefresh: true },
+        { skipAuthRefresh: true } as AuthRequestConfig,
       );
-      const payload = response.data?.data || {};
+      const payload = extractAuthData(response.data) as AuthPayload;
 
       if (payload.accessToken) {
         setAuthSession({
@@ -166,8 +168,8 @@ export const AuthProvider = ({ children }: Props) => {
   const signIn = async (email: string, password: string, options: { remember?: boolean } = {}): Promise<AuthUser | null> => {
     try {
       setError(null);
-      const response = await api.post<AuthPayload>('/auth/login', { email, password }, { skipAuthRefresh: true });
-      const payload = response.data?.data || {};
+      const response = await api.post<AuthPayload>('/auth/login', { email, password }, { skipAuthRefresh: true } as AuthRequestConfig);
+      const payload = extractAuthData(response.data) as AuthPayload;
 
       if (payload.accessToken) {
         setAuthSession({
@@ -187,7 +189,7 @@ export const AuthProvider = ({ children }: Props) => {
   const logout = async () => {
     try {
       setError(null);
-      await api.post('/auth/logout', {}, { skipAuthRefresh: true });
+      await api.post('/auth/logout', {}, { skipAuthRefresh: true } as AuthRequestConfig);
     } catch (err: unknown) {
       setError(getAuthErrorMessage(err));
     } finally {

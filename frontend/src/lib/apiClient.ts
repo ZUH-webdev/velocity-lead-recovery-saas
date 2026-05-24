@@ -139,8 +139,8 @@ apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const token = tokenStorage.getAccessToken();
 
   if (token) {
-    config.headers = config.headers || {};
-    config.headers[AUTH_HEADER] = `Bearer ${token}`;
+    (config as any).headers = (config as any).headers || {};
+    (config as any).headers[AUTH_HEADER] = `Bearer ${token}`;
   }
 
   return config;

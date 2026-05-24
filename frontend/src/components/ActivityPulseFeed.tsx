@@ -2,7 +2,9 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { MessageCircle, PhoneCall, CheckCircle2, AlertCircle, Clock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import type { ActivityEvent } from '../types';
+import type { ActivityEvent as ActivityEventType } from '../types';
+
+const MotionDiv = motion.div as any;
 
 const eventTypeConfig = {
   message: {
@@ -38,7 +40,7 @@ const eventTypeConfig = {
 };
 
 interface ActivityEventProps {
-  event: ActivityEvent;
+  event: ActivityEventType;
   index: number;
 }
 
@@ -47,7 +49,7 @@ export const ActivityEvent = ({ event, index }: ActivityEventProps) => {
   const Icon = config.icon;
 
   return (
-    <motion.div
+    <MotionDiv
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: index * 0.08, type: 'spring', stiffness: 300, damping: 30 }}
@@ -55,7 +57,7 @@ export const ActivityEvent = ({ event, index }: ActivityEventProps) => {
     >
       {/* Timeline Dot */}
       <div className="relative pt-1">
-        <motion.div
+        <MotionDiv
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ delay: index * 0.08 + 0.1 }}
@@ -68,7 +70,7 @@ export const ActivityEvent = ({ event, index }: ActivityEventProps) => {
       </div>
 
       {/* Event Content */}
-      <motion.div
+      <MotionDiv
         className="flex-1 pb-4"
         whileHover={{ x: 4 }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
@@ -102,13 +104,13 @@ export const ActivityEvent = ({ event, index }: ActivityEventProps) => {
             </div>
           )}
         </div>
-      </motion.div>
-    </motion.div>
+      </MotionDiv>
+    </MotionDiv>
   );
 };
 
 interface Props {
-  activities?: ActivityEvent[];
+  activities?: ActivityEventType[];
   isLoading?: boolean;
   maxItems?: number;
 }
@@ -147,21 +149,21 @@ export const ActivityPulseFeed = ({
   }
 
   return (
-    <motion.div
+    <MotionDiv
       variants={containerVariants}
       initial="hidden"
       animate="visible"
       className="space-y-0"
     >
       {displayActivities.length === 0 ? (
-        <motion.div
+        <MotionDiv
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center py-8 text-slate-500"
         >
           <Clock className="w-8 h-8 mx-auto mb-2 opacity-50" />
           <p className="text-sm">No recent activities yet</p>
-        </motion.div>
+        </MotionDiv>
       ) : (
         displayActivities.map((activity, index) => (
           <ActivityEvent
@@ -171,6 +173,6 @@ export const ActivityPulseFeed = ({
           />
         ))
       )}
-    </motion.div>
+    </MotionDiv>
   );
 };

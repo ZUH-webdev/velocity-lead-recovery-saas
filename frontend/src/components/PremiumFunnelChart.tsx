@@ -49,7 +49,7 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
     return null;
   }
 
-  const datum = payload[0]?.payload || {};
+  const datum = (payload[0]?.payload ?? {}) as FunnelDatum;
 
   return (
     <motion.div

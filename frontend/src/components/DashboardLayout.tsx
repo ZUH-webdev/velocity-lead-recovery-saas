@@ -60,18 +60,7 @@ export const DashboardLayout = () => {
       exit={{ opacity: 0 }}
       className="min-h-screen"
     >
-      <Dashboard
-        metrics={metrics}
-        leads={filteredLeads}
-        selectedLead={selectedLead}
-        onLeadClick={handleLeadClick}
-        calendarStatus={calendarStatus}
-        onSync={handleSync}
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        filterState={filterState}
-        onFilterChange={setFilterState}
-      />
+      <Dashboard />
 
       {/* Conversation Mirror Modal */}
       <AIConversationMirror

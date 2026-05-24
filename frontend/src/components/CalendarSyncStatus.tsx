@@ -28,7 +28,7 @@ const CalendarSyncStatus = ({ status, onSync, onSettings }: Props) => {
       
       const lastSyncDate = new Date(status.lastSync);
       const now = new Date();
-      const diffMinutes = Math.floor((now - lastSyncDate) / 60000);
+      const diffMinutes = Math.floor((now.getTime() - lastSyncDate.getTime()) / 60000);
       
       if (diffMinutes < 1) {
         setTimeAgo('Just now');
