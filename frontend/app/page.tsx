@@ -43,12 +43,23 @@ const faqItems = [
 ];
 
 function TopNav() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  useEffect(() => {
+    function handleResize() {
+      if (window.innerWidth >= 768) setIsMenuOpen(false);
+    }
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <header
       className="fixed top-0 left-0 right-0 z-[1000] py-[14px] bg-[rgba(255,255,255,0.9)] backdrop-blur-[19px] border-b border-[rgba(0,0,0,0.06)] transition duration-300"
       style={{ WebkitBackdropFilter: 'blur(16px)' }}
     >
-      <div className="mx-auto grid max-w-[1440px] grid-cols-[1fr_auto_1fr] items-center px-[31px]">
+      <div className="mx-auto grid max-w-[1440px] grid-cols-[1fr_auto] md:grid-cols-[1fr_auto_1fr] items-center px-[24px] md:px-[40px] lg:px-[80px]">
         <Link href="/" className="flex items-center gap-[12px] justify-self-start">
           <Image src="/velocity-logo.webp" alt="Velocity" width={28} height={28} priority className="h-[28px] w-[28px] object-contain" />
           <span className="font-hero text-[24px] font-[800] leading-none tracking-[-0.02em] text-[#111827]">
@@ -56,7 +67,7 @@ function TopNav() {
           </span>
         </Link>
 
-        <nav className="flex items-center gap-[46px] justify-self-center">
+        <nav className="hidden md:flex items-center gap-[20px] lg:gap-[46px] justify-self-center">
           {navItems.map((item) => (
             <Link key={item.label} href={item.href} className="font-body text-[15px] font-[500] leading-none tracking-[0em] text-[#6b7280]">
               {item.label}
@@ -64,23 +75,60 @@ function TopNav() {
           ))}
         </nav>
 
-        <div className="justify-self-end">
+        <div className="hidden md:block justify-self-end">
           <Link
             href="/signin"
-            className="inline-flex h-[44px] items-center gap-[12px] rounded-[8px] bg-[#0f172a] px-[24px] font-body text-[15px] font-[600] tracking-[0.01em] text-white shadow-[0_8px_24px_rgba(15,23,42,0.18)]"
+            className="inline-flex min-h-[44px] h-auto lg:h-[44px] py-[10px] lg:py-0 items-center gap-[12px] rounded-[8px] bg-[#0f172a] px-[20px] lg:px-[24px] font-body text-[15px] font-[600] tracking-[0.01em] text-white shadow-[0_8px_24px_rgba(15,23,42,0.18)]"
           >
             Evaluate Velocity
             <ArrowRight className="h-[18px] w-[18px] stroke-[2.2]" />
           </Link>
         </div>
+
+        <button
+          type="button"
+          aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={isMenuOpen}
+          onClick={() => setIsMenuOpen((prev) => !prev)}
+          className="justify-self-end md:hidden inline-flex h-[44px] w-[44px] items-center justify-center rounded-[8px] text-[#111827]"
+        >
+          <span className="text-[26px] leading-none">{isMenuOpen ? '×' : '☰'}</span>
+        </button>
       </div>
+
+      {isMenuOpen && (
+        <div className="md:hidden absolute left-0 right-0 top-full bg-[rgba(255,255,255,0.97)] backdrop-blur-[16px] border-b border-[#f3f4f6]" style={{ WebkitBackdropFilter: 'blur(16px)' }}>
+          <nav className="flex flex-col">
+            {navItems.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                onClick={() => setIsMenuOpen(false)}
+                className="flex min-h-[44px] items-center border-b border-[#f3f4f6] px-[24px] py-[16px] font-body text-[16px] font-[500] text-[#6b7280]"
+              >
+                {item.label}
+              </Link>
+            ))}
+            <div className="p-[24px]">
+              <Link
+                href="/signin"
+                onClick={() => setIsMenuOpen(false)}
+                className="inline-flex min-h-[44px] w-full items-center justify-center gap-[12px] rounded-[8px] bg-[#0f172a] px-[24px] py-[12px] font-body text-[15px] font-[600] tracking-[0.01em] text-white shadow-[0_8px_24px_rgba(15,23,42,0.18)]"
+              >
+                Evaluate Velocity
+                <ArrowRight className="h-[18px] w-[18px] stroke-[2.2]" />
+              </Link>
+            </div>
+          </nav>
+        </div>
+      )}
     </header>
   );
 }
 
 function HeroCard() {
   return (
-    <div className="w-full max-w-[444px] rounded-[18px] border border-[#eceff3] bg-white mt-10 px-[28px] pb-[21px] pt-[24px] shadow-[0_18px_50px_rgba(15,23,42,0.04)]">
+    <div className="w-full max-w-[444px] rounded-[18px] border border-[#eceff3] bg-white mt-[40px] md:mt-[20px] lg:mt-[40px] px-[22px] md:px-[24px] lg:px-[28px] pb-[18px] md:pb-[20px] lg:pb-[21px] pt-[20px] md:pt-[22px] lg:pt-[24px] shadow-[0_18px_50px_rgba(15,23,42,0.04)]">
       <div className="flex items-center mt-[20px] justify-between">
         <span className="font-mono-ui text-[12px] font-[400] uppercase tracking-[0.08em] text-[#6b7280]">Live Feed</span>
         <Activity className="h-[18px] w-[18px] text-[#b88243]" />
@@ -112,7 +160,7 @@ function HeroCard() {
 
 function HeroSection() {
   return (
-    <section id="platform" style={{ scrollMarginTop: 'var(--header-height)' }} className="mx-auto flex max-w-[1440px] justify-between gap-[72px] px-[31px] pt-[36px] mt-9">
+    <section id="platform" style={{ scrollMarginTop: 'var(--header-height)' }} className="mx-auto flex flex-col md:flex-row max-w-[1440px] justify-between gap-[40px] md:gap-[32px] lg:gap-[72px] px-[24px] md:px-[40px] lg:px-[80px] pt-[36px] mt-9">
       <div className="w-full max-w-[640px] pt-[12px]">
         <div className="inline-flex h-[31px] items-center gap-[9px] rounded-full border border-[#e6eaef] bg-white px-[14px] font-mono-ui text-[11px] font-[400] uppercase tracking-[0.1em] text-[#678096] shadow-[0_1px_0_rgba(15,23,42,0.02)]">
           <span className="h-[9px] w-[9px] rounded-full bg-[#7ddcc1]" />
@@ -120,7 +168,7 @@ function HeroSection() {
           <span>99.9% Uptime</span>
         </div>
 
-        <h1 className="font-hero mt-[46px] max-w-[620px] text-[clamp(48px,6vw,80px)] font-[500] leading-[1.05] tracking-[-0.02em] text-[#0f0f10]">
+        <h1 className="font-hero mt-[46px] max-w-[620px] text-[clamp(36px,8vw,52px)] md:text-[clamp(40px,5vw,64px)] lg:text-[clamp(48px,6vw,80px)] font-[500] leading-[1.05] tracking-[-0.02em] text-[#0f0f10]">
           Every missed call
           <br />
           costs you.
@@ -131,10 +179,10 @@ function HeroSection() {
           already yours.
         </p>
 
-        <div className="mt-[40px] flex items-center gap-[16px]">
+        <div className="mt-[40px] flex flex-col md:flex-row items-stretch md:items-center gap-[12px] md:gap-[16px]">
           <Link
             href="#"
-            className="font-body inline-flex h-[57px] items-center gap-[12px] rounded-[6px] bg-[#0f172a] px-[28px] text-[15px] font-[600] tracking-[0.01em] text-white shadow-[0_8px_24px_rgba(15,23,42,0.18)]"
+            className="font-body inline-flex min-h-[44px] h-[57px] w-full md:w-auto justify-center items-center gap-[12px] rounded-[6px] bg-[#0f172a] px-[28px] text-[15px] font-[600] tracking-[0.01em] text-white shadow-[0_8px_24px_rgba(15,23,42,0.18)]"
           >
             Calculate Revenue Leak
             <ArrowRight className="h-[18px] w-[18px] stroke-[2.2]" />
@@ -142,7 +190,7 @@ function HeroSection() {
 
           <Link
             href="#"
-            className="font-body inline-flex h-[57px] items-center rounded-[6px] border border-[#dfe4ea] bg-white px-[31px] text-[15px] font-[600] tracking-[0.01em] text-[#111827] shadow-[0_1px_0_rgba(15,23,42,0.02)]"
+            className="font-body inline-flex min-h-[44px] h-[57px] w-full md:w-auto justify-center items-center rounded-[6px] border border-[#dfe4ea] bg-white px-[31px] text-[15px] font-[600] tracking-[0.01em] text-[#111827] shadow-[0_1px_0_rgba(15,23,42,0.02)]"
           >
             Read the Whitepaper
           </Link>
@@ -169,9 +217,9 @@ function StatSection() {
   return (
     // full-width section with approx 80px vertical padding // figma ref
     <section className="w-full bg-white">
-      <div className="mx-auto flex max-w-[1440px] items-center justify-between px-[31px] py-[80px]">
+      <div className="mx-auto flex flex-col md:flex-row max-w-[1440px] items-start md:items-center justify-between gap-[32px] md:gap-[24px] lg:gap-[40px] px-[24px] md:px-[40px] lg:px-[80px] py-[80px]">
         {/* two-column layout: left ~45%, right ~55% (estimated) // figma ref */}
-        <div className="w-[45%]">
+        <div className="w-full md:w-[45%]">
           {/* font-size ~36-40px and heading stack match Figma // figma ref */}
           <h2 className="font-hero text-[clamp(24px,3.6vw,36px)] font-[500] leading-[1.15] tracking-[-0.015em] text-[#0f0f10]">
             91% of unreturned voicemails
@@ -183,13 +231,13 @@ function StatSection() {
           <div className="mt-[16px] w-[60px] h-[3px] bg-[#B8860B]" />
         </div>
 
-        <div className="w-[55%]">
+        <div className="w-full md:w-[55%]">
           {/* logo spacing and wordmark sizing approximated from the reference // figma ref */}
-          <div className="flex items-center justify-end gap-[56px] font-heading text-[18px] font-[700] tracking-[0.05em] text-[#9ca3af]">
+          <div className="grid grid-cols-2 justify-items-center gap-x-[24px] gap-y-[20px] md:flex md:items-center md:justify-end md:gap-[28px] lg:gap-[56px] font-heading text-[14px] md:text-[15px] lg:text-[18px] font-[700] tracking-[0.05em] text-[#9ca3af]">
             {logos.map((logo) => (
               <div key={logo} className="text-[#9ca3af]">
                 {logo === 'MOUNT SINAI' ? (
-                  <div className="leading-[1] text-[18px] font-[700] text-[#9ca3af]">
+                  <div className="leading-[1] text-[14px] md:text-[15px] lg:text-[18px] font-[700] text-[#9ca3af]">
                     <span className="block">MOUNT</span>
                     <span className="block">SINAI</span>
                   </div>
@@ -259,8 +307,8 @@ export default function RootPage() {
 function VoiceFollowupSection() {
   return (
     <section className="w-full bg-[#FAFAFA]">
-      <div className="mx-auto max-w-[1440px] px-[31px] py-[100px]">
-        <div className="flex flex-col md:flex-row items-center gap-[60px]">
+      <div className="mx-auto max-w-[1440px] px-[24px] md:px-[40px] lg:px-[80px] py-[100px]">
+        <div className="flex flex-col md:flex-row items-center gap-[40px] md:gap-[32px] lg:gap-[60px]">
           <div className="w-full md:w-[45%]">
             <h3 className="font-hero text-[clamp(28px,3vw,42px)] font-[800] leading-tight tracking-[-0.02em] text-[#0f0f10] mb-[20px]">
               AI Voice Follow-up
@@ -288,10 +336,12 @@ function VoiceFollowupSection() {
             </div>
           </div>
 
-          <div className="hidden md:block h-[70%] w-[2px] bg-[#c9a97a] self-center" />
+          <div className="h-[2px] w-[40px] bg-[#c9a97a] my-[32px] md:hidden" />
+
+          <div className="hidden lg:block h-[70%] w-[2px] bg-[#c9a97a] self-center" />
 
           <div className="w-full md:w-[55%]">
-            <div className="bg-white border border-[#e5e7eb] rounded-[12px] p-[28px] shadow-[0_2px_16px_rgba(0,0,0,0.05)]">
+            <div className="bg-white border border-[#e5e7eb] rounded-[12px] p-[28px] shadow-[0_2px_16px_rgba(0,0,0,0.05)] max-w-full">
               <div className="flex items-center gap-[14px] mb-[28px]">
                 <div className="w-[42px] h-[42px] flex items-center justify-center rounded-[8px] border border-[#e5e7eb]">
                   <PhoneCall className="h-[18px] w-[18px] text-[#0f0f10]" />
@@ -325,14 +375,14 @@ function ImpactSection() {
   return (
     // centered typographic section with light warm gray background // figma ref
     <section className="w-full bg-[#FAFAFA]">
-      <div className="mx-auto max-w-[1440px] px-[31px] py-[100px]">
+      <div className="mx-auto max-w-[1440px] px-[24px] md:px-[40px] lg:px-[80px] py-[80px] md:py-[100px]">
         <div className="mx-auto text-center" style={{ maxWidth: '820px' }}>
-          <h3 className="font-hero mx-auto mb-[32px] text-[clamp(32px,3.5vw,52px)] font-[500] leading-[1.2] tracking-[-0.02em] text-[#0f0f10]">
+          <h3 className="font-hero mx-auto mb-[32px] text-[clamp(26px,5vw,52px)] font-[500] leading-[1.2] tracking-[-0.02em] text-[#0f0f10]">
             The silence of a missed call isn't an operational flaw. It's a clinical failure disguised as a busy day.
           </h3>
         </div>
 
-        <div className="mx-auto text-center" style={{ maxWidth: '620px' }}>
+        <div className="mx-auto max-w-full md:max-w-[620px] text-center">
           <p className="font-body mx-auto text-[17px] font-[400] leading-[1.7] text-[#6b7280]">
             Every day, modern practices lose revenue not because of poor care, but because of poor capture. The margins
             of your schedule are bleeding out in voicemails, abandoned forms, and unreturned texts.
@@ -373,7 +423,7 @@ function MechanismSection() {
 
   return (
     <section id="mechanism" style={{ scrollMarginTop: 'var(--header-height)' }} className="w-full bg-white">
-      <div className="mx-auto max-w-[1440px] px-[31px] py-[100px]">
+      <div className="mx-auto max-w-[1440px] px-[24px] md:px-[40px] lg:px-[80px] py-[100px]">
           <div className="w-full">
           <div className="mb-[16px]">
             <span className="font-mono-ui text-[12px] font-[500] tracking-[0.12em] uppercase text-[#b5895a]">THE MECHANISM</span>
@@ -389,9 +439,9 @@ function MechanismSection() {
               <div className="border-t border-[#eceff3]" />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-[28px] items-start">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[28px] items-start">
               {cards.map((c, i) => (
-                <div key={i} className="flex flex-col items-start">
+                <div key={i} className="flex flex-col items-start max-[479px]:py-[20px] max-[479px]:px-[16px]">
                   <div className="w-full flex justify-start z-10">
                     <div className="inline-flex items-center justify-center w-[52px] h-[52px] rounded-[8px] border border-[#e5e7eb] bg-white mb-[24px] text-[#0f0f10] shadow-[0_6px_18px_rgba(15,23,42,0.04)]">
                       {c.icon}
@@ -420,10 +470,10 @@ function MechanismSection() {
 function AutomatedCalendarSection() {
   return (
     <section className="w-full bg-[#FAFAFA]">
-      <div className="mx-auto max-w-[1440px] px-[31px] py-[80px]">
-        <div className="flex flex-col md:flex-row items-center gap-[60px]">
+      <div className="mx-auto max-w-[1440px] px-[24px] md:px-[40px] lg:px-[80px] py-[80px]">
+        <div className="flex flex-col md:flex-row items-center gap-[40px] md:gap-[32px] lg:gap-[60px]">
           <div className="w-full md:w-[45%]">
-            <div className="bg-white border border-[#e5e7eb] rounded-[14px] px-[24px] py-[28px] shadow-[0_2px_20px_rgba(0,0,0,0.05)]">
+            <div className="bg-white border border-[#e5e7eb] rounded-[14px] px-[20px] md:px-[22px] lg:px-[24px] py-[24px] md:py-[26px] lg:py-[28px] shadow-[0_2px_20px_rgba(0,0,0,0.05)] max-w-full">
               <div className="flex items-center justify-between mb-[24px]">
                 <div className="font-body text-[15px] font-[600] text-[#0f0f10]">Calendar Synchronization</div>
 
@@ -433,17 +483,17 @@ function AutomatedCalendarSection() {
               </div>
 
               <div className="flex flex-col gap-[10px]">
-                <div className="flex items-center justify-between border border-[#e5e7eb] rounded-[8px] px-[16px] py-[14px] bg-white">
+                <div className="flex items-center justify-between border border-[#e5e7eb] rounded-[8px] px-[14px] lg:px-[16px] py-[12px] lg:py-[14px] bg-white">
                   <div className="font-body text-[14px] font-[400] text-[#374151]">Tuesday, 9:00 AM</div>
                   <div className="font-body text-[14px] text-[#9ca3af] line-through">Unavailable</div>
                 </div>
 
-                <div className="flex items-center justify-between border border-[#c9a97a] rounded-[8px] px-[16px] py-[14px] bg-[#fffaf5]">
+                <div className="flex items-center justify-between border border-[#c9a97a] rounded-[8px] px-[14px] lg:px-[16px] py-[12px] lg:py-[14px] bg-[#fffaf5]">
                   <div className="font-body text-[14px] font-[500] text-[#b5895a]">Tuesday, 10:30 AM</div>
                   <div className="font-body text-[14px] font-[700] text-[#0f0f10]">Auto-Booked</div>
                 </div>
 
-                <div className="flex items-center justify-between border border-[#e5e7eb] rounded-[8px] px-[16px] py-[14px] bg-white">
+                <div className="flex items-center justify-between border border-[#e5e7eb] rounded-[8px] px-[14px] lg:px-[16px] py-[12px] lg:py-[14px] bg-white">
                   <div className="font-body text-[14px] font-[400] text-[#374151]">Tuesday, 11:15 AM</div>
                   <div className="font-body text-[14px] text-[#9ca3af] line-through">Unavailable</div>
                 </div>
@@ -530,10 +580,10 @@ function StatsSection() {
     <section id="results" style={{ scrollMarginTop: 'var(--header-height)' }} className="relative w-full bg-[#0a0a0a] text-white overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" style={{ background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.015) 2px, rgba(255,255,255,0.015) 4px)' }} />
 
-      <div ref={ref} className="mx-auto relative max-w-[1440px] px-[31px] py-[120px]">
+      <div ref={ref} className="mx-auto relative max-w-[1440px] px-[24px] md:px-[40px] lg:px-[80px] py-[120px]">
         <div className="grid grid-cols-1 md:grid-cols-3 md:divide-x md:divide-[rgba(255,255,255,0.08)]">
-          <div className="flex flex-col items-start px-0 py-0 md:px-[72px]">
-            <div style={{ textShadow: '0 0 80px rgba(201,169,122,0.15)' }} className="font-hero text-[clamp(64px,8vw,100px)] font-[800] leading-[1] tracking-[-0.03em]">
+          <div className="flex flex-col items-start px-0 py-[48px] border-b border-[rgba(255,255,255,0.08)] last:border-b-0 md:py-0 md:border-b-0 md:px-[32px] lg:px-[72px]">
+            <div style={{ textShadow: '0 0 80px rgba(201,169,122,0.15)' }} className="font-hero text-[clamp(58px,12vw,84px)] md:text-[clamp(56px,7vw,84px)] lg:text-[clamp(64px,8vw,100px)] font-[800] leading-[1] tracking-[-0.03em]">
               <span className="text-white">{val1}</span>
               <span className="text-[#c9a97a]">%</span>
             </div>
@@ -548,8 +598,8 @@ function StatsSection() {
             </div>
           </div>
 
-          <div className="flex flex-col items-start px-0 py-0 md:px-[72px]">
-            <div style={{ textShadow: '0 0 80px rgba(201,169,122,0.15)' }} className="font-hero text-[clamp(64px,8vw,100px)] font-[800] leading-[1] tracking-[-0.03em]">
+          <div className="flex flex-col items-start px-0 py-[48px] border-b border-[rgba(255,255,255,0.08)] last:border-b-0 md:py-0 md:border-b-0 md:px-[32px] lg:px-[72px]">
+            <div style={{ textShadow: '0 0 80px rgba(201,169,122,0.15)' }} className="font-hero text-[clamp(58px,12vw,84px)] md:text-[clamp(56px,7vw,84px)] lg:text-[clamp(64px,8vw,100px)] font-[800] leading-[1] tracking-[-0.03em]">
               <span className="text-white">&lt;{Math.round(val2)}</span>
               <span className="text-[#c9a97a]">m</span>
             </div>
@@ -564,8 +614,8 @@ function StatsSection() {
             </div>
           </div>
 
-          <div className="flex flex-col items-start px-0 py-0 md:px-[72px]">
-            <div style={{ textShadow: '0 0 80px rgba(201,169,122,0.15)' }} className="font-hero text-[clamp(64px,8vw,100px)] font-[800] leading-[1] tracking-[-0.03em]">
+          <div className="flex flex-col items-start px-0 py-[48px] border-b border-[rgba(255,255,255,0.08)] last:border-b-0 md:py-0 md:border-b-0 md:px-[32px] lg:px-[72px]">
+            <div style={{ textShadow: '0 0 80px rgba(201,169,122,0.15)' }} className="font-hero text-[clamp(58px,12vw,84px)] md:text-[clamp(56px,7vw,84px)] lg:text-[clamp(64px,8vw,100px)] font-[800] leading-[1] tracking-[-0.03em]">
               <span className="text-white">{val3.toFixed(1)}</span>
               <span className="text-[#c9a97a]">x</span>
             </div>
@@ -588,8 +638,8 @@ function StatsSection() {
 function TestimonialSection() {
   return (
     <section className="w-full bg-white">
-      <div className="mx-auto max-w-[860px] px-[31px] py-[120px] text-center">
-        <div className="font-hero text-[clamp(32px,3vw,52px)] font-[500] leading-[1.2] tracking-[-0.02em] text-[#0f0f10] mb-[48px]">
+      <div className="mx-auto w-full max-w-[860px] px-[24px] md:px-[40px] lg:px-[80px] py-[80px] md:py-[100px] lg:py-[120px] text-center">
+        <div className="font-hero text-[clamp(26px,4vw,52px)] font-[500] leading-[1.2] tracking-[-0.02em] text-[#0f0f10] mb-[48px]">
           "Velocity fundamentally changed our unit economics. We thought we had a lead volume problem. We actually had a capture problem."
         </div>
 
@@ -607,9 +657,9 @@ function TestimonialSection() {
 function TestimonialCardsSection() {
   return (
     <section className="w-full bg-white mlr-auto">
-      <div className="mx-auto max-w-[1520px] px-[31px] pt-0 pb-[100px]">
+      <div className="mx-auto max-w-[1520px] px-[24px] md:px-[40px] lg:px-[80px] pt-0 pb-[100px]">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-[24px]">
-          <div className="border border-[#e5e7eb] rounded-[12px] p-[40px] min-h-[260px] flex flex-col justify-between">
+          <div className="border border-[#e5e7eb] rounded-[12px] px-[24px] py-[28px] md:p-[28px] lg:p-[40px] min-h-[260px] flex flex-col justify-between max-w-full">
             <div className="text-[16px] font-body font-[400] leading-[1.75] text-[#374151] mb-[32px]">
               "Most healthcare SaaS feels like a toy. Velocity feels like a clinical instrument. It runs quietly in the background, and every Monday I look at a dashboard showing tens of thousands in recovered revenue."
             </div>
@@ -620,7 +670,7 @@ function TestimonialCardsSection() {
             </div>
           </div>
 
-          <div className="border border-[#e5e7eb] rounded-[12px] p-[40px] min-h-[260px] flex flex-col justify-between">
+          <div className="border border-[#e5e7eb] rounded-[12px] px-[24px] py-[28px] md:p-[28px] lg:p-[40px] min-h-[260px] flex flex-col justify-between max-w-full">
             <div className="text-[16px] font-body font-[400] leading-[1.75] text-[#374151] mb-[32px]">
               "We were losing patients to competitors simply because they answered the phone faster. Velocity leveled the playing field instantly. The AI voice is so natural, patients don't even realize they're talking to a system until they show up."
             </div>
@@ -641,7 +691,7 @@ function FAQAccordionSection() {
 
   return (
     <section id="faq" style={{ scrollMarginTop: 'var(--header-height)' }} className="w-full bg-[#fafafa]">
-      <div className="mx-auto max-w-[760px] px-[18px] py-[100px] sm:px-[31px]">
+      <div className="mx-auto w-full max-w-[760px] px-[20px] py-[80px] md:px-[40px] md:py-[100px]">
         <h2 className="mb-[56px] text-center font-hero text-[clamp(28px,3.5vw,44px)] font-[700] tracking-[-0.02em] text-[#0f0f10]">
           Rigorous Evaluation
         </h2>
@@ -657,11 +707,11 @@ function FAQAccordionSection() {
               >
                 <button
                   type="button"
-                  className="flex w-full items-center justify-between gap-[16px] px-[18px] py-[20px] text-left sm:px-[28px] sm:py-[24px]"
+                  className="flex w-full items-center justify-between gap-[16px] px-[18px] py-[20px] text-left md:px-[28px] md:py-[24px]"
                   aria-expanded={isOpen}
                   onClick={() => setOpenIndex(isOpen ? null : index)}
                 >
-                  <span className="font-body text-[16px] font-[500] leading-[1.5] text-[#0f0f10]">
+                  <span className="font-body text-[15px] md:text-[16px] font-[500] leading-[1.5] text-[#0f0f10]">
                     {item.question}
                   </span>
 
@@ -676,8 +726,8 @@ function FAQAccordionSection() {
                   className="overflow-hidden transition-[max-height] duration-300 ease-in-out"
                   style={{ maxHeight: isOpen ? '220px' : '0px' }}
                 >
-                  <div className="mx-[18px] mb-[20px] border-t border-[#f3f4f6] pt-[16px] sm:mx-[28px] sm:mb-[24px]">
-                    <p className="font-body text-[15px] font-[400] leading-[1.7] text-[#6b7280]">
+                  <div className="mx-[18px] mb-[20px] border-t border-[#f3f4f6] pt-[16px] md:mx-[28px] md:mb-[24px]">
+                    <p className="font-body text-[14px] md:text-[15px] font-[400] leading-[1.7] text-[#6b7280]">
                       {item.answer}
                     </p>
                   </div>
@@ -695,18 +745,18 @@ function FinalCtaFooterSection() {
   return (
     <div className="bg-[#0a0a0a] isolate">
       <section className="w-full bg-[#0a0a0a]">
-        <div className="mx-auto flex max-w-[800px] flex-col items-center gap-[32px] px-[18px] py-[140px] text-center sm:px-[31px]">
-          <h2 className="font-hero text-[clamp(38px,6vw,72px)] font-[600] leading-[1.1] tracking-[-0.03em] text-white">
+        <div className="mx-auto flex max-w-[800px] flex-col items-center gap-[32px] px-[24px] md:px-[40px] lg:px-[80px] py-[100px] text-center">
+          <h2 className="font-hero text-[clamp(32px,6vw,72px)] font-[600] leading-[1.1] tracking-[-0.03em] text-white">
             Stop losing what you've already earned.
           </h2>
 
-          <p className="mx-auto max-w-[560px] font-body text-[18px] font-[400] leading-[1.65] text-[rgba(255,255,255,0.45)]">
+          <p className="mx-auto max-w-[560px] font-body text-[16px] md:text-[18px] font-[400] leading-[1.65] text-[rgba(255,255,255,0.45)]">
             Deploy the intelligence that captures every opportunity in the margins of your practice.
           </p>
 
           <Link
             href="#"
-            className="mt-[8px] inline-flex items-center gap-[8px] rounded-[8px] bg-white px-[40px] py-[18px] font-body text-[16px] font-[600] text-[#0f0f10] transition-colors duration-200 hover:bg-[#f3f4f6]"
+            className="mt-[8px] inline-flex min-h-[44px] w-full max-w-[320px] items-center justify-center gap-[8px] rounded-[8px] bg-white px-[40px] py-[18px] font-body text-[16px] font-[600] text-[#0f0f10] transition-colors duration-200 hover:bg-[#f3f4f6] md:w-auto md:max-w-none"
           >
             Begin the Assessment →
           </Link>
@@ -714,8 +764,8 @@ function FinalCtaFooterSection() {
       </section>
 
       <footer className="w-full border-t border-[rgba(255,255,255,0.08)] bg-[#0a0a0a]">
-        <div className="mx-auto flex max-w-[1440px] flex-col items-center gap-[20px] px-[18px] py-[32px] text-center sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-[16px] sm:px-[31px] sm:text-left">
-          <Link href="/" className="inline-flex items-center gap-[10px]">
+        <div className="mx-auto flex max-w-[1440px] flex-col items-center gap-[20px] px-[24px] py-[32px] text-center sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-x-[16px] sm:gap-y-[14px] sm:text-left md:flex-nowrap md:px-[40px] lg:px-[80px]">
+          <Link href="/" className="order-1 inline-flex items-center gap-[10px] md:order-1">
             <Image
               src="/velocity-logo.webp"
               alt="Velocity"
@@ -728,7 +778,7 @@ function FinalCtaFooterSection() {
             </span>
           </Link>
 
-          <nav className="flex flex-wrap items-center justify-center gap-x-[32px] gap-y-[12px]">
+          <nav className="order-2 flex w-full flex-wrap items-center justify-center gap-x-[24px] gap-y-[16px] sm:order-3 md:order-2 md:w-auto md:flex-1 md:gap-x-[32px] md:gap-y-[12px]">
             <Link href="#" className="font-mono-ui text-[11px] font-[400] uppercase tracking-[0.1em] text-[rgba(255,255,255,0.79)]  transition-colors duration-200 hover:text-[rgba(255,255,255,0.7)]">
               Privacy
             </Link>
@@ -743,7 +793,7 @@ function FinalCtaFooterSection() {
             </Link>
           </nav>
 
-          <div className="font-mono-ui text-[11px] font-[400] tracking-[0.05em] whitespace-nowrap text-[rgba(255,255,255,0.79)] ">
+          <div className="order-3 sm:order-2 md:order-3 font-mono-ui text-[11px] font-[400] tracking-[0.05em] whitespace-nowrap text-[rgba(255,255,255,0.79)] ">
             © 2026 Velocity Health Intelligence, Inc.
           </div>
         </div>
