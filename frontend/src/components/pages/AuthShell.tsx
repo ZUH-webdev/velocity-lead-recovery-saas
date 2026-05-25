@@ -1,9 +1,9 @@
 "use client";
 
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { Sparkles } from 'lucide-react';
 import { Globe } from '../ui/Globe';
-import { dmSans } from './authFonts';
 
 interface StatItem {
   label: string;
@@ -23,10 +23,10 @@ export default function AuthShell({ children, stats = [] }: Props) {
       <div className="relative grid min-h-screen lg:grid-cols-[1.08fr_0.92fr]">
         <section className="relative overflow-hidden border-b border-white/10 bg-[#030712] px-6 py-6 sm:px-8 lg:border-b-0 lg:border-r lg:border-white/10 lg:px-12 lg:py-6">
           <div className="relative flex flex-col">
-            <div className="flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-3 self-start">
               <img src="/velocity-logo.webp" alt="Velocity" className="h-9 w-auto" />
               <span className="text-[15px] font-semibold tracking-[0.26em] text-white">Velocity</span>
-            </div>
+            </Link>
 
             <div className="flex items-start justify-start pt-6 lg:pt-8">
               <motion.div
@@ -48,7 +48,7 @@ export default function AuthShell({ children, stats = [] }: Props) {
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: 'easeOut' }}
-                className={`${dmSans.className} w-full max-w-[560px] rounded-[34px] border border-slate-200/80 bg-white p-6 text-slate-900 shadow-[0_30px_120px_rgba(15,23,42,0.18)] backdrop-blur-xl sm:p-8 lg:p-10`}
+                className="font-body w-full max-w-[560px] rounded-[34px] border border-slate-200/80 bg-white p-6 text-slate-900 shadow-[0_30px_120px_rgba(15,23,42,0.18)] backdrop-blur-xl sm:p-8 lg:p-10"
           >
             {children}
           </motion.div>

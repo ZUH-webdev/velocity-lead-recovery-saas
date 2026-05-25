@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { ArrowRight, CheckCircle2, MailWarning, ShieldCheck } from 'lucide-react';
 import { authService } from '../../src/services/authService';
 import AuthShell from '../../src/components/pages/AuthShell';
-import { dmSans, dmSerif } from '../../src/components/pages/authFonts';
 
 interface Banner {
   type: 'error' | 'success' | 'info';
@@ -65,7 +64,7 @@ export default function VerifyClient({ token }: Props) {
 
   return (
     <AuthShell stats={[]}>
-      <div className={dmSans.className}>
+      <div className="font-body">
         <div className="flex items-center justify-between">
           <div className="grid h-12 w-12 place-items-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-[0_12px_30px_rgba(15,23,42,0.08)]">
             <StatusIcon className="h-5 w-5" />
@@ -76,7 +75,7 @@ export default function VerifyClient({ token }: Props) {
         </div>
 
         <div className="mt-8">
-          <h1 className={`${dmSerif.className} mt-4 whitespace-nowrap text-[clamp(2.35rem,5vw,3.75rem)] font-normal leading-[0.9] tracking-[-0.05em] text-slate-950`}>
+          <h1 className="font-hero mt-4 whitespace-nowrap text-[clamp(2.35rem,5vw,3.75rem)] font-[800] leading-[0.95] tracking-[-0.03em] text-slate-950">
             Verify your account.
           </h1>
           <p className="mt-4 max-w-[34rem] text-[15px] leading-8 text-slate-500">
