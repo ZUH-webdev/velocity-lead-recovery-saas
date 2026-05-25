@@ -97,7 +97,7 @@ function shouldAttemptTokenRefresh(originalRequest: AuthRequestConfig, status?: 
     return true;
   }
 
-  return !/^\/auth\/(login|register|refresh|logout|verify)(?:[/?#]|$)/.test(requestUrl);
+  return !/^\/auth\/(login|register|refresh|logout|verify|verify-email)(?:[/?#]|$)/.test(requestUrl);
 }
 
 async function requestRefreshToken(): Promise<AuthTokenResponse> {

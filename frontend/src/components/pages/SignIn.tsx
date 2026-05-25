@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowRight, Eye, EyeOff, Mail, Shield,} from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { dmSans, dmSerif } from './authFonts';
 import AuthShell from './AuthShell';
 
 interface Banner {
@@ -56,7 +55,7 @@ export default function SignIn() {
 
   return (
     <AuthShell stats={stats}>
-      <div className={dmSans.className}>
+      <div className="font-body">
       <div className="flex items-center justify-between">
         <div className="grid h-12 w-12 place-items-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-[0_12px_30px_rgba(15,23,42,0.08)]">
           <Shield className="h-5 w-5" />
@@ -71,7 +70,7 @@ export default function SignIn() {
           <Sparkles className="h-4 w-4 text-[#388BFD]" />
           Premium login
         </div> */}
-        <h1 className={`${dmSerif.className} mt-4 whitespace-nowrap text-[clamp(2.35rem,5vw,3.75rem)] font-normal leading-[0.9] tracking-[-0.05em] text-slate-950`}>
+        <h1 className="font-hero mt-4 whitespace-nowrap text-[clamp(2.35rem,5vw,3.75rem)] font-[800] leading-[0.95] tracking-[-0.03em] text-slate-950">
           Welcome back.
         </h1>
         {/* <p className="mt-4 max-w-[34rem] text-[15px] leading-8 text-slate-500">

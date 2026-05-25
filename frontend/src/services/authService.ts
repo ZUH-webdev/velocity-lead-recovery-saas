@@ -1,6 +1,7 @@
 import type { AxiosError } from 'axios';
 import { apiClient, extractAuthData, getAuth, postAuth, getAuthTokenStorage, type AuthRequestConfig } from '../lib/apiClient';
 import type {
+  AuthRegisterResponse,
   AuthMessageResponse,
   AuthTokenResponse,
   AuthUserResponse,
@@ -35,10 +36,9 @@ function syncStoredTokens(payload: AuthTokenResponse): void {
   });
 }
 
-export async function register(input: RegisterRequest, config?: AuthRequestConfig): Promise<AuthTokenResponse> {
+export async function register(input: RegisterRequest, config?: AuthRequestConfig): Promise<AuthRegisterResponse> {
   try {
-    const payload = await postAuth<RegisterRequest, AuthTokenResponse>('/auth/register', input, config);
-    syncStoredTokens(payload);
+    const payload = await postAuth<RegisterRequest, AuthRegisterResponse>('/auth/register', input, config);
     return payload;
   } catch (error) {
     rethrowAuthError(error);
@@ -65,12 +65,11 @@ export async function me(config?: AuthRequestConfig): Promise<AuthUserResponse> 
 
 export async function verify(input: VerifyRequest, config?: AuthRequestConfig): Promise<AuthUserResponse> {
   try {
-    const response = await apiClient.post<AuthUserResponse>('/auth/verify', { refreshToken: input.refreshToken }, {
-      ...config,
-      params: { ...(config?.params || {}), token: input.token },
-    });
+    const response = await apiClient.post<AuthTokenResponse>('/auth/verify-email', { token: input.token }, config);
+    const payload = extractAuthData<AuthTokenResponse>(response.data);
+    syncStoredTokens(payload);
 
-    return extractAuthData<AuthUserResponse>(response.data);
+    return { user: payload.user || null };
   } catch (error) {
     rethrowAuthError(error);
   }

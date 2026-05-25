@@ -1,4 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Google+Sans+Flex:wght@400;500;700;800&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -7,14 +9,34 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    background: #ffffff;
   }
 
   body {
-    @apply min-h-screen bg-[#e0e5ec] overflow-x-hidden text-slate-950 antialiased;
+    @apply min-h-screen overflow-x-hidden text-slate-950 antialiased;
+    font-family: var(--font-body);
+    background: #ffffff;
   }
 
   .auth-shell {
-    font-family: 'Google Sans Flex', 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-family: var(--font-body);
+  }
+
+  .font-heading {
+    font-family: var(--font-heading);
+  }
+
+  .font-body {
+    font-family: var(--font-body);
+  }
+
+  .font-mono-ui {
+    font-family: var(--font-mono);
+  }
+
+  /* Hero specific font utility using Space Grotesk */
+  .font-hero {
+    font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
   }
 
   @media (max-width: 640px) {
@@ -31,6 +53,10 @@
 }
 
 :root {
+  --font-heading: 'Cabinet Grotesk', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --header-height: 96px;
   --neu-bg: #e0e5ec;
   --neu-dark: #bec3cf;
   --neu-light: #ffffff;
@@ -152,4 +178,10 @@
     background: var(--neu-dark);
     border-radius: 3px;
   }
+}
+
+/* Header scrolled state for sticky glass effect */
+header.scrolled {
+  box-shadow: 0 1px 12px rgba(0, 0, 0, 0.07);
+  background: rgba(255, 255, 255, 0.88);
 }

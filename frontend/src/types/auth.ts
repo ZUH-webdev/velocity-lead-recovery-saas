@@ -36,6 +36,9 @@ export interface RegisterRequest {
   fullName: string;
   email: string;
   password: string;
+  companyName: string;
+  phone?: string;
+  industry?: string;
 }
 
 export interface LoginRequest {
@@ -45,7 +48,6 @@ export interface LoginRequest {
 
 export interface VerifyRequest {
   token: string;
-  refreshToken: string;
 }
 
 export interface RefreshRequest {
@@ -63,6 +65,13 @@ export interface AuthUserResponse {
 export interface AuthTokenResponse extends AuthUserResponse {
   accessToken: string | null;
   refreshToken?: string | null;
+}
+
+export interface AuthRegisterResponse extends AuthUserResponse {
+  verificationRequired: boolean;
+  verificationToken: string;
+  verificationLink: string;
+  message: string;
 }
 
 export interface AuthMessageResponse {

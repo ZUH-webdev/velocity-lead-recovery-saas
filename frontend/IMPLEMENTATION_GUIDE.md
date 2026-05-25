@@ -471,8 +471,8 @@ import { FixedSizeList as List } from 'react-window';
 
 3. **Environment Variables:** Never expose API keys
    ```
-   VITE_API_URL=https://api.velocity.com (public)
-   VITE_API_KEY is stored server-side (never in frontend)
+  NEXT_PUBLIC_API_URL=https://api.velocity.com (public)
+  API keys remain server-side and are never exposed to the frontend
    ```
 
 ---

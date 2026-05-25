@@ -3,26 +3,14 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, Building2, Eye, EyeOff, HeartPulse, Lock, Mail, Phone, User } from 'lucide-react';
+import { ArrowRight, Building2, Eye, EyeOff, HeartPulse, Lock, Mail, User } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { dmSans, dmSerif } from './authFonts';
 import AuthShell from './AuthShell';
 
 interface Banner {
   type: 'error' | 'success' | 'info';
   message: string;
 }
-
-const industryOptions = [
-  'Medical Practice',
-  'Urgent Care',
-  'Dental Clinic',
-  'Physical Therapy',
-  'Behavioral Health',
-  'Specialty Clinic',
-  'Home Health',
-  'Other Clinical Practice',
-];
 
 const stats = [
   { label: 'Follow-up coverage', value: '98%', subtext: 'AI outreach across the workday' },
@@ -35,8 +23,6 @@ export default function SignUp() {
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [companyName, setCompanyName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [industry, setIndustry] = useState(industryOptions[0]);
   const [banner, setBanner] = useState<Banner | null>(null);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -70,17 +56,16 @@ export default function SignUp() {
     if (!validateForm()) return;
     setLoading(true);
     try {
-      await signUp({
+      const result = await signUp({
         email: email.trim(),
         password,
         fullName: fullName.trim(),
         companyName: companyName.trim(),
-        phone: phone.trim(),
-        industry,
         remember: true,
       });
-      setBanner({ type: 'success', message: 'Workspace created successfully. Redirecting to your dashboard.' });
-      setTimeout(() => router.replace('/dashboard'), 800);
+      const target = result?.verificationLink || (result?.verificationToken ? `/verify?token=${encodeURIComponent(result.verificationToken)}` : '/verify');
+      setBanner({ type: 'success', message: 'Account created. Check your email to verify your account.' });
+      setTimeout(() => router.replace(target), 800);
     } catch (err: unknown) {
       setBanner({ type: 'error', message: err instanceof Error ? err.message : 'Failed to create account.' });
     } finally {
@@ -94,7 +79,7 @@ export default function SignUp() {
 
   return (
     <AuthShell stats={stats}>
-      <div className={dmSans.className}>
+      <div className="font-body">
       <div className="flex items-center justify-between">
         <div className="grid h-12 w-12 place-items-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-[0_12px_30px_rgba(15,23,42,0.08)]">
           <HeartPulse className="h-5 w-5" />
@@ -109,7 +94,7 @@ export default function SignUp() {
           <Sparkles className="h-4 w-4 text-[#388BFD]" />
           Premium onboarding
         </div> */}
-        <h1 className={`${dmSerif.className} mt-4 whitespace-nowrap text-[clamp(2.35rem,5vw,3.75rem)] font-normal leading-[0.9] tracking-[-0.05em] text-slate-950`}>
+        <h1 className="font-hero mt-4 whitespace-nowrap text-[clamp(2.35rem,5vw,3.75rem)] font-[800] leading-[0.95] tracking-[-0.03em] text-slate-950">
           Create an account.
         </h1>
         {/* <p className="mt-4 max-w-[34rem] text-[15px] leading-8 text-slate-500">
@@ -158,11 +143,10 @@ export default function SignUp() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="space-y-[6px]">
-            <label className="block text-[10px] font-semibold uppercase tracking-[0.26em] text-slate-500">Company name</label>
-            <div className="relative">
-              <Building2 className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+        <div className="space-y-[6px]">
+          <label className="block text-[10px] font-semibold uppercase tracking-[0.26em] text-slate-500">Company name</label>
+          <div className="relative">
+            <Building2 className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
                 value={companyName}
@@ -173,39 +157,6 @@ export default function SignUp() {
                 className="h-12 w-full rounded-[18px] border border-slate-200 bg-white py-3 pl-11 pr-4 text-[15px] text-slate-900 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-[border-color,box-shadow,transform] duration-150 placeholder:text-slate-400 focus:border-[#388BFD] focus:outline-none focus:ring-4 focus:ring-[#388BFD]/10"
               />
             </div>
-          </div>
-
-          <div className="space-y-[6px]">
-            <label className="block text-[10px] font-semibold uppercase tracking-[0.26em] text-slate-500">Phone</label>
-            <div className="relative">
-              <Phone className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-              <input
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="(555) 123-4567"
-                disabled={loading}
-                autoComplete="tel"
-                className="h-12 w-full rounded-[18px] border border-slate-200 bg-white py-3 pl-11 pr-4 text-[15px] text-slate-900 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-[border-color,box-shadow,transform] duration-150 placeholder:text-slate-400 focus:border-[#388BFD] focus:outline-none focus:ring-4 focus:ring-[#388BFD]/10"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-[6px]">
-          <label className="block text-[10px] font-semibold uppercase tracking-[0.26em] text-slate-500">Industry</label>
-          <select
-            value={industry}
-            onChange={(e) => setIndustry(e.target.value)}
-            disabled={loading}
-            className="h-12 w-full rounded-[18px] border border-slate-200 bg-white px-4 text-[15px] text-slate-900 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-[border-color,box-shadow,transform] duration-150 focus:border-[#388BFD] focus:outline-none focus:ring-4 focus:ring-[#388BFD]/10"
-          >
-            {industryOptions.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
         </div>
 
         <div className="space-y-[6px]">
