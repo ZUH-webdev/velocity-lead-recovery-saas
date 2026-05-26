@@ -9,7 +9,7 @@ import { prisma } from "./config/prisma";
 import { getRedisClient } from "./config/redis";
 
 import authRoutes from "./routes/auth.routes";
-import businessRoutes from "./routes/business.routes";
+import tenantRouter from "./routes/tenant.routes";
 import leadsRoutes from "./routes/leads.routes";
 import smsRoutes from "./routes/sms.routes";
 import calendarRoutes from "./routes/calendar.routes";
@@ -31,9 +31,7 @@ const STATUS_COLOR = (status: number) => {
   return chalk.green(status);
 };
 
-morgan.token("status-colored", (req, res) =>
-  STATUS_COLOR(res.statusCode)
-);
+morgan.token("status-colored", (req, res) => STATUS_COLOR(res.statusCode));
 morgan.token("method-colored", (req) => {
   const m = req.method ?? "";
   return chalk.bold.white(m.padEnd(6));
@@ -46,7 +44,7 @@ const prodFormat = ":method :url :status :response-time ms";
 app.use(
   morgan(process.env.NODE_ENV === "production" ? prodFormat : devFormat, {
     skip: (req) => req.url === "/api/health", // don't pollute logs with health pings
-  })
+  }),
 );
 
 // ── Routes ────────────────────────────────────────────────────────────────────
@@ -55,7 +53,14 @@ app.get("/", (req, res) => {
   res.json({
     success: true,
     message: "Velocity Lead Recovery API",
-    endpoints: ["/api/health", "/api/auth", "/api/business", "/api/leads", "/api/sms", "/api/calendar"],
+    endpoints: [
+      "/api/health",
+      "/api/auth",
+      "/api/business",
+      "/api/leads",
+      "/api/sms",
+      "/api/calendar",
+    ],
   });
 });
 
@@ -81,7 +86,7 @@ app.get("/api/health", async (req, res) => {
 });
 
 app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/business", businessRoutes);
+app.use("/api/v1/tenant", tenantRouter);
 app.use("/api/v1/leads", leadsRoutes);
 app.use("/api/v1/sms", smsRoutes);
 app.use("/api/v1/calendar", calendarRoutes);

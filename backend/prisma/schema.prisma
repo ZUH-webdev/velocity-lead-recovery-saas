@@ -8,7 +8,7 @@ generator client {
   previewFeatures = ["postgresqlExtensions"]
 }
 
-  datasource db {
+datasource db {
   provider   = "postgresql"
   extensions = [citext, vector]
 }
@@ -143,6 +143,14 @@ enum AuditActorType {
   API_KEY
 }
 
+enum OnboardingStep {
+  PROFILE
+  PHONE
+  PERSONA
+  KNOWLEDGE
+  COMPLETE
+}
+
 // ================================================================
 // TENANT
 // ================================================================
@@ -155,11 +163,24 @@ model Tenant {
   phone        String
   email        String
   websiteURL   String?
+  address      String?
   timezone     String   @default("UTC")
   workingHours Json?
   isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  // ── Onboarding ──────────────────────────────────────────────
+  onboardingStep       OnboardingStep @default(PROFILE)
+  isLive               Boolean        @default(false)
+
+  // ── Twilio ──────────────────────────────────────────────────
+  twilioPhoneNumber    String?
+  twilioPhoneNumberSid String?
+
+  // ── Vapi ────────────────────────────────────────────────────
+  vapiAssistantId      String?
+  vapiPhoneNumberId    String?
 
   members          TenantMember[]
   roleDefinitions  RoleDefinition[]
@@ -179,9 +200,30 @@ model Tenant {
   apiKeys          TenantApiKey[]
   webhookEndpoints WebhookEndpoint[]
   auditLogs        AuditLog[]
+  agentPersona     AgentPersona?
 
   @@index([isActive])
   @@index([createdAt])
+}
+
+// ================================================================
+// AGENT PERSONA
+// ================================================================
+
+model AgentPersona {
+  id              String   @id @default(uuid()) @db.Uuid
+  tenantId        String   @unique @db.Uuid
+  name            String   // e.g. "Sarah"
+  voice           String   // Vapi voice ID
+  language        String   @default("en")
+  greeting        String   // First thing the agent says
+  systemPrompt    String   // Injected into Vapi
+  escalationRules Json     // Keywords that trigger CRITICAL
+  fallbackMessage String   // When AI doesn't know the answer
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 }
 
 // ================================================================
@@ -293,7 +335,7 @@ model Permission {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  tenant          Tenant                    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant          Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   roleLinks       RolePermission[]
   memberOverrides MemberPermissionOverride[]
 
@@ -316,7 +358,7 @@ model RolePermission {
 model TenantMember {
   id           String       @id @default(uuid()) @db.Uuid
   tenantId     String       @db.Uuid
-  userId       String       @db.Uuid
+  userId       String?      @db.Uuid
   roleId       String       @db.Uuid
   status       MemberStatus @default(INVITED)
   jobTitle     String?
@@ -330,14 +372,14 @@ model TenantMember {
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
 
-  tenant                 Tenant                    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  user                   User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  role                   RoleDefinition            @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  tenant                 Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user                   User?                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role                   RoleDefinition             @relation(fields: [roleId], references: [id], onDelete: Restrict)
   permissionOverrides    MemberPermissionOverride[]
-  assignedLeads          Lead[]                    @relation("LeadAssignedTo")
-  escalatedConversations Conversation[]            @relation("ConversationEscalatedTo")
-  messages               Message[]                 @relation("MessageSentByStaff")
-  appointments           Appointment[]             @relation("AppointmentAssignedTo")
+  assignedLeads          Lead[]                     @relation("LeadAssignedTo")
+  escalatedConversations Conversation[]             @relation("ConversationEscalatedTo")
+  messages               Message[]                  @relation("MessageSentByStaff")
+  appointments           Appointment[]              @relation("AppointmentAssignedTo")
 
   @@unique([tenantId, userId])
   @@index([tenantId, status])
@@ -379,8 +421,8 @@ model Lead {
   createdAt          DateTime   @default(now())
   updatedAt          DateTime   @updatedAt
 
-  tenant        Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  assignedTo    TenantMember? @relation("LeadAssignedTo", fields: [assignedToMemberId], references: [id], onDelete: SetNull)
+  tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  assignedTo    TenantMember?  @relation("LeadAssignedTo", fields: [assignedToMemberId], references: [id], onDelete: SetNull)
   conversations Conversation[]
   appointments  Appointment[]
   vapiCalls     VapiCall[]
@@ -558,9 +600,6 @@ model DocumentChunk {
   content        String
   tokenCount     Int?
   embeddingModel String?
-  // NOTE: Run after migrate:
-  // ALTER TABLE "DocumentChunk" ADD COLUMN embedding vector(1536);
-  // CREATE INDEX ON "DocumentChunk" USING hnsw (embedding vector_cosine_ops);
   embedding      Float[]
   metadata       Json?
   createdAt      DateTime @default(now())

@@ -3,14 +3,6 @@ import { HttpResponse } from "../utils/httpResponse";
 import { env } from "../config/env";
 import type { Request, Response, NextFunction } from "express";
 
-declare global {
-  namespace Express {
-    interface Request {
-      userId?: string;
-    }
-  }
-}
-
 export function authenticateToken(
   req: Request,
   res: Response,
