@@ -6,53 +6,36 @@ import { HttpResponse } from "../utils/httpResponse";
 import { z } from "zod";
 import { env } from "../config/env";
 import { sendVerificationEmail } from "../utils/send-mail";
+import {
+  hashToken,
+  AccessTokenPayload,
+  RefreshTokenPayload,
+  generateTokens,
+  refreshExpiresAt,
+} from "../utils/auth";
 
 export const RegisterSchema = z.object({
-  email:    z.string().email(),
+  email: z.string().email(),
   password: z.string().min(8),
   fullName: z.string().min(2),
 });
 
 export const LoginSchema = z.object({
-  email:    z.string().email(),
+  email: z.string().email(),
   password: z.string().min(1),
 });
 
-type AuthTokens = { accessToken: string; refreshToken: string };
-
-interface AccessTokenPayload  { sub: string; type: "access" }
-interface RefreshTokenPayload { sub: string; type: "refresh"; jti: string }
-
-function generateTokens(userId: string): AuthTokens {
-  const jti = crypto.randomUUID();
-
-  const accessToken = jwt.sign(
-    { sub: userId, type: "access" } satisfies AccessTokenPayload,
-    env.ACCESS_TOKEN_SECRET,
-    { expiresIn: env.ACCESS_TOKEN_EXPIRE },
-  );
-
-  const refreshToken = jwt.sign(
-    { sub: userId, type: "refresh", jti } satisfies RefreshTokenPayload,
-    env.REFRESH_TOKEN_SECRET,
-    { expiresIn: env.REFRESH_TOKEN_EXPIRE },
-  );
-
-  return { accessToken, refreshToken };
-}
-
-function hashToken(value: string): string {
-  return crypto.createHash("sha256").update(value).digest("hex");
-}
-
-function refreshExpiresAt(): Date {
-  return new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
-}
-
-async function createSession(userId: string, refreshToken: string): Promise<void> {
+async function createSession(
+  userId: string,
+  refreshToken: string,
+): Promise<void> {
   const { jti } = jwt.decode(refreshToken) as RefreshTokenPayload;
   await prisma.authSession.create({
-    data: { userId, sessionTokenHash: hashToken(jti), expiresAt: refreshExpiresAt() },
+    data: {
+      userId,
+      sessionTokenHash: hashToken(jti),
+      expiresAt: refreshExpiresAt(),
+    },
   });
 }
 
@@ -68,7 +51,10 @@ export class AuthService {
   static async register(body: unknown) {
     const parsed = RegisterSchema.safeParse(body);
     if (!parsed.success) {
-      return HttpResponse.unprocessable("Validation failed", parsed.error.flatten());
+      return HttpResponse.unprocessable(
+        "Validation failed",
+        parsed.error.flatten(),
+      );
     }
 
     const { email, password, fullName } = parsed.data;
@@ -76,22 +62,21 @@ export class AuthService {
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) return HttpResponse.conflict("Email already in use");
 
-    const passwordHash        = await bcrypt.hash(password, 12);
-    const verificationToken   = crypto.randomBytes(32).toString("hex");
-    const verificationExpiry  = new Date(Date.now() + 1000 * 60 * 60 * 24); // 24 h
+    const passwordHash = await bcrypt.hash(password, 12);
+    const verificationToken = crypto.randomBytes(32).toString("hex");
+    const verificationExpiry = new Date(Date.now() + 1000 * 60 * 60 * 24); // 24h
 
-    const user = await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx) => {
       const newUser = await tx.user.create({
         data: { email, fullName },
-        select: { id: true, email: true, fullName: true, createdAt: true },
       });
 
       await tx.authAccount.create({
         data: {
-          userId:            newUser.id,
-          provider:          "credentials",
+          userId: newUser.id,
+          provider: "credentials",
           providerAccountId: newUser.id,
-          profile:           { passwordHash },
+          profile: { passwordHash },
         },
       });
 
@@ -99,12 +84,10 @@ export class AuthService {
         data: {
           email,
           tokenHash: hashToken(verificationToken),
-          purpose:   "EMAIL_VERIFICATION",
+          purpose: "EMAIL_VERIFICATION",
           expiresAt: verificationExpiry,
         },
       });
-
-      return newUser;
     });
 
     await sendVerificationEmail(
@@ -112,17 +95,17 @@ export class AuthService {
       `${env.APP_URL}/auth/verify?token=${verificationToken}`,
     );
 
-    const { accessToken, refreshToken } = generateTokens(user.id);
-    await createSession(user.id, refreshToken);
-
-    return HttpResponse.created("Account created", { user, accessToken, refreshToken });
+    // ← No tokens issued here. User must verify email first.
+    return HttpResponse.created(
+      "Account created. Please check your email to verify your account.",
+    );
   }
 
   static async verifyEmail(token: string) {
     const tokenHash = hashToken(token);
 
-    const record = await prisma.authVerificationToken.findUnique({
-      where: { tokenHash },
+    const record = await prisma.authVerificationToken.findFirst({
+      where: { tokenHash, purpose: "EMAIL_VERIFICATION" },
     });
 
     if (!record || record.purpose !== "EMAIL_VERIFICATION") {
@@ -135,37 +118,60 @@ export class AuthService {
       return HttpResponse.badRequest("Verification token has expired");
     }
 
-    await prisma.$transaction(async (tx) => {
+    const user = await prisma.$transaction(async (tx) => {
       await tx.authVerificationToken.update({
-        where: { tokenHash },
-        data:  { consumedAt: new Date() },
+        where: { tokenHash, purpose: "EMAIL_VERIFICATION" },
+        data: { consumedAt: new Date() },
       });
 
-      await tx.user.update({
+      return tx.user.update({
         where: { email: record.email },
-        data:  { emailVerifiedAt: new Date() },
+        data: { emailVerifiedAt: new Date() },
+        select: { id: true, email: true, fullName: true },
       });
     });
 
-    return HttpResponse.ok("Email verified successfully");
+    // ← Tokens issued here, after email is confirmed.
+    const { accessToken, refreshToken } = generateTokens(user.id);
+    await createSession(user.id, refreshToken);
+
+    return HttpResponse.ok("Email verified successfully", {
+      user,
+      accessToken,
+      refreshToken,
+    });
   }
 
   static async login(body: unknown) {
     const parsed = LoginSchema.safeParse(body);
     if (!parsed.success) {
-      return HttpResponse.unprocessable("Validation failed", parsed.error.flatten());
+      return HttpResponse.unprocessable(
+        "Validation failed",
+        parsed.error.flatten(),
+      );
     }
 
     const { email, password } = parsed.data;
 
     const account = await prisma.authAccount.findFirst({
-      where:   { user: { email }, provider: "credentials" },
-      include: { user: { select: { id: true, email: true, fullName: true, emailVerifiedAt: true } } },
+      where: { user: { email }, provider: "credentials" },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            fullName: true,
+            emailVerifiedAt: true,
+          },
+        },
+      },
     });
 
-    const invalid = () => HttpResponse.unauthorized("Invalid email or password");
+    const invalid = () =>
+      HttpResponse.unauthorized("Invalid email or password");
 
-    if (!account?.profile || typeof account.profile !== "object") return invalid();
+    if (!account?.profile || typeof account.profile !== "object")
+      return invalid();
     const { passwordHash } = account.profile as { passwordHash?: string };
     if (!passwordHash) return invalid();
 
@@ -173,12 +179,14 @@ export class AuthService {
     if (!match) return invalid();
 
     if (!account.user.emailVerifiedAt) {
-      return HttpResponse.forbidden("Please verify your email before logging in");
+      return HttpResponse.forbidden(
+        "Please verify your email before logging in",
+      );
     }
 
     await prisma.user.update({
       where: { id: account.user.id },
-      data:  { lastLoginAt: new Date() },
+      data: { lastLoginAt: new Date() },
     });
 
     const { id, email: userEmail, fullName } = account.user;
@@ -210,7 +218,7 @@ export class AuthService {
 
     await prisma.authSession.update({
       where: { sessionTokenHash: hashToken(payload.jti) },
-      data:  { revokedAt: new Date() },
+      data: { revokedAt: new Date() },
     });
 
     const { accessToken, refreshToken } = generateTokens(payload.sub);
@@ -229,7 +237,7 @@ export class AuthService {
 
     await prisma.authSession.updateMany({
       where: { sessionTokenHash: hashToken(payload.jti) },
-      data:  { revokedAt: new Date() },
+      data: { revokedAt: new Date() },
     });
 
     return HttpResponse.ok("Logged out successfully");
@@ -237,8 +245,14 @@ export class AuthService {
 
   static async me(userId: string) {
     const user = await prisma.user.findUnique({
-      where:  { id: userId },
-      select: { id: true, email: true, fullName: true, createdAt: true, lastLoginAt: true },
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        fullName: true,
+        createdAt: true,
+        lastLoginAt: true,
+      },
     });
 
     if (!user) return HttpResponse.notFound("User not found");

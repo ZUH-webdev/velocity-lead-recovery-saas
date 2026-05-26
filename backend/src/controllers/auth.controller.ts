@@ -15,6 +15,7 @@ export class AuthController {
   static async verifyEmail(req: Request, res: Response, next: NextFunction) {
     try {
       const { token } = req.query as { token?: string };
+      
       if (!token) {
         HttpResponse.badRequest("Verification token required").send(res);
         return;
