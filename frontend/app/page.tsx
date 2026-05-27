@@ -61,7 +61,13 @@ function TopNav() {
     >
       <div className="mx-auto grid max-w-[1440px] grid-cols-[1fr_auto] md:grid-cols-[1fr_auto_1fr] items-center px-[24px] md:px-[40px] lg:px-[80px]">
         <Link href="/" className="flex items-center gap-[12px] justify-self-start">
-          <Image src="/velocity-logo.webp" alt="Velocity" width={28} height={28} priority className="h-[28px] w-[28px] object-contain" />
+       <Image
+              src="/velocity-logo.webp"
+              alt="Velocity"
+              width={22}
+              height={23}
+              className="h-[25px] w-[25px] object-contain brightness-0 "
+            />
           <span className="font-hero text-[24px] font-[800] leading-none tracking-[-0.02em] text-[#111827]">
             VELOCITY
           </span>
@@ -136,14 +142,17 @@ function HeroCard() {
 
       <div className="mt-[20px] space-y-[20px]">
         {feedRows.map((row) => (
-          <div key={row.event} className="grid grid-cols-[84px_1fr_auto] items-center gap-[18px]">
+          <div
+            key={row.event}
+            className="grid grid-cols-[64px_1fr_auto] sm:grid-cols-[84px_1fr_auto] items-start gap-[12px] sm:gap-[18px]"
+          >
             <span className="font-mono-ui text-[12px] font-[400] tracking-[0.08em] text-[#6b7280]">
               {row.time}
             </span>
-            <span className="font-mono-ui text-[12px] font-[400] tracking-[0.08em] text-[#1f2937]">
+            <span className="font-mono-ui text-[12px] font-[400] tracking-[0.08em] text-[#1f2937] break-words whitespace-normal">
               {row.event}
             </span>
-            <span className={`font-mono-ui text-[12px] font-[500] tracking-[0.04em] ${row.tone}`}>
+            <span className={`font-mono-ui text-[12px] font-[500] tracking-[0.04em] ${row.tone} text-right`}> 
               {row.status}
             </span>
           </div>
