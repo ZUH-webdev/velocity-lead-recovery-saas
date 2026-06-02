@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { ArrowRight, Eye, EyeOff, Mail, Shield,} from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
@@ -55,90 +56,77 @@ export default function SignIn() {
 
   return (
     <AuthShell stats={stats}>
-      <div className="font-body">
-      <div className="flex items-center justify-between">
-        <div className="grid h-12 w-12 place-items-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-[0_12px_30px_rgba(15,23,42,0.08)]">
-          <Shield className="h-5 w-5" />
+      <div className="relative font-body">
+        <div className="absolute left-1/2 -translate-x-1/2 -top-10">
+          <Image src="/velocity-logo.webp" alt="Velocity" width={44} height={46} className="object-contain brightness-0" />
         </div>
-        <div className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500">
-          Secure access
-        </div>
-      </div>
 
-      <div className="mt-8">
-        {/* <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400">
-          <Sparkles className="h-4 w-4 text-[#388BFD]" />
-          Premium login
-        </div> */}
-        <h1 className="font-hero mt-4 whitespace-nowrap text-[clamp(2.35rem,5vw,3.75rem)] font-[800] leading-[0.95] tracking-[-0.03em] text-slate-950">
-          Welcome back.
-        </h1>
-        {/* <p className="mt-4 max-w-[34rem] text-[15px] leading-8 text-slate-500">
-          Sign in to reopen your clinic workflow, recover every missed lead, and keep high-intent conversations moving.
-        </p> */}
-      </div>
-
-      {banner ? (
-        <div className={`mt-6 rounded-2xl border px-4 py-3 text-sm ${banner.type === 'error' ? 'border-rose-100 bg-rose-50 text-rose-700' : 'border-emerald-100 bg-emerald-50 text-emerald-700'}`}>
-          {banner.message}
-        </div>
-      ) : null}
-
-      <form onSubmit={handleSignIn} className="mt-8 space-y-5">
-        <div className="space-y-[6px]">
-          <label className="block text-[10px] font-semibold uppercase tracking-[0.26em] text-slate-500">Email address</label>
-          <div className="relative">
-            <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@clinic.com"
-              disabled={loading}
-              autoComplete="email"
-              className="h-12 w-full rounded-[18px] border border-slate-200 bg-white py-3 pl-11 pr-4 text-[15px] text-slate-900 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-[border-color,box-shadow,transform] duration-150 placeholder:text-slate-400 focus:border-[#388BFD] focus:outline-none focus:ring-4 focus:ring-[#388BFD]/10"
-            />
+        <div className="mt-6 text-center">
+          <h2 className="font-serif text-3xl font-normal text-slate-950 tracking-tight text-center mt-6 mb-2">Welcome back.</h2>
+          <p className="text-sm text-slate-600">Resume your recovery workflow and keep every high-intent patient conversation moving.</p>
+          <div className="mt-2 text-sm text-slate-500">
+            New here? <Link href="/signup" className="text-slate-950 font-medium underline">Create account</Link>
           </div>
         </div>
 
-        <div className="space-y-[6px]">
-          <div className="flex items-center justify-between gap-3">
-            <label className="block text-[10px] font-semibold uppercase tracking-[0.26em] text-slate-500">Password</label>
-            <Link href="#" className="text-[12px] font-semibold text-[#388BFD] transition hover:text-[#1d6fe0]">
-              Forgot password?
-            </Link>
+        {banner ? (
+          <div className={`mt-6 rounded-lg px-4 py-3 text-sm ${banner.type === 'error' ? 'border border-rose-100 bg-rose-50 text-rose-700' : banner.type === 'success' ? 'border border-emerald-100 bg-emerald-50 text-emerald-700' : 'border border-sky-100 bg-sky-50 text-sky-700'}`}>
+            {banner.message}
           </div>
-          <div className="relative">
-            <input
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              disabled={loading}
-              autoComplete="current-password"
-              className="h-12 w-full rounded-[18px] border border-slate-200 bg-white px-4 pr-12 text-[15px] text-slate-900 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-[border-color,box-shadow,transform] duration-150 placeholder:text-slate-400 focus:border-[#388BFD] focus:outline-none focus:ring-4 focus:ring-[#388BFD]/10"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword((current) => !current)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 transition hover:text-slate-700"
-              aria-label="Toggle password visibility"
-              disabled={loading}
-            >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            </button>
-          </div>
-        </div>
+        ) : null}
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="flex h-12 w-full items-center justify-center gap-2 rounded-[18px] bg-[#0F172A] px-6 text-[14px] font-semibold tracking-[0.02em] text-white shadow-[0_16px_34px_rgba(15,23,42,0.18)] transition duration-150 hover:bg-[#111c33] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70"
-        >
-          {loading ? 'Signing in...' : 'Sign In'}
-          {!loading ? <ArrowRight className="h-4 w-4" /> : null}
-        </button>
-      </form>
+        <form onSubmit={handleSignIn} className="mt-6 space-y-4">
+          <div>
+            <label className="sr-only">Email address</label>
+            <div className="relative">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@clinic.com"
+                disabled={loading}
+                autoComplete="email"
+                className="w-full bg-white border border-slate-200 text-slate-900 rounded-xl px-4 py-3 text-sm focus:border-slate-950 focus:ring-2 focus:ring-slate-950/5 outline-none transition-all duration-200 font-sans"
+              />
+            </div>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between">
+              <label className="sr-only">Password</label>
+              <Link href="#" className="text-sm text-slate-600 hover:underline">Forgot password?</Link>
+            </div>
+            <div className="relative mt-2">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password"
+                disabled={loading}
+                autoComplete="current-password"
+                className="w-full bg-white border border-slate-200 text-slate-900 rounded-xl px-4 py-3 text-sm focus:border-slate-950 focus:ring-2 focus:ring-slate-950/5 outline-none transition-all duration-200 font-sans"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((current) => !current)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500"
+                aria-label="Toggle password visibility"
+                disabled={loading}
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-slate-950 text-white hover:bg-slate-900 font-medium py-3 rounded-xl transition-all duration-200 shadow-sm text-sm tracking-wide mt-2 flex items-center justify-center gap-2"
+          >
+            {loading ? 'Signing in...' : 'Sign In'}
+            {!loading ? <ArrowRight className="h-4 w-4" /> : null}
+          </button>
+        </form>
 
       <div className="my-6 flex items-center gap-3">
         <div className="h-px flex-1 bg-slate-200" />
@@ -149,7 +137,7 @@ export default function SignIn() {
       <button
         type="button"
         onClick={handleGoogle}
-        className="flex h-12 w-full items-center justify-center gap-3 rounded-[18px] border border-slate-200 bg-white px-4 text-[14px] font-semibold text-slate-700 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition hover:border-slate-300 hover:bg-slate-50"
+        className="flex h-[52px] w-full items-center justify-center gap-3 rounded-[10px] border border-[#dfe4ea] bg-white px-4 text-[14px] font-semibold text-slate-700 shadow-[0_6px_18px_rgba(15,23,42,0.04)] transition hover:border-slate-300 hover:bg-slate-50"
       >
         <span className="grid h-5 w-5 place-items-center">
           <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
@@ -161,7 +149,7 @@ export default function SignIn() {
 
       <div className="mt-6 text-center text-[13px] text-slate-500">
         New here?{' '}
-        <Link href="/signup" className="font-semibold text-[#388BFD] transition hover:text-[#1d6fe0]">
+        <Link href="/signup" className="font-semibold text-[#0f172a] transition hover:text-black">
           Create account
         </Link>
       </div>
