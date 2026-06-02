@@ -788,16 +788,16 @@ function FinalCtaFooterSection() {
           </Link>
 
           <nav className="order-2 flex w-full flex-wrap items-center justify-center gap-x-[24px] gap-y-[16px] sm:order-3 md:order-2 md:w-auto md:flex-1 md:gap-x-[32px] md:gap-y-[12px]">
-            <Link href="#" className="font-mono-ui text-[11px] font-[400] uppercase tracking-[0.1em] text-[rgba(255,255,255,0.79)]  transition-colors duration-200 hover:text-[rgba(255,255,255,0.7)]">
+            <Link href="/privacy" className="font-mono-ui text-[11px] font-[400] uppercase tracking-[0.1em] text-[rgba(255,255,255,0.79)]  transition-colors duration-200 hover:text-[rgba(255,255,255,0.7)]">
               Privacy
             </Link>
-            <Link href="#" className="font-mono-ui text-[11px] font-[400] uppercase tracking-[0.1em] text-[rgba(255,255,255,0.79)]  transition-colors duration-200 hover:text-[rgba(255,255,255,0.7)]">
+            <Link href="/terms" className="font-mono-ui text-[11px] font-[400] uppercase tracking-[0.1em] text-[rgba(255,255,255,0.79)]  transition-colors duration-200 hover:text-[rgba(255,255,255,0.7)]">
               Terms
             </Link>
-            <Link href="#" className="font-mono-ui text-[11px] font-[400] uppercase tracking-[0.1em] text-[rgba(255,255,255,0.79)]  transition-colors duration-200 hover:text-[rgba(255,255,255,0.7)]">
+            <Link href="/compliance" className="font-mono-ui text-[11px] font-[400] uppercase tracking-[0.1em] text-[rgba(255,255,255,0.79)]  transition-colors duration-200 hover:text-[rgba(255,255,255,0.7)]">
               Compliance
             </Link>
-            <Link href="#" className="font-mono-ui text-[11px] font-[400] uppercase tracking-[0.1em] text-[rgba(255,255,255,0.79)] transition-colors duration-200 hover:text-[rgba(255,255,255,0.7)]">
+            <Link href="/status" className="font-mono-ui text-[11px] font-[400] uppercase tracking-[0.1em] text-[rgba(255,255,255,0.79)] transition-colors duration-200 hover:text-[rgba(255,255,255,0.7)]">
               System Status
             </Link>
           </nav>

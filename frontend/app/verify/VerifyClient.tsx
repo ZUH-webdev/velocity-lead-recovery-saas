@@ -66,38 +66,39 @@ export default function VerifyClient({ token }: Props) {
     <AuthShell stats={[]}>
       <div className="font-body">
         <div className="flex items-center justify-between">
-          <div className="grid h-12 w-12 place-items-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-[0_12px_30px_rgba(15,23,42,0.08)]">
+          <div className="grid h-12 w-12 place-items-center rounded-[14px] border border-slate-200 bg-white text-slate-700 shadow-[0_12px_30px_rgba(15,23,42,0.06)]">
             <StatusIcon className="h-5 w-5" />
           </div>
-          <div className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500">
+          <div className="font-mono-ui rounded-full border border-[#e6eaef] bg-white px-3 py-1 text-[10px] font-medium uppercase tracking-[0.14em] text-[#6b7280]">
             Account verification
           </div>
         </div>
 
         <div className="mt-8">
-          <h1 className="font-hero mt-4 whitespace-nowrap text-[clamp(2.35rem,5vw,3.75rem)] font-[800] leading-[0.95] tracking-[-0.03em] text-slate-950">
+          <p className="font-mono-ui text-[11px] uppercase tracking-[0.1em] text-[#6b7280]">Verification flow</p>
+          <h1 className="font-hero mt-3 whitespace-nowrap text-[clamp(2.25rem,5vw,3.45rem)] font-[700] leading-[0.95] tracking-[-0.03em] text-[#0f172a]">
             Verify your account.
           </h1>
-          <p className="mt-4 max-w-[34rem] text-[15px] leading-8 text-slate-500">
+          <p className="mt-4 max-w-[34rem] text-[15px] leading-7 text-slate-600">
             Complete the verification link from your email, then you&apos;ll be routed into your workspace.
           </p>
         </div>
 
         {banner ? (
-          <div className={`mt-6 rounded-2xl border px-4 py-3 text-sm ${banner.type === 'error' ? 'border-rose-100 bg-rose-50 text-rose-700' : banner.type === 'success' ? 'border-emerald-100 bg-emerald-50 text-emerald-700' : 'border-sky-100 bg-sky-50 text-sky-700'}`}>
+          <div className={`mt-6 rounded-[16px] border px-4 py-3 text-sm ${banner.type === 'error' ? 'border-rose-100 bg-rose-50 text-rose-700' : banner.type === 'success' ? 'border-emerald-100 bg-emerald-50 text-emerald-700' : 'border-sky-100 bg-sky-50 text-sky-700'}`}>
             {banner.message}
           </div>
         ) : null}
 
         <div className="mt-8 space-y-4">
-          <div className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm leading-7 text-slate-600">
+          <div className="rounded-[12px] border border-[#e6eaef] bg-white px-4 py-4 text-sm leading-7 text-slate-600 shadow-[0_6px_18px_rgba(15,23,42,0.04)]">
             {loading ? 'Checking verification status...' : 'If you arrived here from a verification email, this page will finish the flow for you.'}
           </div>
 
           <button
             type="button"
             onClick={() => router.replace('/signin')}
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-[18px] bg-[#0F172A] px-6 text-[14px] font-semibold tracking-[0.02em] text-white shadow-[0_16px_34px_rgba(15,23,42,0.18)] transition duration-150 hover:bg-[#111c33] active:scale-[0.99]"
+            className="flex h-[52px] w-full items-center justify-center gap-2 rounded-[10px] bg-[#0f172a] px-6 text-[14px] font-semibold tracking-[0.02em] text-white shadow-[0_10px_26px_rgba(15,23,42,0.18)] transition duration-150 hover:bg-black active:scale-[0.99]"
           >
             Go to sign in
             <ArrowRight className="h-4 w-4" />
@@ -105,7 +106,7 @@ export default function VerifyClient({ token }: Props) {
 
           <div className="text-center text-[13px] text-slate-500">
             Need a new link?{' '}
-            <Link href="/signup" className="font-semibold text-[#388BFD] transition hover:text-[#1d6fe0]">
+            <Link href="/signup" className="font-semibold text-[#0f172a] transition hover:text-black">
               Create an account
             </Link>
           </div>
