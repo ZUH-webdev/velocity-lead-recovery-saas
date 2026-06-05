@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ShieldCheck, Lock, Database, FileSearch, ArrowLeft } from 'lucide-react';
+import { ShieldCheck, Lock, Database, FileSearch, ArrowLeft, House } from 'lucide-react';
 
 const pillars = [
   {
@@ -50,6 +50,16 @@ export default function ComplianceSecurityPage() {
           >
             <ArrowLeft className="h-4 w-4" />
             Home
+          </Link>
+        </div>
+
+        <div className="fixed right-4 top-4 z-20 sm:hidden">
+          <Link
+            href="/"
+            className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-[0_8px_24px_rgba(15,23,42,0.12)] transition hover:bg-slate-50 hover:text-slate-950"
+            aria-label="Go back home"
+          >
+            <House className="h-5 w-5" />
           </Link>
         </div>
 

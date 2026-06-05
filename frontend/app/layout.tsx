@@ -3,8 +3,9 @@ import ProvidersClient from './providers/ProvidersClient';
 import './globals.css';
 
 export const metadata = {
-  title: 'Velocity',
-  description: 'Velocity revenue recovery platform',
+  title: 'Velocity — Revenue Recovery & Lead Recovery Platform',
+  description:
+    'Recover lost revenue with Velocity: automated lead recovery, SMS & email follow-ups, calendar sync, and actionable analytics for sales teams.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

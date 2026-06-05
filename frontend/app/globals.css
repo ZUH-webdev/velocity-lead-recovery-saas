@@ -185,3 +185,23 @@ header.scrolled {
   box-shadow: 0 1px 12px rgba(0, 0, 0, 0.07);
   background: rgba(255, 255, 255, 0.88);
 }
+
+@keyframes marquee-left {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(-33.333%, 0, 0);
+  }
+}
+
+.marquee-track {
+  width: max-content;
+  animation: marquee-left 10s linear infinite;
+  will-change: transform;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
