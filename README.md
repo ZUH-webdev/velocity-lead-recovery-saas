@@ -263,19 +263,9 @@ TWILIO_PHONE_NUMBER=your_twilio_number
 # 🚀 Backend Setup
 
 ```bash
-# Navigate to backend
-
-cd apps/server
-
-# Install dependencies
+cd backend
 
 npm install
-
-# Run migrations
-
-npm run db:migrate
-
-# Start development server
 
 npm run dev
 ```
@@ -291,15 +281,9 @@ http://localhost:5000
 # 🎨 Frontend Setup
 
 ```bash
-# Navigate to frontend
-
 cd frontend
 
-# Install dependencies
-
 npm install
-
-# Start development server
 
 npm run dev
 ```
@@ -309,34 +293,75 @@ Frontend runs on:
 ```text
 http://localhost:3000
 ```
+```
 
 ---
 
-# 📁 Suggested Project Structure
+# 📁 Project Structure
 
 ```text
-velocity-engine/
+velocity-lead-recovery-saas/
+│
+├── backend/
+│   │
+│   ├── prisma/
+│   │   ├── schema.prisma
+│   │   └── migrations/
+│   │
+│   ├── src/
+│   │   ├── controllers/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   ├── middleware/
+│   │   ├── utils/
+│   │   ├── jobs/
+│   │   ├── config/
+│   │   └── server.ts
+│   │
+│   ├── Dockerfile
+│   ├── docker-compose.yml
+│   ├── package.json
+│   ├── prisma.config.ts
+│   ├── tsconfig.json
+│   └── README.md
 │
 ├── frontend/
+│   │
 │   ├── app/
-│   ├── components/
-│   ├── hooks/
-│   ├── lib/
-│   └── public/
+│   │   ├── compliance/
+│   │   ├── dashboard/
+│   │   ├── privacy/
+│   │   ├── providers/
+│   │   ├── signin/
+│   │   ├── signup/
+│   │   ├── status/
+│   │   ├── terms/
+│   │   ├── verify/
+│   │   ├── components/
+│   │   ├── globals.css
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   │
+│   ├── public/
+│   ├── src/
+│   ├── dist/
+│   │
+│   ├── package.json
+│   ├── next.config.ts
+│   ├── tsconfig.json
+│   ├── COMPONENT_API.md
+│   ├── BUILD_SUMMARY.md
+│   └── README.md
 │
-├── apps/
-│   └── server/
-│       ├── controllers/
-│       ├── services/
-│       ├── routes/
-│       ├── middleware/
-│       ├── jobs/
-│       ├── db/
-│       └── utils/
+├── AUTH_EMAIL_VERIFICATION_CONTEXT_REPORT.md
+├── ELITE_REDESIGN_COMPLETION.md
+├── Implementation.txt
+├── Nextjs-shift.md
+├── CompleteDocumentation.txt
+├── summary.txt
 │
-├── shared/
-│
-└── docs/
+└── README.md
+```
 ```
 
 ---
