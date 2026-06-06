@@ -413,12 +413,4 @@ All rights reserved © 2026 Velocity Engine.
 
 Unauthorized copying, modification, distribution, or commercial usage is prohibited without explicit permission.
 
----
 
-<p align="center">
-  Built for speed, automation, and scalable lead conversion.
-</p>
-
-<p align="center">
-  ⚡ Velocity Engine v1.0
-</p>
