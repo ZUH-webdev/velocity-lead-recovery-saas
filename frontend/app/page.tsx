@@ -6,13 +6,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Activity, Shield, PhoneCall, Globe, MessageSquare, Calendar, Check, ChevronDown } from 'lucide-react';
 import ScrollReveal, { ScrollRevealGroup, ScrollRevealItem } from '../src/components/ScrollReveal';
-
-const navItems = [
-  { label: 'Platform', href: '#platform' },
-  { label: 'Mechanism', href: '#mechanism' },
-  { label: 'Results', href: '#results' },
-  { label: 'FAQ', href: '#faq' },
-];
+import Header from './components/Header';
+import Footer from './components/Footer';
 
 const feedRows = [
   { time: '11:42:05', event: 'CALL_DROPPED', status: '[DETECTED]', tone: 'text-[#9aa3b7]' },
@@ -63,96 +58,6 @@ const itemVariant = {
   hidden: { opacity: 0, x: -12 },
   visible: { opacity: 1, x: 0, transition: { type: 'spring', stiffness: 110, damping: 18 } },
 };
-
-function TopNav() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  useEffect(() => {
-    function handleResize() {
-      if (window.innerWidth >= 768) setIsMenuOpen(false);
-    }
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  return (
-    <header
-      className="fixed top-0 left-0 right-0 z-[1000] py-[14px] bg-[rgba(255,255,255,0.9)] backdrop-blur-[19px] border-b border-[rgba(0,0,0,0.06)] transition duration-300"
-      style={{ WebkitBackdropFilter: 'blur(16px)' }}
-    >
-      <div className="mx-auto grid max-w-[1440px] grid-cols-[1fr_auto] md:grid-cols-[1fr_auto_1fr] items-center px-[24px] md:px-[40px] lg:px-[80px]">
-        <Link href="/" className="flex items-center gap-[12px] justify-self-start">
-       <Image
-              src="/velocity-logo.webp"
-              alt="Velocity"
-              width={22}
-              height={23}
-              className="h-[25px] w-[25px] object-contain brightness-0 "
-            />
-          <span className="font-hero text-[24px] font-[800] leading-none tracking-[-0.02em] text-[#111827]">
-            VELOCITY
-          </span>
-        </Link>
-
-        <nav className="hidden md:flex items-center gap-[20px] lg:gap-[46px] justify-self-center">
-          {navItems.map((item) => (
-            <Link key={item.label} href={item.href} className="font-body text-[15px] font-[500] leading-none tracking-[0em] text-[#6b7280]">
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-
-        <div className="hidden md:block justify-self-end">
-          <Link
-            href="/signin"
-            className="inline-flex min-h-[44px] h-auto lg:h-[44px] py-[10px] lg:py-0 items-center gap-[12px] rounded-[8px] bg-[#0f172a] px-[20px] lg:px-[24px] font-body text-[15px] font-[600] tracking-[0.01em] text-white shadow-[0_8px_24px_rgba(15,23,42,0.18)]"
-          >
-            Evaluate Velocity
-            <ArrowRight className="h-[18px] w-[18px] stroke-[2.2]" />
-          </Link>
-        </div>
-
-        <button
-          type="button"
-          aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-          aria-expanded={isMenuOpen}
-          onClick={() => setIsMenuOpen((prev) => !prev)}
-          className="justify-self-end md:hidden inline-flex h-[44px] w-[44px] items-center justify-center rounded-[8px] text-[#111827]"
-        >
-          <span className="text-[26px] leading-none">{isMenuOpen ? '×' : '☰'}</span>
-        </button>
-      </div>
-
-      {isMenuOpen && (
-        <div className="md:hidden absolute left-0 right-0 top-full bg-[rgba(255,255,255,0.97)] backdrop-blur-[16px] border-b border-[#f3f4f6]" style={{ WebkitBackdropFilter: 'blur(16px)' }}>
-          <nav className="flex flex-col">
-            {navItems.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                onClick={() => setIsMenuOpen(false)}
-                className="flex min-h-[44px] items-center border-b border-[#f3f4f6] px-[24px] py-[16px] font-body text-[16px] font-[500] text-[#6b7280]"
-              >
-                {item.label}
-              </Link>
-            ))}
-            <div className="p-[24px]">
-              <Link
-                href="/signin"
-                onClick={() => setIsMenuOpen(false)}
-                className="inline-flex min-h-[44px] w-full items-center justify-center gap-[12px] rounded-[8px] bg-[#0f172a] px-[24px] py-[12px] font-body text-[15px] font-[600] tracking-[0.01em] text-white shadow-[0_8px_24px_rgba(15,23,42,0.18)]"
-              >
-                Evaluate Velocity
-                <ArrowRight className="h-[18px] w-[18px] stroke-[2.2]" />
-              </Link>
-            </div>
-          </nav>
-        </div>
-      )}
-    </header>
-  );
-}
 
 function HeroCard() {
   return (
@@ -299,38 +204,13 @@ function StatSection() {
 }
 
 export default function RootPage() {
-  useEffect(() => {
-    const header = document.querySelector('header');
-
-    function updateHeaderHeight() {
-      if (header) {
-        document.documentElement.style.setProperty('--header-height', `${header.offsetHeight}px`);
-      }
-    }
-
-    function onScroll() {
-      if (!header) return;
-      if (window.scrollY > 10) header.classList.add('scrolled');
-      else header.classList.remove('scrolled');
-    }
-
-    updateHeaderHeight();
-    window.addEventListener('resize', updateHeaderHeight);
-    window.addEventListener('scroll', onScroll);
-
-    return () => {
-      window.removeEventListener('resize', updateHeaderHeight);
-      window.removeEventListener('scroll', onScroll);
-    };
-  }, []);
-
   return (
     <div className="font-heading min-h-screen overflow-hidden bg-white text-[#111827]">
       {/* approx: faint grid and soft tonal wash to match the Figma background */}
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(17,24,39,0.045)_1px,transparent_1px),linear-gradient(to_bottom,rgba(17,24,39,0.045)_1px,transparent_1px)] bg-[size:43px_43px] opacity-[0.26]" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.92),rgba(255,255,255,0.98)_38%,rgba(255,255,255,1)_72%)]" />
       <div className="relative">
-        <TopNav />
+        <Header />
         <main style={{ paddingTop: 'var(--header-height)' }}>
           <HeroSection />
           <StatSection />
@@ -829,41 +709,7 @@ function FinalCtaFooterSection() {
         </ScrollRevealGroup>
       </section>
 
-      <footer className="w-full border-t border-[rgba(255,255,255,0.08)] bg-[#0a0a0a]">
-        <div className="mx-auto flex max-w-[1440px] flex-col items-center gap-[20px] px-[24px] py-[32px] text-center sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-x-[16px] sm:gap-y-[14px] sm:text-left md:flex-nowrap md:px-[40px] lg:px-[80px]">
-          <Link href="/" className="order-1 inline-flex items-center gap-[10px] md:order-1">
-            <Image
-              src="/velocity-logo.webp"
-              alt="Velocity"
-              width={18}
-              height={18}
-              className="h-[18px] w-[18px] object-contain brightness-0 invert"
-            />
-            <span className="font-hero text-[14px] font-[700] tracking-[0.08em] text-white">
-              VELOCITY
-            </span>
-          </Link>
-
-          <nav className="order-2 flex w-full flex-wrap items-center justify-center gap-x-[24px] gap-y-[16px] sm:order-3 md:order-2 md:w-auto md:flex-1 md:gap-x-[32px] md:gap-y-[12px]">
-            <Link href="/privacy" className="font-mono-ui text-[11px] font-[400] uppercase tracking-[0.1em] text-[rgba(255,255,255,0.79)]  transition-colors duration-200 hover:text-[rgba(255,255,255,0.7)]">
-              Privacy
-            </Link>
-            <Link href="/terms" className="font-mono-ui text-[11px] font-[400] uppercase tracking-[0.1em] text-[rgba(255,255,255,0.79)]  transition-colors duration-200 hover:text-[rgba(255,255,255,0.7)]">
-              Terms
-            </Link>
-            <Link href="/compliance" className="font-mono-ui text-[11px] font-[400] uppercase tracking-[0.1em] text-[rgba(255,255,255,0.79)]  transition-colors duration-200 hover:text-[rgba(255,255,255,0.7)]">
-              Compliance
-            </Link>
-            <Link href="/status" className="font-mono-ui text-[11px] font-[400] uppercase tracking-[0.1em] text-[rgba(255,255,255,0.79)] transition-colors duration-200 hover:text-[rgba(255,255,255,0.7)]">
-              System Status
-            </Link>
-          </nav>
-
-          <div className="order-3 sm:order-2 md:order-3 font-mono-ui text-[11px] font-[400] tracking-[0.05em] whitespace-nowrap text-[rgba(255,255,255,0.79)] ">
-            © 2026 Velocity Health Intelligence, Inc.
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

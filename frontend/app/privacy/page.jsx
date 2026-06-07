@@ -1,9 +1,16 @@
 import Link from 'next/link';
 import { Shield, Lock, Database, FileText, ArrowLeft, House } from 'lucide-react';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 export default function PrivacyPolicyPage() {
   return (
-    <main className="bg-gradient-to-b from-slate-50 via-slate-100 to-zinc-200/50 min-h-screen w-full py-20 px-4 relative">
+    <>
+      <Header variant="dark" />
+      <main
+        style={{ paddingTop: 'var(--header-height)' }}
+        className="bg-gradient-to-b from-slate-50 via-slate-100 to-zinc-200/50 min-h-screen w-full py-20 px-4 relative"
+      >
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[560px] h-[360px] bg-slate-200/40 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="max-w-4xl mx-auto bg-white border border-slate-200/80 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.02)] p-8 md:p-14 relative z-10">
@@ -33,7 +40,7 @@ export default function PrivacyPolicyPage() {
           </Link>
         </div>
 
-        <div className="fixed right-4 top-4 z-20 sm:hidden">
+        <div className="absolute right-4 top-4 z-20 sm:hidden">
           <Link
             href="/"
             className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-[0_8px_24px_rgba(15,23,42,0.12)] transition hover:bg-slate-50 hover:text-slate-950"
@@ -121,5 +128,7 @@ export default function PrivacyPolicyPage() {
         </div>
       </div>
     </main>
+    <Footer />
+    </>
   );
 }
