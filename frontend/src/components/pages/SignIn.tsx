@@ -42,7 +42,7 @@ export default function SignIn() {
     try {
       await signIn(email.trim(), password);
       setBanner({ type: 'success', message: 'Signed in successfully. Redirecting to your workspace.' });
-      setTimeout(() => router.replace('/dashboard'), 700);
+      router.push('/dashboard');
     } catch (err: unknown) {
       setBanner({ type: 'error', message: err instanceof Error ? err.message : 'Failed to sign in.' });
     } finally {
