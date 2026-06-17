@@ -7,6 +7,7 @@ import {
   setAuthSession,
   subscribeAuthSession,
 } from '../utils/authSession';
+import { clearToken, setToken } from '../../lib/auth';
 import type { AxiosError } from 'axios';
 import type { AuthRequestConfig } from '../lib/apiClient';
 import type { AuthRegisterResponse, AuthPayload, AuthUser, AuthSession } from '../types';
@@ -81,6 +82,7 @@ export const AuthProvider = ({ children }: Props) => {
       if (initialSession?.accessToken) {
         setUser(initialSession.user || null);
         setAccessToken(initialSession.accessToken || null);
+        setToken(initialSession.accessToken, initialSession.remember);
         setLoading(false);
         return;
       }
@@ -95,6 +97,7 @@ export const AuthProvider = ({ children }: Props) => {
             accessToken: payload.accessToken,
             remember: true,
           });
+          setToken(payload.accessToken, true);
         }
       } catch (bootstrapError) {
         // clear any possibly stale session state on failure
@@ -167,6 +170,7 @@ export const AuthProvider = ({ children }: Props) => {
           accessToken: payload.accessToken,
           remember: options.remember ?? false,
         });
+        setToken(payload.accessToken, options.remember ?? false);
       }
 
       return payload.user || null;
@@ -184,6 +188,7 @@ export const AuthProvider = ({ children }: Props) => {
       setError(getAuthErrorMessage(err));
     } finally {
       clearAuthSession();
+      clearToken();
     }
   };
 
