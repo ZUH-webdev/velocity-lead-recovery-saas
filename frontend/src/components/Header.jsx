@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Bell, Search, ChevronDown, Menu } from 'lucide-react';
 import { useAppStore } from '../store/appStore';
@@ -174,6 +175,11 @@ export const Header = ({ onSearch, onMenuClick }) => {
           </div>
           <ChevronDown className="w-4 h-4 hidden md:block transition-colors" style={{ color: 'var(--neu-text-light)' }} />
         </button>
+
+        {/* Mobile Logo (far right end) */}
+        <Link to="/dashboard" className="md:hidden flex-shrink-0 ml-1">
+          <img src="/velocity-logo.webp" alt="Velocity" className="h-8 w-8 object-contain" />
+        </Link>
       </div>
     </div>
   );

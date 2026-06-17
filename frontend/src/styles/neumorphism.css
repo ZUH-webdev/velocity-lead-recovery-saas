@@ -98,6 +98,7 @@
     inset 8px 8px 16px var(--neu-dark),
     inset -8px -8px 16px var(--neu-light);
   transition: all 0.3s ease;
+  overflow: visible; /* allow positioned children (password toggle) to render correctly */
 }
 
 .neumorphism-input-wrapper:focus-within {
@@ -114,11 +115,17 @@
   border: none;
   padding: 20px 24px;
   padding-left: 55px;
+  padding-right: 24px; /* base right padding; overridden for password inputs below */
   color: var(--neu-text-dark);
   font-size: 16px;
   font-weight: 500;
   outline: none;
   transition: all 0.3s ease;
+}
+
+/* Ensure password inputs leave room for the toggle button */
+.neumorphism-input-wrapper input[type="password"] {
+  padding-right: 64px;
 }
 
 .neumorphism-input-wrapper input::placeholder {
@@ -166,7 +173,7 @@
 /* Password Toggle */
 .neumorphism-password-toggle {
   position: absolute;
-  right: 15px;
+  right: 18px;
   top: 50%;
   transform: translateY(-50%);
   background: var(--neu-bg);
@@ -184,6 +191,7 @@
     -4px -4px 10px var(--neu-light);
   transition: all 0.3s ease;
   padding: 0;
+  z-index: 3; /* keep above input and label */
 }
 
 .neumorphism-password-toggle:hover {
@@ -502,6 +510,10 @@
   .neumorphism-input-wrapper input {
     padding: 18px 20px;
     padding-left: 50px;
+  }
+
+  .neumorphism-input-wrapper input[type="password"] {
+    padding-right: 56px;
   }
 
   .neumorphism-input-wrapper label {

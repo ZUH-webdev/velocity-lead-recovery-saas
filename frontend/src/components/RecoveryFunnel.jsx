@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import  CountUp  from 'react-countup';
+import CountUp from 'react-countup';
 import {
   BarChart,
   Bar,
@@ -12,17 +12,27 @@ import {
   ResponsiveContainer,
   PieChart,
   Pie,
+  AreaChart,
+  Area,
 } from 'recharts';
 import { TrendingUp, DollarSign, Users, Zap, Phone } from 'lucide-react';
 
 const RecoveryFunnel = ({ metrics }) => {
+  // Elite animation easing
+  const fluidSpringTransition = {
+    type: 'spring',
+    stiffness: 180,
+    damping: 26,
+    mass: 1.1,
+  };
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
+        staggerChildren: 0.12,
+        delayChildren: 0.15,
       },
     },
   };
@@ -32,8 +42,50 @@ const RecoveryFunnel = ({ metrics }) => {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { type: 'spring', stiffness: 300, damping: 30 },
+      transition: fluidSpringTransition,
     },
+  };
+
+  // Elite gradient and filter definitions
+  const EliteGradientDefs = () => (
+    <defs>
+      <linearGradient id="eliteFunnelGradient" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#6366f1" stopOpacity={0.95} />
+        <stop offset="50%" stopColor="#8b5cf6" stopOpacity={0.75} />
+        <stop offset="100%" stopColor="#10b981" stopOpacity={0.55} />
+      </linearGradient>
+      <linearGradient id="eliteBarGradient" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#7c3aed" stopOpacity={0.95} />
+        <stop offset="100%" stopColor="#6366f1" stopOpacity={0.6} />
+      </linearGradient>
+      <filter id="microShadow">
+        <feDropShadow dx="0" dy="1" stdDeviation="0.5" floodOpacity="0.15" />
+      </filter>
+    </defs>
+  );
+
+  // Custom glassmorphic tooltip
+  const EliteTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      return (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          className="backdrop-blur-md bg-white/70 border border-white/40 rounded-lg p-3 shadow-[0_10px_30px_rgba(0,0,0,0.08)]"
+        >
+          <p className="font-semibold text-slate-800 text-sm">
+            {payload[0].payload.stage || 'Value'}
+          </p>
+          <p className="text-indigo-600 font-bold text-base">
+            {typeof payload[0].value === 'number'
+              ? payload[0].value.toLocaleString()
+              : payload[0].value}
+          </p>
+        </motion.div>
+      );
+    }
+    return null;
   };
 
   const MetricCard = ({ icon: Icon, label, value, color = 'indigo', isAnimated = false }) => {
@@ -148,7 +200,7 @@ const RecoveryFunnel = ({ metrics }) => {
         />
       </div>
 
-      {/* Funnel Visualization */}
+      {/* Elite Bar Chart Visualization */}
       <motion.div
         variants={itemVariants}
         className="p-8 rounded-xl bg-white border border-slate-200 overflow-hidden relative"
@@ -176,42 +228,72 @@ const RecoveryFunnel = ({ metrics }) => {
             </motion.span>
           </div>
 
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={metrics.funnelData}>
-              <defs>
-                <linearGradient id="funnelGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#6366f1" stopOpacity={0.9} />
-                  <stop offset="100%" stopColor="#6366f1" stopOpacity={0.4} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="4 4" stroke="rgba(226, 232, 240, 0.4)" vertical={false} />
-              <XAxis
-                dataKey="stage"
-                stroke="rgb(100, 116, 139)"
-                style={{ fontSize: '0.875rem' }}
-              />
-              <YAxis stroke="rgb(100, 116, 139)" style={{ fontSize: '0.875rem' }} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.98)',
-                  border: '1px solid rgba(226, 232, 240, 1)',
-                  borderRadius: '8px',
-                  color: '#0F172A',
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
-                }}
-                cursor={{ fill: 'rgba(99, 102, 241, 0.05)' }}
-              />
-              <Bar dataKey="value" fill="url(#funnelGradient)" radius={[12, 12, 0, 0]}>
-                {metrics.funnelData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.fill} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+          {/* Premium Bar Chart with Elite Styling */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.4, ease: 'easeOut' }}
+          >
+            <ResponsiveContainer width="100%" height={340}>
+              <BarChart
+                data={metrics.funnelData}
+                margin={{ top: 20, right: 30, left: 0, bottom: 45 }}
+              >
+                <defs>
+                  <EliteGradientDefs />
+                </defs>
+                {/* Ultra-faint grid lines */}
+                <CartesianGrid
+                  strokeDasharray="0"
+                  stroke="rgba(163, 177, 198, 0.2)"
+                  vertical={false}
+                  horizontalPoints={[0, 1]}
+                />
+                {/* Elite axis styling */}
+                <XAxis
+                  dataKey="stage"
+                  tick={{
+                    fill: '#94a3b8',
+                    fontSize: 11,
+                    fontWeight: 500,
+                    fontFamily: 'Inter, Plus Jakarta Sans',
+                  }}
+                  axisLine={{ stroke: 'rgba(163, 177, 198, 0.2)' }}
+                  tickLine={{ stroke: 'rgba(163, 177, 198, 0.2)' }}
+                />
+                <YAxis
+                  tick={{
+                    fill: '#94a3b8',
+                    fontSize: 11,
+                    fontWeight: 500,
+                    fontFamily: 'Inter, Plus Jakarta Sans',
+                  }}
+                  axisLine={{ stroke: 'rgba(163, 177, 198, 0.2)' }}
+                  tickLine={{ stroke: 'rgba(163, 177, 198, 0.2)' }}
+                />
+                {/* Glassmorphic tooltip */}
+                <Tooltip content={<EliteTooltip />} cursor={{ fill: 'rgba(99, 102, 241, 0.05)' }} />
+                {/* Premium bars with soft corners */}
+                <Bar
+                  dataKey="value"
+                  fill="url(#eliteBarGradient)"
+                  radius={[12, 12, 0, 0]}
+                  isAnimationActive
+                  animationDuration={1400}
+                  animationEasing="easeOut"
+                  filter="url(#microShadow)"
+                >
+                  {metrics.funnelData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.fill || 'url(#eliteBarGradient)'} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </motion.div>
         </div>
       </motion.div>
 
-      {/* Conversion Metrics */}
+      {/* Conversion Metrics with Area Chart */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <motion.div
           variants={itemVariants}
@@ -234,14 +316,7 @@ const RecoveryFunnel = ({ metrics }) => {
                   <Cell key={`cell-${index}`} fill={entry.fill} />
                 ))}
               </Pie>
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                  border: '1px solid rgba(226, 232, 240, 0.8)',
-                  borderRadius: '8px',
-                  color: '#0F172A',
-                }}
-              />
+              <Tooltip content={<EliteTooltip />} />
             </PieChart>
           </ResponsiveContainer>
         </motion.div>

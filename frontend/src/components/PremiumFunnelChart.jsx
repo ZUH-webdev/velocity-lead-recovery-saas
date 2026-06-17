@@ -11,6 +11,8 @@ import {
   ResponsiveContainer,
   ComposedChart,
   Line,
+  Bar,
+  BarChart,
 } from 'recharts';
 import { Zap, ArrowRight, TrendingUp } from 'lucide-react';
 
@@ -32,41 +34,101 @@ const PremiumFunnelChart = ({ metrics }) => {
     return () => clearInterval(interval);
   }, [funnelData.length]);
 
-  // Custom gradient for the funnel
-  const GradientFunnelArea = () => (
+  // Elite custom gradient and filter definitions
+  const EliteGradientDefs = () => (
     <defs>
-      <linearGradient id="funnelGradient" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#7c3aed" stopOpacity={0.8} />
-        <stop offset="50%" stopColor="#6366f1" stopOpacity={0.6} />
-        <stop offset="100%" stopColor="#10b981" stopOpacity={0.4} />
+      {/* Multi-stop violet to emerald gradient */}
+      <linearGradient id="eliteFunnelGradient" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#7c3aed" stopOpacity={0.9} />
+        <stop offset="35%" stopColor="#6366f1" stopOpacity={0.75} />
+        <stop offset="70%" stopColor="#3b82f6" stopOpacity={0.6} />
+        <stop offset="100%" stopColor="#10b981" stopOpacity={0.5} />
       </linearGradient>
-      <filter id="funnelGlow">
-        <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+      
+      {/* Dual-tone bar gradient */}
+      <linearGradient id="eliteBarGradient" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#7c3aed" stopOpacity={0.95} />
+        <stop offset="100%" stopColor="#6366f1" stopOpacity={0.6} />
+      </linearGradient>
+      
+      {/* Ambient glow filter */}
+      <filter id="eliteGlow">
+        <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
         <feMerge>
           <feMergeNode in="coloredBlur" />
           <feMergeNode in="SourceGraphic" />
         </feMerge>
       </filter>
+      
+      {/* Micro-shadow for depth */}
+      <filter id="microShadow">
+        <feDropShadow dx="0" dy="1" stdDeviation="0.5" floodOpacity="0.15" />
+      </filter>
     </defs>
   );
+
+  // Custom tooltip with glassmorphism
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      return (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          className="backdrop-blur-md bg-white/70 border border-white/40 rounded-lg p-3 shadow-[0_10px_30px_rgba(0,0,0,0.08)]"
+        >
+          <p className="font-semibold text-slate-800 text-sm">
+            {payload[0].payload.stage}
+          </p>
+          <p className="text-violet-600 font-bold text-base">
+            {payload[0].payload.value.toLocaleString()}
+          </p>
+          <p className="text-xs text-slate-500 mt-1">
+            {payload[0].payload.percentage}% conversion
+          </p>
+        </motion.div>
+      );
+    }
+    return null;
+  };
+
+  // Fluid spring animation easing
+  const fluidSpringTransition = {
+    type: 'spring',
+    stiffness: 180,
+    damping: 26,
+    mass: 1.2,
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
+        staggerChildren: 0.12,
         delayChildren: 0.2,
       },
     },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, x: -20 },
+    hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
-      x: 0,
-      transition: { type: 'spring', stiffness: 300, damping: 30 },
+      y: 0,
+      transition: fluidSpringTransition,
+    },
+  };
+
+  // Chart animation: bars float up from baseline
+  const barContainerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 1.4,
+        ease: 'easeOut',
+      },
     },
   };
 
@@ -135,7 +197,7 @@ const PremiumFunnelChart = ({ metrics }) => {
         </div>
       </motion.div>
 
-      {/* Curved Stream Funnel Chart */}
+      {/* Elite Bar Chart with Premium Styling */}
       <motion.div
         variants={itemVariants}
         className="neu-carved p-4 md:p-8 rounded-xl relative overflow-hidden"
@@ -154,41 +216,132 @@ const PremiumFunnelChart = ({ metrics }) => {
             Funnel Flow Analysis
           </h3>
 
-          {/* Custom Curved Funnel with AreaChart */}
-          <ResponsiveContainer width="100%" height={window.innerWidth < 640 ? 200 : 300}>
-            <ComposedChart data={funnelData} margin={{ top: 10, right: 20, left: -20, bottom: 10 }}>
-              <defs>
-                <GradientFunnelArea />
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-              <XAxis
-                dataKey="stage"
-                tick={{ fill: '#64748b', fontSize: 11 }}
-                axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
-              />
-              <YAxis tick={{ fill: '#64748b', fontSize: 11 }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: 'rgba(30, 30, 46, 0.95)',
-                  border: '1px solid rgba(124, 58, 237, 0.3)',
-                  borderRadius: '8px',
-                  color: '#f1f5f9',
-                  fontSize: '12px',
-                }}
-                cursor={{ stroke: 'rgba(124, 58, 237, 0.3)', strokeWidth: 2 }}
-              />
-              <Area
-                type="monotone"
-                dataKey="value"
-                stroke="#7c3aed"
-                strokeWidth={3}
-                fill="url(#funnelGradient)"
-                isAnimationActive
-                animationDuration={1500}
-                filter="url(#funnelGlow)"
-              />
-            </ComposedChart>
-          </ResponsiveContainer>
+          {/* Premium Bar Chart */}
+          <motion.div variants={barContainerVariants}>
+            <ResponsiveContainer width="100%" height={window.innerWidth < 640 ? 250 : 350}>
+              <BarChart
+                data={funnelData}
+                margin={{ top: 20, right: 30, left: 0, bottom: 45 }}
+              >
+                <defs>
+                  <EliteGradientDefs />
+                </defs>
+                {/* Ultra-faint grid */}
+                <CartesianGrid
+                  strokeDasharray="0"
+                  stroke="rgba(163, 177, 198, 0.2)"
+                  vertical={false}
+                  horizontalPoints={[0, 1]}
+                />
+                {/* Elite axis styling */}
+                <XAxis
+                  dataKey="stage"
+                  tick={{
+                    fill: '#94a3b8',
+                    fontSize: 11,
+                    fontWeight: 500,
+                    fontFamily: 'Inter, Plus Jakarta Sans',
+                  }}
+                  axisLine={{ stroke: 'rgba(163, 177, 198, 0.2)' }}
+                  tickLine={{ stroke: 'rgba(163, 177, 198, 0.2)' }}
+                />
+                <YAxis
+                  tick={{
+                    fill: '#94a3b8',
+                    fontSize: 11,
+                    fontWeight: 500,
+                    fontFamily: 'Inter, Plus Jakarta Sans',
+                  }}
+                  axisLine={{ stroke: 'rgba(163, 177, 198, 0.2)' }}
+                  tickLine={{ stroke: 'rgba(163, 177, 198, 0.2)' }}
+                />
+                {/* Elite glassmorphism tooltip */}
+                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(124, 58, 237, 0.05)' }} />
+                {/* Premium bars with soft corners and gradient */}
+                <Bar
+                  dataKey="value"
+                  fill="url(#eliteBarGradient)"
+                  radius={[12, 12, 0, 0]}
+                  isAnimationActive
+                  animationDuration={1400}
+                  animationEasing="easeOut"
+                  filter="url(#microShadow)"
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </motion.div>
+        </div>
+      </motion.div>
+
+      {/* Premium Area Chart Variant */}
+      <motion.div
+        variants={itemVariants}
+        className="neu-carved p-4 md:p-8 rounded-xl relative overflow-hidden"
+      >
+        <div className="absolute inset-0 pointer-events-none opacity-40"
+          style={{
+            background:
+              'linear-gradient(135deg, rgba(124, 58, 237, 0.08) 0%, transparent 50%, rgba(16, 185, 129, 0.08) 100%)',
+          }}
+        />
+
+        <div className="relative z-10">
+          <h3 className="text-base md:text-lg font-bold text-slate-900 mb-4 md:mb-6 font-jakarta">
+            Conversion Trend
+          </h3>
+
+          <motion.div variants={barContainerVariants}>
+            <ResponsiveContainer width="100%" height={window.innerWidth < 640 ? 200 : 280}>
+              <AreaChart
+                data={funnelData}
+                margin={{ top: 10, right: 30, left: 0, bottom: 45 }}
+              >
+                <defs>
+                  <EliteGradientDefs />
+                </defs>
+                <CartesianGrid
+                  strokeDasharray="0"
+                  stroke="rgba(163, 177, 198, 0.15)"
+                  vertical={false}
+                />
+                <XAxis
+                  dataKey="stage"
+                  tick={{
+                    fill: '#94a3b8',
+                    fontSize: 11,
+                    fontWeight: 500,
+                    fontFamily: 'Inter, Plus Jakarta Sans',
+                  }}
+                  axisLine={{ stroke: 'rgba(163, 177, 198, 0.2)' }}
+                  tickLine={false}
+                />
+                <YAxis
+                  tick={{
+                    fill: '#94a3b8',
+                    fontSize: 11,
+                    fontWeight: 500,
+                    fontFamily: 'Inter, Plus Jakarta Sans',
+                  }}
+                  axisLine={{ stroke: 'rgba(163, 177, 198, 0.2)' }}
+                  tickLine={false}
+                />
+                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(124, 58, 237, 0.05)' }} />
+                {/* Dual-tone area with smooth monotone stroke */}
+                <Area
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#7c3aed"
+                  strokeWidth={3}
+                  fill="url(#eliteFunnelGradient)"
+                  fillOpacity={0.15}
+                  isAnimationActive
+                  animationDuration={1400}
+                  animationEasing="easeOut"
+                  filter="url(#microShadow)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </motion.div>
         </div>
       </motion.div>
 
