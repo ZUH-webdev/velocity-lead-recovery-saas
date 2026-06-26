@@ -1,33 +1,24 @@
-"use client";
-import React, { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '../context/AuthContext';
+'use client'
 
-interface Props {
-  children: React.ReactNode;
-}
+import { useAuth } from '../context/AuthContext'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
-export const ProtectedRoute = ({ children }: Props) => {
-  const { isAuthenticated, loading } = useAuth();
-  const router = useRouter();
+export default function ProtectedRoute({ 
+  children 
+}: { 
+  children: React.ReactNode 
+}) {
+  const { isAuthenticated, isLoading } = useAuth()
+  const router = useRouter()
 
   useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      router.replace('/signin');
+    if (!isLoading && !isAuthenticated) {
+      router.push('/signin')
     }
-  }, [loading, isAuthenticated, router]);
+  }, [isAuthenticated, isLoading, router])
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
-        <div className="text-white text-lg">Loading...</div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) return null;
-
-  return children;
-};
-
-export default ProtectedRoute;
+  if (isLoading) return <div>Loading...</div>
+  if (!isAuthenticated) return null
+  return <>{children}</>
+}

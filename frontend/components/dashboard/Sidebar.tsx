@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../src/context/AuthContext';
 import { cn } from '../../src/lib/utils';
+import { clearToken } from '../../lib/auth';
 
 const navItems = [
   { href: '/dashboard', label: 'Overview', icon: LayoutDashboard, exact: true },
@@ -41,14 +42,14 @@ interface SidebarProps {
 export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { user, activeTenantId, switchTenant } = useAuth();
 
   const displayName = user?.fullName || user?.name || 'Velocity User';
   const email = user?.email || 'user@clinic.com';
   const initials = getInitials(displayName, email);
 
-  const handleLogout = async () => {
-    await logout();
+  const handleLogout = () => {
+    clearToken();
     router.push('/signin');
   };
 
@@ -95,6 +96,24 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
       </nav>
 
       <div className="border-t border-[#1e1e1e] p-4">
+        {user?.tenantMembers && user.tenantMembers.length > 0 && (
+          <div className="mb-4">
+            <label htmlFor="workspace-select" className="sr-only">Workspace</label>
+            <select
+              id="workspace-select"
+              value={activeTenantId || ''}
+              onChange={(e) => switchTenant(e.target.value)}
+              className="w-full rounded-lg border border-[#2a2a2a] bg-[#1a1a1a] px-3 py-2 text-sm font-medium text-[#f5f5f5] focus:border-[#c9a97a] focus:outline-none focus:ring-1 focus:ring-[#c9a97a]"
+            >
+              {user.tenantMembers.map((m: any) => (
+                <option key={m.tenantId} value={m.tenantId}>
+                  {m.tenant?.name || 'Workspace'}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
         <div className="mb-3 flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#c9a97a]/20 text-xs font-semibold text-[#c9a97a]">
             {initials}

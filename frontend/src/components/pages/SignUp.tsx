@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { ArrowRight, Building2, Eye, EyeOff, HeartPulse, Lock, Mail, User } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
+import { apiRequest } from '../../../lib/api';
 import AuthShell from './AuthShell';
 
 interface Banner {
@@ -28,7 +28,6 @@ export default function SignUp() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const { signUp } = useAuth();
   const router = useRouter();
 
   const validateForm = () => {
@@ -57,16 +56,15 @@ export default function SignUp() {
     if (!validateForm()) return;
     setLoading(true);
     try {
-      const result = await signUp({
-        email: email.trim(),
-        password,
-        fullName: fullName.trim(),
-        companyName: companyName.trim(),
-        remember: true,
+      await apiRequest('/auth/register', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: email.trim(),
+          password,
+          fullName: fullName.trim(),
+        })
       });
-      const target = result?.verificationLink || (result?.verificationToken ? `/verify?token=${encodeURIComponent(result.verificationToken)}` : '/verify');
-      setBanner({ type: 'success', message: 'Account created. Check your email to verify your account.' });
-      setTimeout(() => router.replace(target), 700);
+      setBanner({ type: 'success', message: 'Check your email to verify your account.' });
     } catch (err: unknown) {
       setBanner({ type: 'error', message: err instanceof Error ? err.message : 'Failed to create account.' });
     } finally {

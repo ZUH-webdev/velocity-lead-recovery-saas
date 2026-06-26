@@ -26,7 +26,7 @@ export default function SignIn() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const { signIn } = useAuth();
+  const { login } = useAuth();
   const router = useRouter();
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -40,7 +40,7 @@ export default function SignIn() {
 
     setLoading(true);
     try {
-      await signIn(email.trim(), password);
+      await login(email.trim(), password);
       setBanner({ type: 'success', message: 'Signed in successfully. Redirecting to your workspace.' });
       router.push('/dashboard');
     } catch (err: unknown) {

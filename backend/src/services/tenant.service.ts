@@ -4,68 +4,53 @@ import { sendMemberInviteEmail } from "../utils/send-mail";
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { env } from "../config/env";
-import { hashToken } from "../utils/auth";
+import { generateTokens } from "../utils/auth";
 
-// ── Default permissions seeded for every new tenant ───────────────────────
+// ── Default permissions seeded globally (once) ─────────────────────────────
 
 const DEFAULT_PERMISSIONS = [
-  { key: "leads:read", description: "View leads" },
-  { key: "leads:write", description: "Create and update leads" },
-  { key: "leads:delete", description: "Delete leads" },
-  { key: "conversations:read", description: "View conversations" },
-  { key: "conversations:write", description: "Manage conversations" },
-  { key: "appointments:read", description: "View appointments" },
-  { key: "appointments:write", description: "Create and update appointments" },
-  { key: "members:read", description: "View team members" },
-  { key: "members:write", description: "Invite and update members" },
-  { key: "members:delete", description: "Remove members" },
-  { key: "roles:read", description: "View roles" },
-  { key: "roles:write", description: "Create and update roles" },
-  { key: "roles:delete", description: "Delete roles" },
-  { key: "knowledge:read", description: "View knowledge base" },
-  { key: "knowledge:write", description: "Upload knowledge documents" },
-  { key: "knowledge:delete", description: "Delete knowledge documents" },
-  { key: "agent:read", description: "View AI agent settings" },
-  { key: "agent:write", description: "Update AI agent settings" },
-  { key: "settings:read", description: "View tenant settings" },
-  { key: "settings:write", description: "Update tenant settings" },
-  { key: "billing:read", description: "View billing and invoices" },
-  { key: "billing:write", description: "Manage billing and subscriptions" },
+  { key: "leads:read", name: "View leads", description: "View leads" },
+  { key: "leads:write", name: "Manage leads", description: "Create and update leads" },
+  { key: "leads:delete", name: "Delete leads", description: "Delete leads" },
+  { key: "conversations:read", name: "View conversations", description: "View conversations" },
+  { key: "conversations:write", name: "Manage conversations", description: "Manage conversations" },
+  { key: "appointments:read", name: "View appointments", description: "View appointments" },
+  { key: "appointments:write", name: "Manage appointments", description: "Create and update appointments" },
+  { key: "members:read", name: "View members", description: "View team members" },
+  { key: "members:write", name: "Manage members", description: "Invite and update members" },
+  { key: "members:delete", name: "Remove members", description: "Remove members" },
+  { key: "roles:read", name: "View roles", description: "View roles" },
+  { key: "roles:write", name: "Manage roles", description: "Create and update roles" },
+  { key: "roles:delete", name: "Delete roles", description: "Delete roles" },
+  { key: "knowledge:read", name: "View knowledge", description: "View knowledge base" },
+  { key: "knowledge:write", name: "Upload knowledge", description: "Upload knowledge documents" },
+  { key: "knowledge:delete", name: "Delete knowledge", description: "Delete knowledge documents" },
+  { key: "agent:read", name: "View agent", description: "View AI agent settings" },
+  { key: "agent:write", name: "Manage agent", description: "Update AI agent settings" },
+  { key: "settings:read", name: "View settings", description: "View tenant settings" },
+  { key: "settings:write", name: "Manage settings", description: "Update tenant settings" },
+  { key: "billing:read", name: "View billing", description: "View billing and invoices" },
+  { key: "billing:write", name: "Manage billing", description: "Manage billing and subscriptions" },
 ];
 
 // Keys assigned to each system role
 const ROLE_PERMISSION_MAP: Record<string, string[]> = {
   owner: DEFAULT_PERMISSIONS.map((p) => p.key), // all
   admin: [
-    "leads:read",
-    "leads:write",
-    "leads:delete",
-    "conversations:read",
-    "conversations:write",
-    "appointments:read",
-    "appointments:write",
-    "members:read",
-    "members:write",
-    "members:delete",
-    "roles:read",
-    "roles:write",
-    "roles:delete",
-    "knowledge:read",
-    "knowledge:write",
-    "knowledge:delete",
-    "agent:read",
-    "agent:write",
-    "settings:read",
-    "settings:write",
-    "billing:read", // no billing:write
+    "leads:read", "leads:write", "leads:delete",
+    "conversations:read", "conversations:write",
+    "appointments:read", "appointments:write",
+    "members:read", "members:write", "members:delete",
+    "roles:read", "roles:write", "roles:delete",
+    "knowledge:read", "knowledge:write", "knowledge:delete",
+    "agent:read", "agent:write",
+    "settings:read", "settings:write",
+    "billing:read",
   ],
   receptionist: [
-    "leads:read",
-    "leads:write",
-    "conversations:read",
-    "conversations:write",
-    "appointments:read",
-    "appointments:write",
+    "leads:read", "leads:write",
+    "conversations:read", "conversations:write",
+    "appointments:read", "appointments:write",
     "knowledge:read",
   ],
   viewer: [
@@ -77,49 +62,41 @@ const ROLE_PERMISSION_MAP: Record<string, string[]> = {
 };
 
 const SYSTEM_ROLES = [
-  {
-    key: "owner",
-    name: "Owner",
-    description: "Full access to everything including billing",
-  },
-  {
-    key: "admin",
-    name: "Admin",
-    description: "Manage staff, leads, and settings",
-  },
-  {
-    key: "receptionist",
-    name: "Receptionist",
-    description: "View and manage leads and conversations",
-  },
+  { key: "owner", name: "Owner", description: "Full access to everything including billing" },
+  { key: "admin", name: "Admin", description: "Manage staff, leads, and settings" },
+  { key: "receptionist", name: "Receptionist", description: "View and manage leads and conversations" },
   { key: "viewer", name: "Viewer", description: "Read-only dashboard access" },
 ];
 
+/**
+ * Ensure all global permissions exist (upsert by key), then seed system roles
+ * for the new tenant and assign the creator as Owner member.
+ */
 async function seedTenantDefaults(tenantId: string, userId: string) {
-  // 1. Create all permissions
+  // 1. Upsert all global permissions (they are shared, not per-tenant)
   const permissions = await Promise.all(
     DEFAULT_PERMISSIONS.map((p) =>
-      prisma.permission.create({
-        data: { tenantId, key: p.key, description: p.description },
+      prisma.permission.upsert({
+        where: { key: p.key },
+        update: {},
+        create: { key: p.key, name: p.name, description: p.description },
       }),
     ),
   );
 
-  const permissionMap = Object.fromEntries(
-    permissions.map((p) => [p.key, p.id]),
-  );
+  const permissionMap = Object.fromEntries(permissions.map((p) => [p.key, p.id]));
 
   // 2. Create system roles with their permission links
   const roles = await Promise.all(
     SYSTEM_ROLES.map((r) =>
-      prisma.roleDefinition.create({
+      prisma.role.create({
         data: {
           tenantId,
           key: r.key,
           name: r.name,
           description: r.description,
           isSystemRole: true,
-          permissionLinks: {
+          permissions: {
             create: (ROLE_PERMISSION_MAP[r.key] ?? [])
               .filter((key) => permissionMap[key] !== undefined)
               .map((key) => ({
@@ -155,17 +132,13 @@ export class TenantService {
   }
 
   static async getById(tenantId: string) {
-    const tenant = await prisma.tenant.findUnique({
-      where: { id: tenantId },
-    });
-
+    const tenant = await prisma.tenant.findUnique({ where: { id: tenantId } });
     if (!tenant) return HttpResponse.notFound("Tenant not found");
-
     return HttpResponse.ok("Tenant retrieved successfully", tenant);
   }
 
   static async create(
-    userId: string, // ← creator gets Owner role
+    userId: string,
     name: string,
     email: string,
     industry: string,
@@ -174,36 +147,18 @@ export class TenantService {
   ) {
     const slug = name.toLowerCase().replace(/\s+/g, "-");
 
-    const existingTenant = await prisma.tenant.findUnique({
-      where: { slug },
-    });
-
+    const existingTenant = await prisma.tenant.findUnique({ where: { slug } });
     if (existingTenant) {
       return HttpResponse.conflict("Tenant with this name already exists");
     }
 
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-    const tenant = await prisma.$transaction(async (tx) => {
-      const newTenant = await tx.tenant.create({
-        data: {
-          name,
-          slug,
-          email,
-          industry,
-          phone,
-          timezone: tz,
-          isActive: true,
-          websiteURL,
-          workingHours: {},
-        },
-      });
-
-      return newTenant;
+    const tenant = await prisma.tenant.create({
+      data: { name, slug, email, industry, phone, timezone: tz, isActive: true, websiteURL, workingHours: {} },
     });
 
-    // Seed roles, permissions, and assign owner — outside transaction
-    // so failures here don't roll back tenant creation silently
+    // Seed roles, permissions, and assign owner
     await seedTenantDefaults(tenant.id, userId);
 
     return HttpResponse.created("Tenant created successfully", tenant);
@@ -212,200 +167,128 @@ export class TenantService {
   static async update(
     tenantId: string,
     data: Partial<{
-      name: string;
-      email: string;
-      industry: string;
-      phone: string;
-      website: string;
-      address: string;
-      timezone: string;
-      workingHours: object;
+      name: string; email: string; industry: string; phone: string;
+      website: string; address: string; timezone: string; workingHours: object;
     }>,
   ) {
-    const tenant = await prisma.tenant.findUnique({
-      where: { id: tenantId },
-    });
-
+    const tenant = await prisma.tenant.findUnique({ where: { id: tenantId } });
     if (!tenant) return HttpResponse.notFound("Tenant not found");
 
-    const updated = await prisma.tenant.update({
-      where: { id: tenantId },
-      data,
-    });
-
+    const updated = await prisma.tenant.update({ where: { id: tenantId }, data });
     return HttpResponse.ok("Tenant updated successfully", updated);
   }
 
   static async deactivate(tenantId: string) {
-    const tenant = await prisma.tenant.findUnique({
-      where: { id: tenantId },
-    });
-
+    const tenant = await prisma.tenant.findUnique({ where: { id: tenantId } });
     if (!tenant) return HttpResponse.notFound("Tenant not found");
 
-    const updated = await prisma.tenant.update({
-      where: { id: tenantId },
-      data: { isActive: false },
-    });
-
+    const updated = await prisma.tenant.update({ where: { id: tenantId }, data: { isActive: false } });
     return HttpResponse.ok("Tenant deactivated successfully", updated);
   }
 
   static async activate(tenantId: string) {
-  const tenant = await prisma.tenant.findUnique({
-    where: { id: tenantId },
-  });
+    const tenant = await prisma.tenant.findUnique({ where: { id: tenantId } });
+    if (!tenant) return HttpResponse.notFound("Tenant not found");
+    if (tenant.isActive) return HttpResponse.conflict("Tenant is already active");
 
-  if (!tenant) return HttpResponse.notFound("Tenant not found");
-  if (tenant.isActive) return HttpResponse.conflict("Tenant is already active");
+    const updated = await prisma.tenant.update({ where: { id: tenantId }, data: { isActive: true } });
+    return HttpResponse.ok("Tenant activated successfully", updated);
+  }
 
-  const updated = await prisma.tenant.update({
-    where: { id: tenantId },
-    data: { isActive: true },
-  });
-
-  return HttpResponse.ok("Tenant activated successfully", updated);
-}
-
-// ── Members ───────────────────────────────────────────────────────────────
+  // ── Members ───────────────────────────────────────────────────────────────
 
   static async getMembers(tenantId: string) {
     const members = await prisma.tenantMember.findMany({
       where: { tenantId },
       include: {
-        user: {
-          select: { id: true, email: true, fullName: true, avatarURL: true },
-        },
+        user: { select: { id: true, email: true, fullName: true, avatarURL: true } },
         role: true,
       },
     });
-
     return HttpResponse.ok("Members retrieved successfully", members);
   }
 
   static async inviteMember(
     tenantId: string,
-    invitedByMemberId: string,       // ← who is inviting
+    invitedByMemberId: string,
     invitedEmail: string,
-    roleId: string,
+    roleId?: string,
     jobTitle?: string,
     department?: string,
   ) {
-    // 1. Validate role belongs to this tenant
-    const role = await prisma.roleDefinition.findFirst({
-      where: { id: roleId, tenantId },
-    });
-    if (!role) return HttpResponse.notFound("Role not found");
+    // 1. Validate role belongs to this tenant (if provided)
+    let role = null;
+    if (roleId) {
+      role = await prisma.role.findFirst({ where: { id: roleId, tenantId } });
+      if (!role) return HttpResponse.notFound("Role not found");
+    }
 
-    // 2. Get inviter info for the email
+    // 2. Get inviter info
     const inviter = await prisma.tenantMember.findFirst({
       where: { id: invitedByMemberId, tenantId },
       include: { user: { select: { fullName: true } } },
     });
 
-    // 3. Get tenant info for the email
+    // 3. Get tenant info
     const tenant = await prisma.tenant.findUnique({
       where: { id: tenantId },
       select: { name: true },
     });
 
-    // 4. Check not already invited
+    // 4. Check not already invited (via Invite record)
+    const existingInvite = await prisma.invite.findFirst({
+      where: { tenantId, invitedEmail, accepted: false },
+    });
+    if (existingInvite) return HttpResponse.conflict("This email has already been invited");
+
+    // Also check if user is already a member
     const existingMember = await prisma.tenantMember.findFirst({
       where: { tenantId, invitedEmail },
     });
-    if (existingMember) return HttpResponse.conflict("Member already invited");
+    if (existingMember) return HttpResponse.conflict("Member already exists in this workspace");
 
-    // 5. Generate invite token
-    const rawToken   = crypto.randomBytes(32).toString("hex");
-    const tokenHash  = hashToken(rawToken);
-    const expiresAt  = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7); // 7 days
+    // 5. Generate invite token and create Invite record
+    const rawToken = crypto.randomBytes(32).toString("hex");
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7); // 7 days
 
-    // 6. Create member record + verification token in one transaction
-    const member = await prisma.$transaction(async (tx) => {
-      const newMember = await tx.tenantMember.create({
-        data: {
-          tenantId,
-          roleId,
-          invitedEmail,
-          jobTitle:   jobTitle   ?? null,
-          department: department ?? null,
-          status:     "INVITED",
-          invitedAt:  new Date(),
-          userId:     null,
-        },
-      });
-
-      await tx.authVerificationToken.create({
-        data: {
-          email:     invitedEmail,
-          tokenHash,
-          purpose:   "MEMBER_INVITE",
-          expiresAt,
-          metadata:  {
-            tenantId,
-            memberId:  newMember.id,
-            roleId,
-          },
-        },
-      });
-
-      return newMember;
+    const invite = await prisma.invite.create({
+      data: {
+        tenantId,
+        invitedEmail,
+        roleId: roleId ?? null,
+        jobTitle: jobTitle ?? null,
+        department: department ?? null,
+        token: rawToken,
+        accepted: false,
+        expiresAt,
+      },
     });
 
-    // 7. Send invite email
-    const inviteUrl     = `${env.APP_URL}/accept-invite?token=${rawToken}`;
-    const inviterName   = inviter?.user?.fullName ?? "A team member";
-    const tenantName    = tenant?.name ?? "your workspace";
-    const roleName      = role.name;
+    // 6. Send invite email
+    const inviteUrl = `${env.APP_URL}/accept-invite?token=${rawToken}`;
+    const inviterName = inviter?.user?.fullName ?? "A team member";
+    const tenantName = tenant?.name ?? "your workspace";
+    const roleName = role?.name ?? "Member";
 
-    await sendMemberInviteEmail(
-      invitedEmail,
-      inviterName,
-      tenantName,
-      roleName,
-      inviteUrl,
-    );
+    console.log(`\n🔗 [INVITE] ${invitedEmail} → ${inviteUrl}\n`);
 
-    return HttpResponse.created("Member invited successfully", member);
+    await sendMemberInviteEmail(invitedEmail, inviterName, tenantName, roleName, inviteUrl);
+
+    return HttpResponse.created("Member invited successfully", invite);
   }
 
-  static async acceptInvite(
-    token: string,
-    fullName: string,
-    password: string,
-  ) {
-    const tokenHash = hashToken(token);
-
+  static async acceptInvite(token: string, fullName: string, password: string) {
     // 1. Validate token
-    const record = await prisma.authVerificationToken.findFirst({
-      where: { tokenHash },
-    });
+    const invite = await prisma.invite.findUnique({ where: { token } });
 
-    if (!record || record.purpose !== "MEMBER_INVITE") {
-      return HttpResponse.badRequest("Invalid invite token");
-    }
-    if (record.consumedAt) {
-      return HttpResponse.badRequest("Invite has already been accepted");
-    }
-    if (record.expiresAt < new Date()) {
-      return HttpResponse.badRequest("Invite token has expired");
-    }
+    if (!invite) return HttpResponse.badRequest("Invalid invite token");
+    if (invite.accepted) return HttpResponse.badRequest("Invite has already been accepted");
+    if (invite.expiresAt < new Date()) return HttpResponse.badRequest("Invite token has expired");
 
-    const { tenantId, memberId } = record.metadata as {
-      tenantId: string;
-      memberId: string;
-    };
+    const { tenantId, invitedEmail, roleId } = invite;
 
-    // 2. Check member record still exists and is still INVITED
-    const member = await prisma.tenantMember.findFirst({
-      where: { id: memberId, tenantId, status: "INVITED" },
-    });
-    if (!member) return HttpResponse.badRequest("Invite is no longer valid");
-
-    // 3. Check if user already exists (was already registered)
-    const existingUser = await prisma.user.findUnique({
-      where: { email: record.email },
-    });
+    // 2. Check if user already exists
+    const existingUser = await prisma.user.findUnique({ where: { email: invitedEmail } });
 
     const passwordHash = await bcrypt.hash(password, 12);
 
@@ -413,53 +296,49 @@ export class TenantService {
       let resolvedUser;
 
       if (existingUser) {
-        // User already has an account — just link them
         resolvedUser = existingUser;
       } else {
-        // Create new user
         resolvedUser = await tx.user.create({
           data: {
-            email:           record.email,
+            email: invitedEmail,
             fullName,
+            password: passwordHash,
+            emailVerified: true,
             emailVerifiedAt: new Date(), // auto-verified via invite
-          },
-        });
-
-        await tx.authAccount.create({
-          data: {
-            userId:            resolvedUser.id,
-            provider:          "credentials",
-            providerAccountId: resolvedUser.id,
-            profile:           { passwordHash },
           },
         });
       }
 
-      // Activate the member record
-      await tx.tenantMember.update({
-        where: { id: memberId },
+      // Create TenantMember record
+      await tx.tenantMember.create({
         data: {
-          userId:   resolvedUser.id,
-          status:   "ACTIVE",
+          tenantId,
+          userId: resolvedUser.id,
+          roleId: roleId ?? null,
+          invitedEmail,
+          status: "ACTIVE",
           joinedAt: new Date(),
+          invitedAt: invite.createdAt,
         },
       });
 
-      // Consume the token
-      await tx.authVerificationToken.update({
-        where: { id: record.id },
-        data:  { consumedAt: new Date() },
+      // Mark invite as accepted
+      await tx.invite.update({
+        where: { id: invite.id },
+        data: { accepted: true },
       });
 
       return resolvedUser;
     });
 
+    // Issue tokens
+    const { accessToken, refreshToken } = generateTokens(user.id);
+    await prisma.user.update({ where: { id: user.id }, data: { refreshToken } });
+
     return HttpResponse.ok("Invite accepted successfully", {
-      user: {
-        id:       user.id,
-        email:    user.email,
-        fullName: user.fullName,
-      },
+      user: { id: user.id, email: user.email, fullName: user.fullName },
+      accessToken,
+      refreshToken,
     });
   }
 
@@ -475,55 +354,40 @@ export class TenantService {
       workingHours: object;
     }>,
   ) {
-    const member = await prisma.tenantMember.findFirst({
-      where: { id: memberId, tenantId },
-    });
-
+    const member = await prisma.tenantMember.findFirst({ where: { id: memberId, tenantId } });
     if (!member) return HttpResponse.notFound("Member not found");
 
     if (data.roleId) {
-      const role = await prisma.roleDefinition.findFirst({
-        where: { id: data.roleId, tenantId },
-      });
+      const role = await prisma.role.findFirst({ where: { id: data.roleId, tenantId } });
       if (!role) return HttpResponse.notFound("Role not found");
     }
 
-    const updated = await prisma.tenantMember.update({
-      where: { id: memberId },
-      data,
-    });
-
+    const updated = await prisma.tenantMember.update({ where: { id: memberId }, data });
     return HttpResponse.ok("Member updated successfully", updated);
   }
 
   static async removeMember(tenantId: string, memberId: string) {
-    const member = await prisma.tenantMember.findFirst({
-      where: { id: memberId, tenantId },
-    });
-
+    const member = await prisma.tenantMember.findFirst({ where: { id: memberId, tenantId } });
     if (!member) return HttpResponse.notFound("Member not found");
 
     await prisma.tenantMember.update({
       where: { id: memberId },
-      data:  { status: "LEFT", leftAt: new Date() },
+      data: { status: "LEFT", leftAt: new Date() },
     });
-
     return HttpResponse.ok("Member removed successfully");
   }
-
 
   // ── Roles ─────────────────────────────────────────────────────────────────
 
   static async getRoles(tenantId: string) {
-    const roles = await prisma.roleDefinition.findMany({
+    const roles = await prisma.role.findMany({
       where: { tenantId },
       include: {
-        permissionLinks: {
+        permissions: {
           include: { permission: true },
         },
       },
     });
-
     return HttpResponse.ok("Roles retrieved successfully", roles);
   }
 
@@ -534,29 +398,22 @@ export class TenantService {
     description: string,
     permissionIds: string[],
   ) {
-    const existingRole = await prisma.roleDefinition.findFirst({
-      where: { tenantId, key },
-    });
+    const existingRole = await prisma.role.findFirst({ where: { tenantId, key } });
+    if (existingRole) return HttpResponse.conflict("Role with this key already exists");
 
-    if (existingRole)
-      return HttpResponse.conflict("Role with this key already exists");
-
-    const role = await prisma.roleDefinition.create({
+    const role = await prisma.role.create({
       data: {
         tenantId,
         key,
         name,
         description,
         isSystemRole: false,
-        permissionLinks: {
+        permissions: {
           create: permissionIds.map((permissionId) => ({ permissionId })),
         },
       },
-      include: {
-        permissionLinks: { include: { permission: true } },
-      },
+      include: { permissions: { include: { permission: true } } },
     });
-
     return HttpResponse.created("Role created successfully", role);
   }
 
@@ -566,63 +423,45 @@ export class TenantService {
     data: Partial<{ name: string; description: string }>,
     permissionIds?: string[],
   ) {
-    const role = await prisma.roleDefinition.findFirst({
-      where: { id: roleId, tenantId },
-    });
-
+    const role = await prisma.role.findFirst({ where: { id: roleId, tenantId } });
     if (!role) return HttpResponse.notFound("Role not found");
-    if (role.isSystemRole)
-      return HttpResponse.forbidden("System roles cannot be modified");
+    if (role.isSystemRole) return HttpResponse.forbidden("System roles cannot be modified");
 
-    const updated = await prisma.roleDefinition.update({
+    const updated = await prisma.role.update({
       where: { id: roleId },
       data: {
         ...data,
         ...(permissionIds && {
-          permissionLinks: {
+          permissions: {
             deleteMany: {},
             create: permissionIds.map((permissionId) => ({ permissionId })),
           },
         }),
       },
-      include: {
-        permissionLinks: { include: { permission: true } },
-      },
+      include: { permissions: { include: { permission: true } } },
     });
-
     return HttpResponse.ok("Role updated successfully", updated);
   }
 
   static async deleteRole(tenantId: string, roleId: string) {
-    const role = await prisma.roleDefinition.findFirst({
-      where: { id: roleId, tenantId },
-    });
-
+    const role = await prisma.role.findFirst({ where: { id: roleId, tenantId } });
     if (!role) return HttpResponse.notFound("Role not found");
-    if (role.isSystemRole)
-      return HttpResponse.forbidden("System roles cannot be deleted");
+    if (role.isSystemRole) return HttpResponse.forbidden("System roles cannot be deleted");
 
-    const membersWithRole = await prisma.tenantMember.count({
-      where: { roleId, tenantId },
-    });
-
+    const membersWithRole = await prisma.tenantMember.count({ where: { roleId, tenantId } });
     if (membersWithRole > 0) {
-      return HttpResponse.conflict(
-        "Cannot delete a role that is assigned to members",
-      );
+      return HttpResponse.conflict("Cannot delete a role that is assigned to members");
     }
 
-    await prisma.roleDefinition.delete({ where: { id: roleId } });
+    await prisma.role.delete({ where: { id: roleId } });
     return HttpResponse.ok("Role deleted successfully");
   }
 
   // ── Permissions ───────────────────────────────────────────────────────────
 
-  static async getPermissions(tenantId: string) {
-    const permissions = await prisma.permission.findMany({
-      where: { tenantId },
-    });
-
+  static async getPermissions(_tenantId: string) {
+    // Permissions are global, not per-tenant
+    const permissions = await prisma.permission.findMany();
     return HttpResponse.ok("Permissions retrieved successfully", permissions);
   }
 
@@ -632,28 +471,18 @@ export class TenantService {
     permissionId: string,
     type: "GRANT" | "REVOKE",
   ) {
-    const member = await prisma.tenantMember.findFirst({
-      where: { id: memberId, tenantId },
-    });
-
+    const member = await prisma.tenantMember.findFirst({ where: { id: memberId, tenantId } });
     if (!member) return HttpResponse.notFound("Member not found");
 
-    const permission = await prisma.permission.findFirst({
-      where: { id: permissionId, tenantId },
-    });
-
+    const permission = await prisma.permission.findUnique({ where: { id: permissionId } });
     if (!permission) return HttpResponse.notFound("Permission not found");
 
-    const override = await prisma.memberPermissionOverride.upsert({
+    const override = await prisma.memberPermission.upsert({
       where: { memberId_permissionId: { memberId, permissionId } },
       update: { type },
       create: { memberId, permissionId, type },
     });
-
-    return HttpResponse.ok(
-      "Permission override applied successfully",
-      override,
-    );
+    return HttpResponse.ok("Permission override applied successfully", override);
   }
 
   static async removeMemberPermissionOverride(
@@ -661,16 +490,12 @@ export class TenantService {
     memberId: string,
     permissionId: string,
   ) {
-    const member = await prisma.tenantMember.findFirst({
-      where: { id: memberId, tenantId },
-    });
-
+    const member = await prisma.tenantMember.findFirst({ where: { id: memberId, tenantId } });
     if (!member) return HttpResponse.notFound("Member not found");
 
-    await prisma.memberPermissionOverride.delete({
+    await prisma.memberPermission.delete({
       where: { memberId_permissionId: { memberId, permissionId } },
     });
-
     return HttpResponse.ok("Permission override removed successfully");
   }
 }

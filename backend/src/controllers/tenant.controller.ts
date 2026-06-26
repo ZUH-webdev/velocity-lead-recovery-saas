@@ -141,8 +141,8 @@ export class TenantController {
   static async inviteMember(req: Request, res: Response): Promise<void> {
     const { invitedEmail, roleId, jobTitle, department } = req.body;
 
-    if (!invitedEmail || !roleId) {
-      HttpResponse.badRequest("invitedEmail and roleId are required").send(res);
+    if (!invitedEmail) {
+      HttpResponse.badRequest("invitedEmail is required").send(res);
       return;
     }
 
@@ -156,7 +156,7 @@ export class TenantController {
       req.tenant!.id,
       req.member!.id, // ← pass inviter's memberId
       invitedEmail,
-      roleId,
+      roleId,         // now optional
       jobTitle,
       department,
     );

@@ -1,4 +1,5 @@
 import DashboardShell from './DashboardShell';
+import ProtectedRoute from '../../src/components/ProtectedRoute';
 
 export const metadata = {
   title: 'Velocity Dashboard — Lead Recovery & Analytics',
@@ -7,5 +8,9 @@ export const metadata = {
 };
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  return <DashboardShell>{children}</DashboardShell>;
+  return (
+    <ProtectedRoute>
+      <DashboardShell>{children}</DashboardShell>
+    </ProtectedRoute>
+  );
 }

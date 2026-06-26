@@ -167,6 +167,7 @@ model Tenant {
   timezone     String   @default("UTC")
   workingHours Json?
   isActive     Boolean  @default(true)
+  status       String   @default("active")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -183,8 +184,8 @@ model Tenant {
   vapiPhoneNumberId    String?
 
   members          TenantMember[]
-  roleDefinitions  RoleDefinition[]
-  permissions      Permission[]
+  roles            Role[]
+  invites          Invite[]
   leads            Lead[]
   services         Service[]
   conversations    Conversation[]
@@ -205,6 +206,7 @@ model Tenant {
   @@index([isActive])
   @@index([createdAt])
 }
+
 
 // ================================================================
 // AGENT PERSONA
@@ -231,26 +233,31 @@ model AgentPersona {
 // ================================================================
 
 model User {
-  id              String    @id @default(uuid()) @db.Uuid
-  email           String    @unique @db.Citext
-  fullName        String?
-  avatarURL       String?
-  timezone        String?
-  emailVerifiedAt DateTime?
-  lastLoginAt     DateTime?
-  isPlatformAdmin Boolean   @default(false)
-  hasOnboarded    Boolean   @default(false)
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  id                      String    @id @default(uuid()) @db.Uuid
+  fullName                String
+  email                   String    @unique @db.Citext
+  password                String
+  emailVerified           Boolean   @default(false)
+  emailVerificationToken  String?
+  refreshToken            String?
+  avatarURL               String?
+  timezone                String?
+  emailVerifiedAt         DateTime?
+  lastLoginAt             DateTime?
+  isPlatformAdmin         Boolean   @default(false)
+  hasOnboarded            Boolean   @default(false)
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
 
-  authAccounts AuthAccount[]
-  authSessions AuthSession[]
-  memberships  TenantMember[]
-  messages     Message[]      @relation("MessageSentByUser")
-  auditLogs    AuditLog[]     @relation("AuditActorUser")
+  authAccounts  AuthAccount[]
+  authSessions  AuthSession[]
+  tenantMembers TenantMember[]
+  messages      Message[]      @relation("MessageSentByUser")
+  auditLogs     AuditLog[]     @relation("AuditActorUser")
 
   @@index([createdAt])
 }
+
 
 model AuthAccount {
   id                String    @id @default(uuid()) @db.Uuid
@@ -309,57 +316,50 @@ model AuthVerificationToken {
 // RBAC
 // ================================================================
 
-model RoleDefinition {
+model Role {
   id           String   @id @default(uuid()) @db.Uuid
-  tenantId     String   @db.Uuid
   key          String
   name         String
   description  String?
-  isSystemRole Boolean  @default(false)
+  tenantId     String   @db.Uuid
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-
-  tenant          Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  members         TenantMember[]
-  permissionLinks RolePermission[]
+  tenant       Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  members      TenantMember[]
+  permissions  RolePermission[]
+  isSystemRole Boolean  @default(false)
 
   @@unique([tenantId, key])
   @@index([tenantId])
 }
 
 model Permission {
-  id          String   @id @default(uuid()) @db.Uuid
-  tenantId    String   @db.Uuid
-  key         String
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  tenant          Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  roleLinks       RolePermission[]
-  memberOverrides MemberPermissionOverride[]
-
-  @@unique([tenantId, key])
-  @@index([tenantId])
+  id              String           @id @default(uuid()) @db.Uuid
+  key             String           @unique
+  name            String
+  description     String?
+  rolePermissions RolePermission[]
+  memberPerms     MemberPermission[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
 }
 
 model RolePermission {
-  roleId       String   @db.Uuid
-  permissionId String   @db.Uuid
-  createdAt    DateTime @default(now())
+  id           String     @id @default(uuid()) @db.Uuid
+  roleId       String     @db.Uuid
+  permissionId String     @db.Uuid
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
 
-  role       RoleDefinition @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  permission Permission     @relation(fields: [permissionId], references: [id], onDelete: Cascade)
-
-  @@id([roleId, permissionId])
+  @@unique([roleId, permissionId])
   @@index([permissionId])
 }
 
 model TenantMember {
   id           String       @id @default(uuid()) @db.Uuid
   tenantId     String       @db.Uuid
-  userId       String?      @db.Uuid
-  roleId       String       @db.Uuid
+  userId       String       @db.Uuid
+  roleId       String?      @db.Uuid
   status       MemberStatus @default(INVITED)
   jobTitle     String?
   department   String?
@@ -373,9 +373,9 @@ model TenantMember {
   updatedAt    DateTime     @updatedAt
 
   tenant                 Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  user                   User?                      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  role                   RoleDefinition             @relation(fields: [roleId], references: [id], onDelete: Restrict)
-  permissionOverrides    MemberPermissionOverride[]
+  user                   User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role                   Role?                      @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  permissions            MemberPermission[]
   assignedLeads          Lead[]                     @relation("LeadAssignedTo")
   escalatedConversations Conversation[]             @relation("ConversationEscalatedTo")
   messages               Message[]                  @relation("MessageSentByStaff")
@@ -386,18 +386,32 @@ model TenantMember {
   @@index([userId, status])
 }
 
-model MemberPermissionOverride {
-  id           String              @id @default(uuid()) @db.Uuid
-  memberId     String              @db.Uuid
-  permissionId String              @db.Uuid
-  type         PermissionGrantType
-
-  member     TenantMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
-  permission Permission   @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+model MemberPermission {
+  id           String       @id @default(uuid()) @db.Uuid
+  memberId     String       @db.Uuid
+  permissionId String       @db.Uuid
+  type         String       // "GRANT" or "DENY"
+  member       TenantMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  permission   Permission   @relation(fields: [permissionId], references: [id], onDelete: Cascade)
 
   @@unique([memberId, permissionId])
   @@index([memberId])
 }
+
+model Invite {
+  id            String   @id @default(uuid()) @db.Uuid
+  tenantId      String   @db.Uuid
+  invitedEmail  String
+  roleId        String?  @db.Uuid
+  jobTitle      String?
+  department    String?
+  token         String   @unique
+  accepted      Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  expiresAt     DateTime
+  tenant        Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
 
 // ================================================================
 // LEADS
