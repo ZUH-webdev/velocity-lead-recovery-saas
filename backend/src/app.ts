@@ -2,6 +2,7 @@ import express from "express";
 import morgan from "morgan";
 import helmet from "helmet";
 import chalk from "chalk";
+import cookieParser from "cookie-parser";
 import { limiter } from "./middleware/rateLimiter";
 import cors from "./middleware/cors";
 import { errorHandler } from "./middleware/errorHandler";
@@ -20,6 +21,7 @@ const app = express();
 
 app.use(cors);
 app.use(helmet());
+app.use(cookieParser());
 app.use(express.json({ limit: "10mb" }));
 app.use(limiter);
 

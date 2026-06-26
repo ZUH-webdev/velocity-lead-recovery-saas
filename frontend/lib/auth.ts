@@ -25,3 +25,20 @@ export function clearToken(): void {
   window.localStorage.removeItem(TOKEN_KEY);
   document.cookie = `${TOKEN_COOKIE}=; path=/; max-age=0; SameSite=Lax`;
 }
+
+const TENANT_KEY = 'velocity_active_tenant';
+
+export function getActiveTenantId(): string | null {
+  if (!canUseStorage()) return null;
+  return window.localStorage.getItem(TENANT_KEY);
+}
+
+export function setActiveTenantId(tenantId: string): void {
+  if (!canUseStorage()) return;
+  window.localStorage.setItem(TENANT_KEY, tenantId);
+}
+
+export function clearActiveTenantId(): void {
+  if (!canUseStorage()) return;
+  window.localStorage.removeItem(TENANT_KEY);
+}

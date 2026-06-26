@@ -218,10 +218,23 @@ export const sendCriticalLeadAlert = async (
 // ── Internal sender ────────────────────────────────────────────────────────
 
 async function send(to: string, subject: string, html: string) {
+  // If using a dummy/skip API key, just log to console — do NOT throw
+  const isDummyKey =
+    !env.RESEND_API_KEY ||
+    env.RESEND_API_KEY.startsWith("re_skip") ||
+    env.RESEND_API_KEY === "re_skip_for_now";
+
+  if (isDummyKey) {
+    console.log(
+      `\n📧 [DEV EMAIL — RESEND NOT CONFIGURED]\n  To: ${to}\n  Subject: ${subject}\n  (HTML content omitted — check server logs for verification links)\n`,
+    );
+    return;
+  }
+
   try {
     await resend.emails.send({ from: FROM, to, subject, html });
   } catch (error) {
-    console.error(`Failed to send email to ${to}:`, error);
-    throw new Error("Failed to send email");
+    // Log but do NOT throw — email failure should not crash critical auth flows
+    console.error(`[send-mail] Failed to send email to ${to}:`, error);
   }
 }

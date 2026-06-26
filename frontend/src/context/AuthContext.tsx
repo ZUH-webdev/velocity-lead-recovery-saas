@@ -1,207 +1,187 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import api from '../utils/api';
-import { extractAuthData } from '../lib/apiClient';
-import {
-  clearAuthSession,
-  getStoredAuthSession,
-  setAuthSession,
-  subscribeAuthSession,
-} from '../utils/authSession';
-import { clearToken, setToken } from '../../lib/auth';
-import type { AxiosError } from 'axios';
-import type { AuthRequestConfig } from '../lib/apiClient';
-import type { AuthRegisterResponse, AuthPayload, AuthUser, AuthSession } from '../types';
+'use client'
 
-interface SignUpInput {
-  email: string;
-  password: string;
-  fullName: string;
-  companyName: string;
-  phone?: string;
-  industry?: string;
-  tenant?: unknown;
-  workspace?: unknown;
-  businessId?: string;
-  remember?: boolean;
+import React, { createContext, useContext, useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { getToken, setToken, clearToken, getActiveTenantId, setActiveTenantId, clearActiveTenantId } from '../../lib/auth'
+import { apiRequest } from '../../lib/api'
+
+interface User {
+  id: string
+  fullName: string
+  email: string
+  emailVerified: boolean
+  createdAt: string
+  [key: string]: any
 }
 
-interface AuthContextValue {
-  user: AuthUser | null;
-  accessToken: string | null;
-  loading: boolean;
-  error: string | null;
-  signUp: (
-    inputOrEmail: SignUpInput | string,
-    password?: string,
-    fullName?: string,
-    options?: Partial<SignUpInput>,
-  ) => Promise<AuthRegisterResponse | null>;
-  signIn: (email: string, password: string, options?: { remember?: boolean }) => Promise<AuthUser | null>;
-  logout: () => Promise<void>;
-  isAuthenticated: boolean;
+interface AuthContextType {
+  user: User | null
+  accessToken: string | null
+  activeTenantId: string | null
+  isLoading: boolean
+  isAuthenticated: boolean
+  login: (email: string, password: string) => Promise<void>
+  logout: () => Promise<void>
+  refreshAccessToken: () => Promise<void>
+  switchTenant: (tenantId: string) => void
 }
 
-const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-function getAuthErrorMessage(error: unknown): string {
-  const axiosError = error as AxiosError<{ error?: string }>;
-  return axiosError?.response?.data?.error || axiosError?.message || (error instanceof Error ? error.message : 'Authentication failed');
-}
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<User | null>(null)
+  const [accessToken, setAccessToken] = useState<string | null>(null)
+  const [activeTenantId, setActiveTenantIdState] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const router = useRouter()
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+  const refreshAccessToken = async () => {
+    try {
+      const res = await apiRequest('/auth/refresh', { method: 'POST' })
+      if (res.data?.accessToken) {
+        setToken(res.data.accessToken)
+        setAccessToken(res.data.accessToken)
+      } else {
+        throw new Error('No token returned')
+      }
+    } catch (err) {
+      clearToken()
+      setUser(null)
+      setAccessToken(null)
+      throw err
+    }
   }
-  return context;
-};
 
-interface Props {
-  children: React.ReactNode;
-}
-
-export const AuthProvider = ({ children }: Props) => {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const fetchMe = async (tokenOverride?: string) => {
+    try {
+      // Temporarily override the getToken during this request if passed
+      // apiRequest natively reads getToken() so we have to use standard fetch or rely on what's in storage
+      // Since apiRequest uses getToken() synchronously, we'll let it read from localStorage.
+      const res = await apiRequest('/auth/me', { method: 'GET' })
+      if (res.data?.user) {
+        setUser(res.data.user)
+        setAccessToken(getToken())
+        
+        let currentTenantId = getActiveTenantId()
+        const members = res.data.user.tenantMembers || []
+        
+        if (members.length > 0) {
+          const isValid = members.some((m: any) => m.tenantId === currentTenantId)
+          if (!currentTenantId || !isValid) {
+            currentTenantId = members[0].tenantId
+            if (currentTenantId) setActiveTenantId(currentTenantId)
+          }
+        } else {
+          currentTenantId = null
+          clearActiveTenantId()
+        }
+        setActiveTenantIdState(currentTenantId)
+        
+      } else {
+        throw new Error('No user returned')
+      }
+    } catch (err) {
+      throw err
+    }
+  }
 
   useEffect(() => {
-    // Subscribe to cross-tab session changes (safe to register on client only)
-    const unsubscribe = subscribeAuthSession((session: AuthSession | null) => {
-      setUser(session?.user || null);
-      setAccessToken(session?.accessToken || null);
-    });
-
-    let active = true;
-
-    const bootstrapSession = async () => {
-      // Only access localStorage/session helpers on the client
-      const initialSession = typeof window !== 'undefined' ? getStoredAuthSession() : null;
-
-      if (initialSession?.accessToken) {
-        setUser(initialSession.user || null);
-        setAccessToken(initialSession.accessToken || null);
-        setToken(initialSession.accessToken, initialSession.remember);
-        setLoading(false);
-        return;
-      }
-
+    const initAuth = async () => {
       try {
-        const response = await api.post<AuthPayload>('/auth/refresh', {}, { skipAuthRefresh: true } as AuthRequestConfig);
-        const payload = extractAuthData(response.data) as AuthPayload;
-
-        if (payload.accessToken) {
-          setAuthSession({
-            user: payload.user || null,
-            accessToken: payload.accessToken,
-            remember: true,
-          });
-          setToken(payload.accessToken, true);
+        const token = getToken()
+        if (!token) {
+          throw new Error('No token found')
         }
-      } catch (bootstrapError) {
-        // clear any possibly stale session state on failure
-        if (typeof window !== 'undefined') clearAuthSession();
+        await fetchMe()
+      } catch (err) {
+        // If 401 or no token, try to refresh
+        try {
+          await refreshAccessToken()
+          await fetchMe()
+        } catch (refreshErr) {
+          clearToken()
+          clearActiveTenantId()
+          setUser(null)
+          setAccessToken(null)
+          setActiveTenantIdState(null)
+        }
       } finally {
-        if (active) {
-          setLoading(false);
-        }
+        setIsLoading(false)
       }
-    };
-
-    // Only run bootstrap on client
-    if (typeof window !== 'undefined') bootstrapSession();
-
-    return () => {
-      active = false;
-      unsubscribe();
-    };
-  }, []);
-
-  const signUp = async (
-    inputOrEmail: SignUpInput | string,
-    password?: string,
-    fullName?: string,
-    options: Partial<SignUpInput> = {},
-  ): Promise<AuthRegisterResponse | null> => {
-    try {
-      setError(null);
-      const isObjectPayload = inputOrEmail !== null && typeof inputOrEmail === 'object';
-      const registrationInput = isObjectPayload
-        ? inputOrEmail
-        : {
-            email: inputOrEmail,
-            password,
-            fullName,
-            ...options,
-          };
-
-      const response = await api.post<AuthRegisterResponse>(
-        '/auth/register',
-        {
-          email: registrationInput.email,
-          password: registrationInput.password ?? password,
-          fullName: registrationInput.fullName ?? fullName,
-          companyName: registrationInput.companyName,
-          phone: registrationInput.phone,
-          industry: registrationInput.industry,
-          tenant: registrationInput.tenant,
-          workspace: registrationInput.workspace,
-          businessId: registrationInput.businessId,
-        },
-        { skipAuthRefresh: true } as AuthRequestConfig,
-      );
-      return extractAuthData(response.data) as AuthRegisterResponse;
-    } catch (err: unknown) {
-      setError(getAuthErrorMessage(err));
-      throw err;
     }
-  };
 
-  const signIn = async (email: string, password: string, options: { remember?: boolean } = {}): Promise<AuthUser | null> => {
-    try {
-      setError(null);
-      const response = await api.post<AuthPayload>('/auth/login', { email, password }, { skipAuthRefresh: true } as AuthRequestConfig);
-      const payload = extractAuthData(response.data) as AuthPayload;
+    initAuth()
+  }, [])
 
-      if (payload.accessToken) {
-        setAuthSession({
-          user: payload.user || null,
-          accessToken: payload.accessToken,
-          remember: options.remember ?? false,
-        });
-        setToken(payload.accessToken, options.remember ?? false);
+  const login = async (email: string, password: string) => {
+    const res = await apiRequest('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+    })
+
+    if (res.data?.accessToken) {
+      setToken(res.data.accessToken)
+      setAccessToken(res.data.accessToken)
+      setUser(res.data.user)
+      
+      const members = res.data.user?.tenantMembers || []
+      if (members.length > 0) {
+        const firstTenantId = members[0].tenantId
+        setActiveTenantId(firstTenantId)
+        setActiveTenantIdState(firstTenantId)
       }
-
-      return payload.user || null;
-    } catch (err: unknown) {
-      setError(getAuthErrorMessage(err));
-      throw err;
+      
+      router.push('/dashboard')
+    } else {
+      throw new Error(res.message || 'Login failed')
     }
-  };
+  }
 
   const logout = async () => {
     try {
-      setError(null);
-      await api.post('/auth/logout', {}, { skipAuthRefresh: true } as AuthRequestConfig);
-    } catch (err: unknown) {
-      setError(getAuthErrorMessage(err));
+      await apiRequest('/auth/logout', { method: 'POST' })
+    } catch (err) {
+      console.error('Logout error:', err)
     } finally {
-      clearAuthSession();
-      clearToken();
+      clearToken()
+      clearActiveTenantId()
+      setUser(null)
+      setAccessToken(null)
+      setActiveTenantIdState(null)
+      router.push('/signin')
     }
-  };
+  }
 
-  const value = {
-    user,
-    accessToken,
-    loading,
-    error,
-    signUp,
-    signIn,
-    logout,
-    isAuthenticated: !!accessToken,
-  };
+  const switchTenant = (tenantId: string) => {
+    setActiveTenantId(tenantId)
+    setActiveTenantIdState(tenantId)
+    // Optional: Could trigger a reload or re-fetch to update scoped data
+    window.location.href = '/dashboard'
+  }
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-};
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        accessToken,
+        activeTenantId,
+        isLoading,
+        isAuthenticated: !!user,
+        login,
+        logout,
+        refreshAccessToken,
+        switchTenant,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  )
+}
+
+export const useAuth = () => {
+  const context = useContext(AuthContext)
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider')
+  }
+  return context
+}

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowRight, CheckCircle2, MailWarning, ShieldCheck } from 'lucide-react';
-import { authService } from '../../src/services/authService';
+import { apiRequest } from '../../lib/api';
 import AuthShell from '../../src/components/pages/AuthShell';
 
 interface Banner {
@@ -35,18 +35,18 @@ export default function VerifyClient({ token }: Props) {
     const verifyAccount = async () => {
       setLoading(true);
       try {
-        await authService.verify({ token });
+        await apiRequest(`/auth/verify?token=${token}`, { method: 'POST' });
 
         if (!active) return;
 
-        setBanner({ type: 'success', message: 'Verification complete. Redirecting to your dashboard.' });
-        setTimeout(() => router.replace('/dashboard'), 900);
+        setBanner({ type: 'success', message: 'Email verified! Redirecting to sign in...' });
+        setTimeout(() => router.replace('/signin'), 2000);
       } catch (error: unknown) {
         if (!active) return;
 
         setBanner({
           type: 'error',
-          message: error instanceof Error ? error.message : 'Unable to complete verification right now.',
+          message: 'Invalid or expired verification link.',
         });
       } finally {
         if (active) setLoading(false);
