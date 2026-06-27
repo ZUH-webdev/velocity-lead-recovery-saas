@@ -2,8 +2,8 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { getToken, setToken, clearToken, getActiveTenantId, setActiveTenantId, clearActiveTenantId } from '../../lib/auth'
-import { apiRequest } from '../../lib/api'
+import { getToken, setToken, clearToken, getActiveTenantId, setActiveTenantId, clearActiveTenantId } from '../lib/auth'
+import { apiRequest } from '../lib/api'
 
 interface User {
   id: string

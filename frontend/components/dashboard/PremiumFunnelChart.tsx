@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { ArrowUpRight, TrendingUp, Zap } from 'lucide-react';
-import type { FunnelDatum, RecoveryMetrics } from '../types';
+import type { FunnelDatum, RecoveryMetrics } from '../../types';
 
 const defaultFunnelData: FunnelDatum[] = [
   { stage: 'Missed Calls', value: 1247, percentage: 100 },

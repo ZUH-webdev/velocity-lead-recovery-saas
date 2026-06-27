@@ -9,7 +9,7 @@ import {
   Phone,
   Maximize2,
 } from 'lucide-react';
-import type { ConversationMessage, Lead } from '../types';
+import type { ConversationMessage, Lead } from '../../types';
 
 interface Props {
   isOpen: boolean;

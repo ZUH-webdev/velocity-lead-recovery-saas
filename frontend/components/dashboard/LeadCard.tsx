@@ -9,7 +9,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import clsx from 'clsx';
-import type { Lead } from '../types';
+import type { Lead } from '../../types';
 
 interface Props {
   lead: Lead;

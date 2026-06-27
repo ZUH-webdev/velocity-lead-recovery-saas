@@ -12,8 +12,8 @@ import {
   Users,
   X,
 } from 'lucide-react';
-import { useAuth } from '../../src/context/AuthContext';
-import { cn } from '../../src/lib/utils';
+import { useAuth } from '../../context/AuthContext';
+import { cn } from '../../lib/utils';
 import { clearToken } from '../../lib/auth';
 
 const navItems = [

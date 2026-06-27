@@ -16,7 +16,7 @@ interface Props {
   index?: number;
 }
 
-const StatCard = ({
+const AdvancedStatCard = ({
   icon: Icon,
   label,
   value,
@@ -163,4 +163,4 @@ const StatCard = ({
   );
 };
 
-export default StatCard;
+export default AdvancedStatCard;

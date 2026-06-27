@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import { AuthProvider } from '../../src/context/AuthContext';
+import { AuthProvider } from '../../context/AuthContext';
 import ScrollToTop from '../components/ScrollToTop';
 
 interface Props {

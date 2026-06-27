@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useAuth } from '../../../src/context/AuthContext';
+import { useAuth } from '../../../context/AuthContext';
 
 type Tab = 'profile' | 'business' | 'integrations' | 'notifications';
 

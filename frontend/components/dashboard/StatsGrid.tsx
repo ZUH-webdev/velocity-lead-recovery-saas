@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import StatCard from './StatCard';
+import AdvancedStatCard from './AdvancedStatCard';
 import {
   DollarSign,
   TrendingUp,
@@ -11,7 +11,7 @@ import {
   Activity,
   Brain,
 } from 'lucide-react';
-import type { RecoveryMetrics } from '../types';
+import type { RecoveryMetrics } from '../../types';
 
 interface Props {
   metrics?: Partial<RecoveryMetrics>;
@@ -136,11 +136,11 @@ const StatsGrid = ({ metrics = {}, isLoading = false }: Props) => {
     >
       <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
         {stats.map((stat, index) => (
-          <StatCard
+          <AdvancedStatCard
             key={`stat-${index}`}
             icon={stat.icon}
             label={stat.label}
-            value={stat.value}
+            value={String(stat.value)}
             prefix={stat.prefix}
             suffix={stat.suffix}
             color={stat.color as 'indigo' | 'purple' | 'emerald' | 'amber' | 'blue'}

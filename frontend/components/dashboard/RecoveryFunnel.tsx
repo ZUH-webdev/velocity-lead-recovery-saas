@@ -14,7 +14,7 @@ import {
   Pie,
 } from 'recharts';
 import { TrendingUp, DollarSign, Users, Zap, Phone } from 'lucide-react';
-import type { FunnelDatum, RecoveryMetrics } from '../types';
+import type { FunnelDatum, RecoveryMetrics } from '../../types';
 
 interface Props {
   metrics: Partial<RecoveryMetrics>;

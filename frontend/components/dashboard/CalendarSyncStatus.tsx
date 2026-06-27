@@ -9,7 +9,7 @@ import {
   Globe,
   Clock,
 } from 'lucide-react';
-import type { CalendarStatus } from '../types';
+import type { CalendarStatus } from '../../types';
 
 interface Props {
   status?: CalendarStatus;
