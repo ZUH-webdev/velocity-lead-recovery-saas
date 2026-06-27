@@ -1,163 +1,166 @@
-'use client'
+'use client';
 
-import React, { createContext, useContext, useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { getToken, setToken, clearToken, getActiveTenantId, setActiveTenantId, clearActiveTenantId } from '../lib/auth'
-import { apiRequest } from '../lib/api'
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import {
+  getToken,
+  setToken,
+  clearToken,
+  getActiveTenantId,
+  setActiveTenantId,
+  clearActiveTenantId,
+  setRefreshToken,
+  getRefreshToken,
+  clearRefreshToken,
+} from '../lib/auth';
+import { api } from '../lib/api';
 
 interface User {
-  id: string
-  fullName: string
-  email: string
-  emailVerified: boolean
-  createdAt: string
-  [key: string]: any
+  id: string;
+  fullName: string;
+  email: string;
+  emailVerified: boolean;
+  createdAt: string;
+  [key: string]: any;
 }
 
 interface AuthContextType {
-  user: User | null
-  accessToken: string | null
-  activeTenantId: string | null
-  isLoading: boolean
-  isAuthenticated: boolean
-  login: (email: string, password: string) => Promise<void>
-  logout: () => Promise<void>
-  refreshAccessToken: () => Promise<void>
-  switchTenant: (tenantId: string) => void
+  user: User | null;
+  accessToken: string | null;
+  activeTenantId: string | null;
+  isLoading: boolean;
+  isAuthenticated: boolean;
+  login: (email: string, password: string) => Promise<User>;
+  logout: () => Promise<void>;
+  refreshAccessToken: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [accessToken, setAccessToken] = useState<string | null>(null)
-  const [activeTenantId, setActiveTenantIdState] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const router = useRouter()
+  const [user, setUser] = useState<User | null>(null);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [activeTenantId, setActiveTenantIdState] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   const refreshAccessToken = async () => {
     try {
-      const res = await apiRequest('/auth/refresh', { method: 'POST' })
-      if (res.data?.accessToken) {
-        setToken(res.data.accessToken)
-        setAccessToken(res.data.accessToken)
-      } else {
-        throw new Error('No token returned')
-      }
-    } catch (err) {
-      clearToken()
-      setUser(null)
-      setAccessToken(null)
-      throw err
-    }
-  }
+      const refreshToken = getRefreshToken();
+      if (!refreshToken) throw new Error('No refresh token');
 
-  const fetchMe = async (tokenOverride?: string) => {
-    try {
-      // Temporarily override the getToken during this request if passed
-      // apiRequest natively reads getToken() so we have to use standard fetch or rely on what's in storage
-      // Since apiRequest uses getToken() synchronously, we'll let it read from localStorage.
-      const res = await apiRequest('/auth/me', { method: 'GET' })
-      if (res.data?.user) {
-        setUser(res.data.user)
-        setAccessToken(getToken())
-        
-        let currentTenantId = getActiveTenantId()
-        const members = res.data.user.tenantMembers || []
-        
-        if (members.length > 0) {
-          const isValid = members.some((m: any) => m.tenantId === currentTenantId)
-          if (!currentTenantId || !isValid) {
-            currentTenantId = members[0].tenantId
-            if (currentTenantId) setActiveTenantId(currentTenantId)
-          }
-        } else {
-          currentTenantId = null
-          clearActiveTenantId()
-        }
-        setActiveTenantIdState(currentTenantId)
-        
-      } else {
-        throw new Error('No user returned')
-      }
+      const res = await api.post('/auth/refresh', { refreshToken });
+      const payload = res.data?.data;
+      if (!payload?.accessToken) throw new Error('No token returned');
+
+      setToken(payload.accessToken);
+      if (payload.refreshToken) setRefreshToken(payload.refreshToken); // rotate
+      setAccessToken(payload.accessToken);
     } catch (err) {
-      throw err
+      clearToken();
+      clearRefreshToken();
+      setUser(null);
+      setAccessToken(null);
+      throw err;
     }
-  }
+  };
+
+  const fetchMe = async () => {
+    try {
+      const res = await api.get('/auth/me');
+      const userData = res.data?.data?.user; // unwrap HttpResponse envelope
+      if (!userData) throw new Error('No user returned');
+
+      setUser(userData);
+      setAccessToken(getToken());
+
+      let currentTenantId = getActiveTenantId();
+      const members = userData.tenantMembers || [];
+
+      if (members.length > 0) {
+        const isValid = members.some((m: any) => m.tenantId === currentTenantId);
+        if (!currentTenantId || !isValid) {
+          currentTenantId = members[0].tenantId;
+          if (currentTenantId) setActiveTenantId(currentTenantId);
+        }
+      } else {
+        currentTenantId = null;
+        clearActiveTenantId();
+      }
+
+      setActiveTenantIdState(currentTenantId);
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  // AuthContext.tsx — login()
+  const login = async (email: string, password: string) => {
+    const res = await api.post('/auth/login', { email, password });
+    const payload = res.data?.data;
+
+    if (payload?.accessToken) {
+      setToken(payload.accessToken);
+      setRefreshToken(payload.refreshToken);
+      setAccessToken(payload.accessToken);
+      setUser(payload.user);
+
+      const members = payload.user?.tenantMembers || [];
+      if (members.length > 0) {
+        const firstTenantId = members[0].tenantId;
+        setActiveTenantId(firstTenantId);
+        setActiveTenantIdState(firstTenantId);
+      }
+
+      return payload.user; // ← return user so callers can act on it immediately
+    } else {
+      throw new Error(res.data?.message || 'Login failed');
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await api.post('/auth/logout', { refreshToken: getRefreshToken() });
+    } catch (err) {
+      console.error('Logout error:', err);
+    } finally {
+      clearToken();
+      clearRefreshToken(); // ← clear it
+      clearActiveTenantId();
+      setUser(null);
+      setAccessToken(null);
+      setActiveTenantIdState(null);
+      router.push('/sign-in');
+    }
+  };
 
   useEffect(() => {
     const initAuth = async () => {
       try {
-        const token = getToken()
+        const token = getToken();
         if (!token) {
-          throw new Error('No token found')
+          throw new Error('No token found');
         }
-        await fetchMe()
+        await fetchMe();
       } catch (err) {
         // If 401 or no token, try to refresh
         try {
-          await refreshAccessToken()
-          await fetchMe()
+          await refreshAccessToken();
+          await fetchMe();
         } catch (refreshErr) {
-          clearToken()
-          clearActiveTenantId()
-          setUser(null)
-          setAccessToken(null)
-          setActiveTenantIdState(null)
+          clearToken();
+          clearActiveTenantId();
+          setUser(null);
+          setAccessToken(null);
+          setActiveTenantIdState(null);
         }
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    initAuth()
-  }, [])
-
-  const login = async (email: string, password: string) => {
-    const res = await apiRequest('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-    })
-
-    if (res.data?.accessToken) {
-      setToken(res.data.accessToken)
-      setAccessToken(res.data.accessToken)
-      setUser(res.data.user)
-      
-      const members = res.data.user?.tenantMembers || []
-      if (members.length > 0) {
-        const firstTenantId = members[0].tenantId
-        setActiveTenantId(firstTenantId)
-        setActiveTenantIdState(firstTenantId)
-      }
-      
-      router.push('/dashboard')
-    } else {
-      throw new Error(res.message || 'Login failed')
-    }
-  }
-
-  const logout = async () => {
-    try {
-      await apiRequest('/auth/logout', { method: 'POST' })
-    } catch (err) {
-      console.error('Logout error:', err)
-    } finally {
-      clearToken()
-      clearActiveTenantId()
-      setUser(null)
-      setAccessToken(null)
-      setActiveTenantIdState(null)
-      router.push('/signin')
-    }
-  }
-
-  const switchTenant = (tenantId: string) => {
-    setActiveTenantId(tenantId)
-    setActiveTenantIdState(tenantId)
-    // Optional: Could trigger a reload or re-fetch to update scoped data
-    window.location.href = '/dashboard'
-  }
+    initAuth();
+  }, []);
 
   return (
     <AuthContext.Provider
@@ -170,18 +173,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         logout,
         refreshAccessToken,
-        switchTenant,
       }}
     >
       {children}
     </AuthContext.Provider>
-  )
+  );
 }
 
 export const useAuth = () => {
-  const context = useContext(AuthContext)
+  const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider')
+    throw new Error('useAuth must be used within an AuthProvider');
   }
-  return context
-}
+  return context;
+};

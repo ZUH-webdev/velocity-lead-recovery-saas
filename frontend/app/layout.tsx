@@ -1,5 +1,5 @@
 import React from 'react';
-import ProvidersClient from './providers/ProvidersClient';
+import ProvidersClient from '../providers/ProvidersClient';
 import './globals.css';
 
 export const metadata = {
