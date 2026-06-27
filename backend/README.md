@@ -27,7 +27,7 @@ docker-compose up --build
 
 API Endpoints (examples)
 
-- POST /api/auth/signup
+- POST /api/v1/auth/register
   - body: { "email": "user@example.com", "password": "secret12", "businessName": "MyBiz" }
   - success: { success: true, data: { user, token, refreshToken } }
 
@@ -45,7 +45,7 @@ Curl examples
 Signup:
 
 ```bash
-curl -X POST http://localhost:3001/api/auth/signup \
+curl -X POST http://localhost:3001/api/v1/auth/register \
   -H "Content-Type: application/json" \
   -d '{"email":"test@acme.com","password":"secret12","businessName":"Acme"}'
 ```

@@ -12,8 +12,8 @@ import {
   Users,
   X,
 } from 'lucide-react';
-import { useAuth } from '../../src/context/AuthContext';
-import { cn } from '../../src/lib/utils';
+import { useAuth } from '../../context/AuthContext';
+import { cn } from '../../utils/cn';
 import { clearToken } from '../../lib/auth';
 
 const navItems = [
@@ -42,15 +42,14 @@ interface SidebarProps {
 export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, activeTenantId, switchTenant } = useAuth();
+  const { user, activeTenantId, logout } = useAuth();
 
   const displayName = user?.fullName || user?.name || 'Velocity User';
   const email = user?.email || 'user@clinic.com';
   const initials = getInitials(displayName, email);
 
-  const handleLogout = () => {
-    clearToken();
-    router.push('/signin');
+  const handleLogout = async () => {
+    await logout(); // clears tokens, calls backend, redirects to /signin
   };
 
   const isActive = (href: string, exact?: boolean) => {
@@ -61,8 +60,16 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
   const sidebarContent = (
     <div className="flex h-full flex-col">
       <div className="flex items-center gap-3 border-b border-[#1e1e1e] px-5 py-5">
-        <Image src="/velocity-logo.webp" alt="Velocity" width={32} height={34} className="object-contain" />
-        <span className="text-lg font-semibold tracking-tight text-[#f5f5f5]">Velocity</span>
+        <Image
+          src="/velocity-logo.webp"
+          alt="Velocity"
+          width={32}
+          height={34}
+          className="object-contain"
+        />
+        <span className="text-lg font-semibold tracking-tight text-[#f5f5f5]">
+          Velocity
+        </span>
         <button
           type="button"
           onClick={onMobileClose}
@@ -85,10 +92,12 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
                 'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
                 active
                   ? 'border-l-2 border-[#c9a97a] bg-[#1a1a1a] pl-[10px] text-[#f5f5f5]'
-                  : 'border-l-2 border-transparent text-[#888888] hover:bg-[#1a1a1a] hover:text-[#f5f5f5]',
+                  : 'border-l-2 border-transparent text-[#888888] hover:bg-[#1a1a1a] hover:text-[#f5f5f5]'
               )}
             >
-              <Icon className={cn('h-4 w-4', active ? 'text-[#c9a97a]' : 'text-[#888888]')} />
+              <Icon
+                className={cn('h-4 w-4', active ? 'text-[#c9a97a]' : 'text-[#888888]')}
+              />
               {label}
             </Link>
           );
@@ -96,24 +105,6 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
       </nav>
 
       <div className="border-t border-[#1e1e1e] p-4">
-        {user?.tenantMembers && user.tenantMembers.length > 0 && (
-          <div className="mb-4">
-            <label htmlFor="workspace-select" className="sr-only">Workspace</label>
-            <select
-              id="workspace-select"
-              value={activeTenantId || ''}
-              onChange={(e) => switchTenant(e.target.value)}
-              className="w-full rounded-lg border border-[#2a2a2a] bg-[#1a1a1a] px-3 py-2 text-sm font-medium text-[#f5f5f5] focus:border-[#c9a97a] focus:outline-none focus:ring-1 focus:ring-[#c9a97a]"
-            >
-              {user.tenantMembers.map((m: any) => (
-                <option key={m.tenantId} value={m.tenantId}>
-                  {m.tenant?.name || 'Workspace'}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-
         <div className="mb-3 flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#c9a97a]/20 text-xs font-semibold text-[#c9a97a]">
             {initials}
@@ -149,7 +140,7 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
       <aside
         className={cn(
           'fixed left-0 top-0 z-50 h-screen w-[240px] border-r border-[#1e1e1e] bg-[#0f0f0f] transition-transform md:translate-x-0',
-          mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
+          mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         )}
       >
         {sidebarContent}

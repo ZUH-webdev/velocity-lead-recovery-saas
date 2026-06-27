@@ -198,8 +198,6 @@ model Tenant {
   subscriptions    Subscription[]
   invoices         Invoice[]
   usageEvents      UsageEvent[]
-  apiKeys          TenantApiKey[]
-  webhookEndpoints WebhookEndpoint[]
   auditLogs        AuditLog[]
   agentPersona     AgentPersona?
 
@@ -745,38 +743,6 @@ model UsageEvent {
 // API KEYS, WEBHOOKS, AUDIT
 // ================================================================
 
-model TenantApiKey {
-  id         String    @id @default(uuid()) @db.Uuid
-  tenantId   String    @db.Uuid
-  label      String
-  keyPrefix  String
-  keyHash    String
-  lastUsedAt DateTime?
-  expiresAt  DateTime?
-  revokedAt  DateTime?
-  metadata   Json?
-  createdAt  DateTime  @default(now())
-
-  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-
-  @@unique([tenantId, keyPrefix])
-  @@index([tenantId, revokedAt])
-}
-
-model WebhookEndpoint {
-  id               String   @id @default(uuid()) @db.Uuid
-  tenantId         String   @db.Uuid
-  url              String
-  secretHash       String
-  subscribedEvents String[]
-  isActive         Boolean  @default(true)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-
-  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-
-  @@index([tenantId, isActive])
-}
 
 model AuditLog {
   id                String         @id @default(uuid()) @db.Uuid

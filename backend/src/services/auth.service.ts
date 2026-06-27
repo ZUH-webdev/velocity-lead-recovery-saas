@@ -136,6 +136,8 @@ export class AuthService {
 
     const { email, password } = parsed.data;
 
+    console.log("[AUTH] Login attempt for email:", email);
+
     const user = await prisma.user.findUnique({
       where: { email },
       select: {
