@@ -332,7 +332,7 @@ velocity-lead-recovery-saas/
 │   │   ├── dashboard/
 │   │   ├── privacy/
 │   │   ├── providers/
-│   │   ├── signin/
+│   │   ├── sign-in/
 │   │   ├── signup/
 │   │   ├── status/
 │   │   ├── terms/

@@ -2,7 +2,7 @@
 
 import { Bell, Menu } from 'lucide-react';
 import { usePathname } from 'next/navigation';
-import { useAuth } from '../../src/context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 const routeTitles: Record<string, string> = {
   '/dashboard': 'Overview',
