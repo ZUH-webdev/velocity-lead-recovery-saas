@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowRight, CheckCircle2, MailWarning, ShieldCheck } from 'lucide-react';
 import { api } from '../../../lib/api';
 import AuthShell from '../../../components/AuthShell';
-import { setRefreshToken, setToken } from '../../../lib/auth';
+import { setToken } from '../../../lib/auth';
 
 interface Banner {
   type: 'error' | 'success' | 'info';
@@ -41,10 +41,10 @@ export default function VerifyClient({ token }: Props) {
 
         const payload = res.data?.data;
 
-        // Persist tokens so AuthContext picks them up on next load
+        // Store the access token in memory; the refresh token is set as an
+        // httpOnly cookie by the backend and never touches client-side JS.
         if (payload?.accessToken) {
           setToken(payload.accessToken);
-          setRefreshToken(payload.refreshToken);
         }
 
         setBanner({ type: 'success', message: 'Email verified! Redirecting…' });

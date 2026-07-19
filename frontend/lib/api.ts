@@ -1,6 +1,5 @@
 import {
   getToken, getActiveTenantId, setToken, clearToken,
-  getRefreshToken, setRefreshToken, clearRefreshToken,
   clearActiveTenantId
 } from './auth'
 import axios from 'axios';
@@ -57,22 +56,19 @@ api.interceptors.response.use(
     isRefreshing = true;
 
     try {
-      const refreshToken = getRefreshToken();
-      if (!refreshToken) throw new Error('No refresh token available');
-
-      const response = await api.post('/auth/refresh', { refreshToken });
+      // No body needed — the refresh token lives in the httpOnly cookie,
+      // sent automatically because the client is configured with withCredentials.
+      const response = await api.post('/auth/refresh');
       const payload = response.data?.data;
       if (!payload?.accessToken) throw new Error('No access token returned');
 
       setToken(payload.accessToken);
-      if (payload.refreshToken) setRefreshToken(payload.refreshToken); // rotate
       processQueue(null, payload.accessToken);
       originalRequest.headers['Authorization'] = `Bearer ${payload.accessToken}`;
       return api.request(originalRequest);
     } catch (refreshError) {
       processQueue(refreshError, null);
       clearToken();
-      clearRefreshToken();
       clearActiveTenantId();
       window.location.href = '/sign-in';
       return Promise.reject(refreshError);

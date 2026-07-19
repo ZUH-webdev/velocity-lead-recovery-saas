@@ -200,6 +200,7 @@ model Tenant {
   usageEvents      UsageEvent[]
   auditLogs        AuditLog[]
   agentPersona     AgentPersona?
+  callLogs         CallLog[]
 
   @@index([isActive])
   @@index([createdAt])
@@ -235,8 +236,11 @@ model User {
   fullName                String
   email                   String    @unique @db.Citext
   password                String
-  emailVerified           Boolean   @default(false)
-  emailVerificationToken  String?
+  emailVerified                    Boolean   @default(false)
+  emailVerificationToken           String?
+  emailVerificationTokenExpiresAt  DateTime?
+  passwordResetToken               String?
+  passwordResetTokenExpiresAt      DateTime?
   refreshToken            String?
   avatarURL               String?
   timezone                String?
@@ -764,4 +768,25 @@ model AuditLog {
   @@index([tenantId, createdAt])
   @@index([actorUserId, createdAt])
   @@index([action, createdAt])
+}
+
+// ================================================================
+// CALL LOGS (Twilio)
+// ================================================================
+
+model CallLog {
+  id           String   @id @default(uuid()) @db.Uuid
+  tenantId     String   @db.Uuid
+  callerPhone  String
+  callSid      String   @unique
+  direction    String
+  status       String
+  duration     Int?
+  recordingUrl String?
+  createdAt    DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, createdAt])
+  @@index([callSid])
 }

@@ -22,15 +22,29 @@ export class AuthController {
   static async verifyEmail(req: Request, res: Response, next: NextFunction) {
     try {
       const { token } = req.query as { token?: string };
-      
+
       if (!token) {
         HttpResponse.badRequest("Verification token required").send(res);
         return;
       }
-      const result = await AuthService.verifyEmail(token);
-      if (result.data && (result.data as any).refreshToken) {
-        res.cookie("refreshToken", (result.data as any).refreshToken, REFRESH_COOKIE_OPTIONS);
+      const { result, refreshToken } = await AuthService.verifyEmail(token);
+      if (refreshToken) {
+        res.cookie("refreshToken", refreshToken, REFRESH_COOKIE_OPTIONS);
       }
+      result.send(res);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async resendVerification(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { email } = req.body as { email?: string };
+      if (!email) {
+        HttpResponse.badRequest("Email is required").send(res);
+        return;
+      }
+      const result = await AuthService.resendVerification(email);
       result.send(res);
     } catch (err) {
       next(err);
@@ -39,9 +53,9 @@ export class AuthController {
 
   static async login(req: Request, res: Response, next: NextFunction) {
     try {
-      const result = await AuthService.login(req.body);
-      if (result.data && (result.data as any).refreshToken) {
-        res.cookie("refreshToken", (result.data as any).refreshToken, REFRESH_COOKIE_OPTIONS);
+      const { result, refreshToken } = await AuthService.login(req.body);
+      if (refreshToken) {
+        res.cookie("refreshToken", refreshToken, REFRESH_COOKIE_OPTIONS);
       }
       result.send(res);
     } catch (err) {
@@ -56,9 +70,9 @@ export class AuthController {
         HttpResponse.badRequest("Refresh token required").send(res);
         return;
       }
-      const result = await AuthService.refresh(refreshToken);
-      if (result.data && (result.data as any).refreshToken) {
-        res.cookie("refreshToken", (result.data as any).refreshToken, REFRESH_COOKIE_OPTIONS);
+      const { result, refreshToken: newRefreshToken } = await AuthService.refresh(refreshToken);
+      if (newRefreshToken) {
+        res.cookie("refreshToken", newRefreshToken, REFRESH_COOKIE_OPTIONS);
       }
       result.send(res);
     } catch (err) {
@@ -75,6 +89,29 @@ export class AuthController {
       }
       const result = await AuthService.logout(refreshToken);
       res.clearCookie("refreshToken", REFRESH_COOKIE_OPTIONS);
+      result.send(res);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async forgotPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { email } = req.body as { email?: string };
+      if (!email) {
+        HttpResponse.badRequest("Email is required").send(res);
+        return;
+      }
+      const result = await AuthService.forgotPassword(email);
+      result.send(res);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async resetPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await AuthService.resetPassword(req.body);
       result.send(res);
     } catch (err) {
       next(err);

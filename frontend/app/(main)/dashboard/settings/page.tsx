@@ -1,11 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-<<<<<<< HEAD:frontend/app/dashboard/settings/page.tsx
-import { useAuth } from '../../../context/AuthContext';
-=======
 import { useAuth } from '../../../../context/AuthContext';
->>>>>>> 81b2301297bc284c1379fd6c7728df5b2518ffdd:frontend/app/(main)/dashboard/settings/page.tsx
 
 type Tab = 'profile' | 'business' | 'integrations' | 'notifications';
 

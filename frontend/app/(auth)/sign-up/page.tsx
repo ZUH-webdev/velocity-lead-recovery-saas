@@ -26,6 +26,8 @@ export default function SignUp() {
   const [banner, setBanner] = useState<Banner | null>(null);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [registered, setRegistered] = useState(false);
+  const [resending, setResending] = useState(false);
 
   const validateForm = () => {
     if (!fullName.trim()) {
@@ -38,6 +40,14 @@ export default function SignUp() {
     }
     if (password.length < 8) {
       setBanner({ type: 'error', message: 'Password must be at least 8 characters.' });
+      return false;
+    }
+    if (password.length > 72) {
+      setBanner({ type: 'error', message: 'Password cannot exceed 72 characters.' });
+      return false;
+    }
+    if (!/[0-9]/.test(password)) {
+      setBanner({ type: 'error', message: 'Password must contain at least one number.' });
       return false;
     }
     return true;
@@ -55,6 +65,7 @@ export default function SignUp() {
         fullName: fullName.trim(),
       });
       setBanner({ type: 'success', message: 'Check your email to verify your account.' });
+      setRegistered(true);
     } catch (err: unknown) {
       setBanner({
         type: 'error',
@@ -62,6 +73,25 @@ export default function SignUp() {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    setResending(true);
+    try {
+      await api.post('/auth/resend-verification', { email: email.trim() });
+      setBanner({
+        type: 'success',
+        message: 'A new verification link has been sent. Please check your inbox.',
+      });
+    } catch {
+      // Silent — never reveal whether the email exists
+      setBanner({
+        type: 'success',
+        message: 'A new verification link has been sent. Please check your inbox.',
+      });
+    } finally {
+      setResending(false);
     }
   };
 
@@ -98,6 +128,19 @@ export default function SignUp() {
                                         'border border-sky-100 bg-sky-50 text-sky-700'
           }`}>
             {banner.message}
+            {registered && (
+              <p className="mt-2 text-slate-600">
+                Didn&apos;t receive the email?{' '}
+                <button
+                  type="button"
+                  onClick={handleResendVerification}
+                  disabled={resending}
+                  className="font-semibold text-[#0f172a] underline hover:text-black disabled:opacity-60"
+                >
+                  {resending ? 'Sending...' : 'Resend verification email'}
+                </button>
+              </p>
+            )}
           </div>
         )}
 
@@ -185,7 +228,7 @@ export default function SignUp() {
 
         <div className="mt-6 text-center text-sm text-slate-600">
           Already have an account?{' '}
-          <Link href="/signin" className="text-[#0f172a] hover:underline transition hover:text-black">
+          <Link href="/sign-in" className="text-[#0f172a] hover:underline transition hover:text-black">
             Sign in
           </Link>
         </div>

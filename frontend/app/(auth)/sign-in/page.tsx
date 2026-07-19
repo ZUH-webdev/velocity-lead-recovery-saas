@@ -117,7 +117,7 @@ export default function SignIn() {
           <div>
             <div className="flex items-center justify-between">
               <label className="sr-only">Password</label>
-              <Link href="#" className="text-sm text-slate-600 hover:underline">
+              <Link href="/forgot-password" className="text-sm text-slate-600 hover:underline">
                 Forgot password?
               </Link>
             </div>

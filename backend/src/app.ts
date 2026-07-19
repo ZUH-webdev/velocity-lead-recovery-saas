@@ -14,6 +14,8 @@ import tenantRouter from "./routes/tenant.routes";
 import leadsRoutes from "./routes/leads.routes";
 import smsRoutes from "./routes/sms.routes";
 import calendarRoutes from "./routes/calendar.routes";
+import webhookRouter from "./routes/webhook.routes";
+import testRouter from "./routes/test.routes";
 
 const app = express();
 
@@ -92,6 +94,10 @@ app.use("/api/v1/tenant", tenantRouter);
 app.use("/api/v1/leads", leadsRoutes);
 app.use("/api/v1/sms", smsRoutes);
 app.use("/api/v1/calendar", calendarRoutes);
+app.use("/api/v1/webhooks", webhookRouter);
+if (process.env.NODE_ENV !== "production") {
+  app.use("/api/v1/test", testRouter);
+}
 
 // ── Fallback & Error ──────────────────────────────────────────────────────────
 
