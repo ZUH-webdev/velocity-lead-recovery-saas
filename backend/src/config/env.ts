@@ -31,6 +31,9 @@ export const env = {
   GOOGLE_REDIRECT_URI: optional("GOOGLE_REDIRECT_URI", ""),
   RESEND_API_KEY: required("RESEND_API_KEY"),
   APP_URL: optional("APP_URL", "http://localhost:3000"),
+  TWILIO_ACCOUNT_SID: required("TWILIO_ACCOUNT_SID"),
+  TWILIO_AUTH_TOKEN: required("TWILIO_AUTH_TOKEN"),
+  TWILIO_PHONE_NUMBER: required("TWILIO_PHONE_NUMBER"),
 } as const;
 
 export type Env = typeof env;

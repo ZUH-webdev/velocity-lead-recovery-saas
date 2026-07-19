@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { ShieldCheck, Users, CreditCard, ArrowLeft, House } from 'lucide-react';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import Header from '../../../components/Header';
+import Footer from '../../../components/Footer';
 
 export default function TermsOfServicePage() {
   return (
