@@ -1,7 +1,5 @@
 {
   "compilerOptions": {
-    "types": ["node"],
-    "typeRoots": ["./node_modules/@types"],
     "rootDir": "src",
     "outDir": "./dist",
     "module": "commonjs",
