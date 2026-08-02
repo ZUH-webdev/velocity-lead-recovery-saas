@@ -1,12 +1,18 @@
 {
   "compilerOptions": {
+    
+  
+    "types": ["node"],
+    "typeRoots": ["./node_modules/@types"],
+  
+
     "rootDir": "src",
     "outDir": "./dist",
 
     "module": "commonjs",       // ← was "nodenext"
     "target": "es2022",         // ← was "esnext" (es2022 is safe for Node 18+)
     "lib": ["es2022"],          // ← match target
-    "types": ["node"],
+  
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
 
@@ -28,3 +34,4 @@
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist", "prisma.config.ts"]
 }
+
