@@ -3,7 +3,7 @@ import { env } from "../config/env";
 
 const resend = new Resend(env.RESEND_API_KEY);
 
-const FROM = "Velocity <noreply@interview-ai.live>";
+const FROM = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
 
 // ── Shared Layout ──────────────────────────────────────────────────────────
 
