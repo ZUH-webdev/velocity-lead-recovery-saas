@@ -231,10 +231,15 @@ async function send(to: string, subject: string, html: string) {
     return;
   }
 
+  console.log('[send-mail] Sending to:', to)
+  console.log('[send-mail] From:', FROM)
+  console.log('[send-mail] Key prefix:', env.RESEND_API_KEY?.substring(0, 10))
+
   try {
-    await resend.emails.send({ from: FROM, to, subject, html });
+    const result = await resend.emails.send({ from: FROM, to, subject, html })
+    console.log('[send-mail] SUCCESS:', JSON.stringify(result))
   } catch (error) {
-    // Log but do NOT throw — email failure should not crash critical auth flows
-    console.error(`[send-mail] Failed to send email to ${to}:`, error);
+    console.error('[send-mail] FAILED:', JSON.stringify(error))
+    // Still not throwing — just logging
   }
 }
