@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { AuthService } from "../services/auth.service";
 import { HttpResponse } from "../utils/httpResponse";
+import { env } from "../config/env";
 
 const REFRESH_COOKIE_OPTIONS = {
   httpOnly: true,
@@ -113,6 +114,28 @@ export class AuthController {
     try {
       const result = await AuthService.resetPassword(req.body);
       result.send(res);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async googleCallback(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = req.user as { id: string } | undefined;
+      if (!user) {
+        res.redirect(`${env.APP_URL}/sign-in?error=google_failed`);
+        return;
+      }
+
+      const { accessToken, refreshToken, hasWorkspace } = await AuthService.issueOAuthSession(
+        user.id,
+      );
+      res.cookie("refreshToken", refreshToken, REFRESH_COOKIE_OPTIONS);
+
+      const status = hasWorkspace ? "dashboard" : "onboarding";
+      res.redirect(
+        `${env.APP_URL}/auth/callback?token=${encodeURIComponent(accessToken)}&status=${status}`,
+      );
     } catch (err) {
       next(err);
     }

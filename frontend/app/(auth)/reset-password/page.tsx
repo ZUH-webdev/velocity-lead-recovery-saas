@@ -7,6 +7,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowRight, Eye, EyeOff } from 'lucide-react';
 import AuthShell from '../../../components/AuthShell';
 import { api } from '../../../lib/api';
+import { Banner } from '../../../components/ErrorBanner';
+import { getFriendlyError } from '../../../lib/errors';
 
 interface Banner {
   type: 'error' | 'success' | 'info';
@@ -50,11 +52,8 @@ function ResetPasswordForm() {
       await api.post('/auth/reset-password', { token, password });
       setBanner({ type: 'success', message: 'Password reset. Redirecting to sign in…' });
       setTimeout(() => router.replace('/sign-in'), 1500);
-    } catch (err: any) {
-      setBanner({
-        type: 'error',
-        message: err?.response?.data?.message || 'Reset failed. The link may have expired.',
-      });
+    } catch (err: unknown) {
+      setBanner({ type: 'error', message: getFriendlyError(err) });
     } finally {
       setLoading(false);
     }
@@ -81,16 +80,8 @@ function ResetPasswordForm() {
         </div>
 
         {banner && (
-          <div
-            className={`mt-6 rounded-lg px-4 py-3 text-sm ${
-              banner.type === 'error'
-                ? 'border border-rose-100 bg-rose-50 text-rose-700'
-                : banner.type === 'success'
-                  ? 'border border-emerald-100 bg-emerald-50 text-emerald-700'
-                  : 'border border-sky-100 bg-sky-50 text-sky-700'
-            }`}
-          >
-            {banner.message}
+          <div className="mt-6">
+            <Banner type={banner.type} message={banner.message} onDismiss={() => setBanner(null)} />
           </div>
         )}
 

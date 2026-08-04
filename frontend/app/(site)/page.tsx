@@ -940,7 +940,7 @@ function FinalCtaFooterSection() {
           <ScrollRevealItem direction="up">
             <Link
               href="#"
-              className="mt-[8px] inline-flex min-h-[44px] w-full max-w-[320px] items-center justify-center gap-[8px] rounded-[8px] bg-white px-[40px] py-[18px] font-body text-[16px] font-[600] text-[#0f0f10] transition-colors duration-200 hover:bg-[#f3f4f6] md:w-auto md:max-w-none"
+              className="mt-[8px] inline-flex min-h-[44px] w-full max-w-[320px] items-center justify-center gap-[8px] rounded-[8px] border-2 border-white bg-white px-[36px] py-[16px] font-body text-[15px] font-[600] text-[#09090b] transition-all duration-200 hover:bg-transparent hover:text-white md:w-auto md:max-w-none"
             >
               Begin the Assessment →
             </Link>

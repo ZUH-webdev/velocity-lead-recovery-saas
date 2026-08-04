@@ -1,10 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../../context/AuthContext';
 import { useTenant } from '../../../context/TenantContext';
 import Image from 'next/image';
+import { Banner } from '../../../components/ErrorBanner';
+import { getFriendlyError } from '../../../lib/errors';
 
 const INDUSTRIES = [
   'Automotive', 'Healthcare', 'Real Estate', 'Legal',
@@ -21,11 +23,17 @@ interface FormState {
 }
 
 export default function OnboardingPage() {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const { createTenant } = useTenant();
   const router = useRouter();
 
-  console.log('user', user);
+  // Users who already have a workspace have nothing to do here — send them
+  // straight to the dashboard instead of letting them re-run onboarding.
+  useEffect(() => {
+    if (isAuthenticated && user?.hasWorkspace) {
+      router.push('/dashboard');
+    }
+  }, [isAuthenticated, user, router]);
 
   const [form, setForm] = useState<FormState>({
     name: '',
@@ -63,8 +71,8 @@ export default function OnboardingPage() {
     try {
       await createTenant({ ...form, email: user?.email ?? form.email });
       router.push('/dashboard');
-    } catch (err: any) {
-      setServerError(err?.response?.data?.message ?? err?.message ?? 'Something went wrong');
+    } catch (err: unknown) {
+      setServerError(getFriendlyError(err));
     } finally {
       setIsSubmitting(false);
     }
@@ -171,11 +179,7 @@ export default function OnboardingPage() {
               </div>
             </div>
 
-            {serverError && (
-              <div className="rounded-lg border border-rose-100 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-                {serverError}
-              </div>
-            )}
+            {serverError && <Banner type="error" message={serverError} onDismiss={() => setServerError(null)} />}
 
             <button
               type="submit"

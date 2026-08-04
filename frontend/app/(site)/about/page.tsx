@@ -141,7 +141,7 @@ function DarkTopNav() {
 
 function TeamAvatar({ initials, accent }: { initials: string; accent: string }) {
   return (
-    <div className="relative flex h-[72px] w-[72px] shrink-0 items-center justify-center overflow-hidden rounded-[14px] border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)]">
+    <div className="relative flex h-[72px] w-[72px] shrink-0 items-center justify-center overflow-hidden rounded-[14px] border border-[#e4e4e7] bg-[#f4f4f5]">
       <div
         className="pointer-events-none absolute inset-0 opacity-40"
         style={{
@@ -149,10 +149,10 @@ function TeamAvatar({ initials, accent }: { initials: string; accent: string }) 
         }}
       />
       <div
-        className="pointer-events-none absolute -right-2 -top-2 h-8 w-8 rotate-45 border border-[rgba(255,255,255,0.08)]"
+        className="pointer-events-none absolute -right-2 -top-2 h-8 w-8 rotate-45 border border-[#e4e4e7]"
         style={{ background: `${accent}18` }}
       />
-      <span className="relative font-mono-ui text-[13px] font-[500] tracking-[0.12em] text-white">{initials}</span>
+      <span className="relative font-mono-ui text-[13px] font-[500] tracking-[0.12em] text-[#09090b]">{initials}</span>
     </div>
   );
 }
@@ -223,13 +223,13 @@ export default function AboutPage() {
   }, []);
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#0a0a0a] font-heading text-white">
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:43px_43px] opacity-[0.35]" />
+    <div className="relative min-h-screen overflow-hidden bg-[#fafafa] font-heading text-[#09090b]">
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-[size:43px_43px] opacity-[0.35]" />
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.012) 2px, rgba(255,255,255,0.012) 4px)',
+            'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.012) 2px, rgba(0,0,0,0.012) 4px)',
         }}
       />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(201,169,122,0.06),transparent_42%)]" />
@@ -243,24 +243,24 @@ export default function AboutPage() {
             <ScrollRevealGroup className="mx-auto max-w-[820px]" direction="up" stagger={0.1} delayChildren={0.04} hero>
               <ScrollRevealItem direction="up" hero>
                 <div className="flex flex-wrap items-center gap-[16px]">
-                  <span className="inline-flex h-[31px] items-center gap-[9px] rounded-full border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)] px-[14px] font-mono-ui text-[11px] font-[400] uppercase tracking-[0.1em] text-[rgba(255,255,255,0.55)]">
+                  <span className="inline-flex h-[31px] items-center gap-[9px] rounded-full border border-[#e4e4e7] bg-[#f4f4f5] px-[14px] font-mono-ui text-[11px] font-[400] uppercase tracking-[0.1em] text-[#71717a]">
                     <span className="h-[9px] w-[9px] rounded-full bg-[#c9a97a]" />
                     About Velocity
                   </span>
-                  <span className="font-mono-ui text-[11px] font-[400] uppercase tracking-[0.14em] text-[rgba(255,255,255,0.35)]">
+                  <span className="font-mono-ui text-[11px] font-[400] uppercase tracking-[0.14em] text-[#a1a1aa]">
                     Est. 2025
                   </span>
                 </div>
               </ScrollRevealItem>
 
               <ScrollRevealItem className="mt-[40px] md:mt-[48px]" direction="up" hero>
-                <h1 className="font-hero text-[clamp(36px,7vw,72px)] font-[500] leading-[1.05] tracking-[-0.03em] text-white">
+                <h1 className="font-hero text-[clamp(36px,7vw,72px)] font-[500] leading-[1.05] tracking-[-0.03em] text-[#09090b]">
                   Built to recover what modern practices quietly lose.
                 </h1>
               </ScrollRevealItem>
 
               <ScrollRevealItem className="mt-[28px] max-w-[640px]" direction="up" hero>
-                <p className="font-body text-[18px] font-[400] leading-[1.7] text-[rgba(255,255,255,0.55)]">
+                <p className="font-body text-[18px] font-[400] leading-[1.7] text-[#71717a]">
                   Velocity was founded on a single observation — healthcare practices weren&apos;t losing patients because of
                   bad care. They were losing them in the silence after a missed call.
                 </p>
@@ -269,7 +269,7 @@ export default function AboutPage() {
           </section>
 
           {/* What is Velocity */}
-          <section className="border-t border-[rgba(255,255,255,0.06)]">
+          <section className="border-t border-[#e4e4e7]">
             <div className="mx-auto max-w-[1440px] px-[24px] py-[80px] md:px-[40px] md:py-[100px] lg:px-[80px]">
               <ScrollRevealGroup className="mx-auto max-w-[760px]" stagger={0.1}>
                 <ScrollRevealItem direction="up">
@@ -279,7 +279,7 @@ export default function AboutPage() {
                 </ScrollRevealItem>
 
                 <ScrollRevealItem className="mt-[20px]" direction="up">
-                  <p className="font-body text-[17px] font-[400] leading-[1.75] text-[rgba(255,255,255,0.65)] md:text-[18px]">
+                  <p className="font-body text-[17px] font-[400] leading-[1.75] text-[#3f3f46] md:text-[18px]">
                     Velocity is an AI-powered lead recovery and appointment booking platform built for high-intent
                     healthcare businesses — dental clinics, med spas, and specialty practices. When a call is missed or a
                     form is submitted, Velocity launches an automated AI conversation via SMS or voice — qualifying the
@@ -292,7 +292,7 @@ export default function AboutPage() {
           </section>
 
           {/* Who it helps */}
-          <section className="border-t border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.015)]">
+          <section className="border-t border-[#e4e4e7] bg-white">
             <div className="mx-auto max-w-[1440px] px-[24px] py-[80px] md:px-[40px] md:py-[100px] lg:px-[80px]">
               <ScrollRevealGroup stagger={0.08}>
                 <ScrollRevealItem direction="up">
@@ -302,7 +302,7 @@ export default function AboutPage() {
                 </ScrollRevealItem>
 
                 <ScrollRevealItem className="mt-[20px] mb-[40px]" direction="up">
-                  <h2 className="font-hero text-[clamp(28px,4vw,44px)] font-[500] leading-[1.1] tracking-[-0.02em] text-white">
+                  <h2 className="font-hero text-[clamp(28px,4vw,44px)] font-[500] leading-[1.1] tracking-[-0.02em] text-[#09090b]">
                     Velocity is built for
                   </h2>
                 </ScrollRevealItem>
@@ -312,10 +312,10 @@ export default function AboutPage() {
                     <ScrollRevealItem
                       key={item}
                       direction="up"
-                      className="group rounded-[12px] border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)] px-[24px] py-[22px] transition-colors duration-300 hover:border-[rgba(201,169,122,0.25)] hover:bg-[rgba(255,255,255,0.04)]"
+                      className="group rounded-[12px] border border-[#e4e4e7] bg-white px-[24px] py-[22px] shadow-[0_1px_3px_rgba(0,0,0,0.06)] transition-colors duration-300 hover:border-[rgba(201,169,122,0.4)] hover:bg-[#fafafa]"
                     >
                       <div className="mb-[12px] h-[1px] w-[24px] bg-[#c9a97a] transition-all duration-300 group-hover:w-[40px]" />
-                      <p className="font-body text-[15px] font-[400] leading-[1.65] text-[rgba(255,255,255,0.7)]">{item}</p>
+                      <p className="font-body text-[15px] font-[400] leading-[1.65] text-[#3f3f46]">{item}</p>
                     </ScrollRevealItem>
                   ))}
                 </ScrollRevealGroup>
@@ -324,7 +324,7 @@ export default function AboutPage() {
           </section>
 
           {/* Founding team */}
-          <section className="border-t border-[rgba(255,255,255,0.06)]">
+          <section className="border-t border-[#e4e4e7]">
             <div className="mx-auto max-w-[1440px] px-[24px] py-[80px] md:px-[40px] md:py-[100px] lg:px-[80px]">
               <ScrollRevealGroup stagger={0.08}>
                 <ScrollRevealItem direction="up">
@@ -334,7 +334,7 @@ export default function AboutPage() {
                 </ScrollRevealItem>
 
                 <ScrollRevealItem className="mt-[20px] mb-[48px]" direction="up">
-                  <h2 className="font-hero text-[clamp(28px,4vw,44px)] font-[500] leading-[1.1] tracking-[-0.02em] text-white">
+                  <h2 className="font-hero text-[clamp(28px,4vw,44px)] font-[500] leading-[1.1] tracking-[-0.02em] text-[#09090b]">
                     The people behind the platform
                   </h2>
                 </ScrollRevealItem>
@@ -343,9 +343,9 @@ export default function AboutPage() {
                   {teamMembers.map((member) => (
                     <ScrollRevealItem key={member.name} direction="up">
                       <div
-                        className="relative h-full overflow-hidden rounded-[16px] border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)] p-[28px] md:p-[32px]"
+                        className="relative h-full overflow-hidden rounded-[16px] border border-[#e4e4e7] bg-white p-[28px] md:p-[32px]"
                         style={{
-                          boxShadow: `0 0 60px ${member.accent}08, inset 0 1px 0 rgba(255,255,255,0.06)`,
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
                         }}
                       >
                         <div
@@ -357,7 +357,7 @@ export default function AboutPage() {
                           <TeamAvatar initials={member.initials} accent={member.accent} />
 
                           <div className="min-w-0 flex-1">
-                            <h3 className="font-hero text-[20px] font-[600] leading-tight tracking-[-0.01em] text-white">
+                            <h3 className="font-hero text-[20px] font-[600] leading-tight tracking-[-0.01em] text-[#09090b]">
                               {member.name}
                             </h3>
                             <span
@@ -373,7 +373,7 @@ export default function AboutPage() {
                           </div>
                         </div>
 
-                        <p className="relative mt-[24px] font-body text-[15px] font-[400] leading-[1.75] text-[rgba(255,255,255,0.6)]">
+                        <p className="relative mt-[24px] font-body text-[15px] font-[400] leading-[1.75] text-[#3f3f46]">
                           {member.description}
                         </p>
                       </div>
@@ -385,7 +385,7 @@ export default function AboutPage() {
           </section>
 
           {/* Mission */}
-          <section className="border-t border-[rgba(255,255,255,0.06)]">
+          <section className="border-t border-[#e4e4e7]">
             <div className="mx-auto max-w-[1440px] px-[24px] py-[80px] md:px-[40px] md:py-[120px] lg:px-[80px]">
               <ScrollRevealGroup className="mx-auto max-w-[860px] text-center" stagger={0.12}>
                 <ScrollRevealItem direction="up">
@@ -395,7 +395,7 @@ export default function AboutPage() {
                 </ScrollRevealItem>
 
                 <ScrollRevealItem className="mt-[32px]" direction="up">
-                  <blockquote className="font-hero text-[clamp(24px,4vw,44px)] font-[500] leading-[1.25] tracking-[-0.02em] text-white">
+                  <blockquote className="font-hero text-[clamp(24px,4vw,44px)] font-[500] leading-[1.25] tracking-[-0.02em] text-[#09090b]">
                     &ldquo;We didn&apos;t build Velocity to add another tool to a practice&apos;s stack. We built it to close
                     the gap between intent and revenue — automatically, intelligently, and without adding to anyone&apos;s
                     workload.&rdquo;
@@ -403,9 +403,9 @@ export default function AboutPage() {
                 </ScrollRevealItem>
 
                 <ScrollRevealItem className="mt-[40px]" direction="up">
-                  <div className="mx-auto h-[1px] w-[40px] bg-[rgba(255,255,255,0.15)]" />
-                  <p className="mt-[24px] font-body text-[16px] font-[500] text-white">Zain Ul Hassan</p>
-                  <p className="mt-[6px] font-mono-ui text-[11px] font-[400] uppercase tracking-[0.15em] text-[rgba(255,255,255,0.4)]">
+                  <div className="mx-auto h-[1px] w-[40px] bg-[#e4e4e7]" />
+                  <p className="mt-[24px] font-body text-[16px] font-[500] text-[#09090b]">Zain Ul Hassan</p>
+                  <p className="mt-[6px] font-mono-ui text-[11px] font-[400] uppercase tracking-[0.15em] text-[#71717a]">
                     Founder
                   </p>
                 </ScrollRevealItem>
@@ -414,19 +414,19 @@ export default function AboutPage() {
           </section>
 
           {/* CTA */}
-          <section className="border-t border-[rgba(255,255,255,0.06)]">
+          <section className="border-t border-[#e4e4e7]">
             <ScrollRevealGroup
               className="mx-auto flex max-w-[800px] flex-col items-center gap-[32px] px-[24px] py-[100px] text-center md:px-[40px] lg:px-[80px]"
               stagger={0.12}
             >
               <ScrollRevealItem direction="up">
-                <p className="font-mono-ui text-[11px] font-[400] uppercase tracking-[0.14em] text-[rgba(255,255,255,0.35)]">
+                <p className="font-mono-ui text-[11px] font-[400] uppercase tracking-[0.14em] text-[#a1a1aa]">
                   Founded 2025
                 </p>
               </ScrollRevealItem>
 
               <ScrollRevealItem direction="up">
-                <h2 className="font-hero text-[clamp(28px,5vw,52px)] font-[600] leading-[1.1] tracking-[-0.03em] text-white">
+                <h2 className="font-hero text-[clamp(28px,5vw,52px)] font-[600] leading-[1.1] tracking-[-0.03em] text-[#09090b]">
                   Ready to see it work?
                 </h2>
               </ScrollRevealItem>
@@ -434,7 +434,7 @@ export default function AboutPage() {
               <ScrollRevealItem direction="up">
                 <Link
                   href="/#platform"
-                  className="inline-flex min-h-[44px] items-center justify-center gap-[8px] rounded-[8px] border border-[rgba(255,255,255,0.15)] bg-white px-[36px] py-[16px] font-body text-[16px] font-[600] text-[#0f0f10] transition-colors duration-200 hover:bg-[#f3f4f6]"
+                  className="inline-flex min-h-[44px] items-center justify-center gap-[8px] rounded-[8px] border border-[#09090b] bg-[#09090b] px-[36px] py-[16px] font-body text-[16px] font-[600] text-white transition-colors duration-200 hover:bg-[#1c1c1e]"
                 >
                   See Velocity in Action
                   <ArrowRight className="h-[18px] w-[18px] stroke-[2.2]" />

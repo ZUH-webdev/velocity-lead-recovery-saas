@@ -1,57 +1,44 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+const footerLinks = [
+  { label: 'About', href: '/about' },
+  { label: 'Privacy', href: '/privacy' },
+  { label: 'Terms', href: '/terms' },
+  { label: 'Compliance', href: '/compliance' },
+  { label: 'System Status', href: '/status' },
+];
+
 export default function Footer() {
   return (
-    <footer className="w-full border-t border-[#e4e4e7] bg-white">
-      <div className="mx-auto flex max-w-[1440px] flex-col items-center gap-[20px] px-[24px] py-[32px] text-center sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-x-[16px] sm:gap-y-[14px] sm:text-left md:flex-nowrap md:px-[40px] lg:px-[80px]">
-        <Link href="/" className="order-1 inline-flex items-center gap-[10px] md:order-1">
+    <footer className="w-full border-t border-[#e4e4e7] bg-white px-[24px] py-[32px] md:px-[80px] md:py-[40px]">
+      <div className="mx-auto flex max-w-[1200px] flex-col items-center gap-[20px] text-center md:flex-row md:flex-wrap md:items-center md:justify-between md:gap-[24px] md:text-left">
+        <Link href="/" className="inline-flex items-center gap-[10px]">
           <Image
             src="/velocity-logo.webp"
             alt="Velocity"
-            width={18}
-            height={18}
-            className="h-[18px] w-[18px] object-contain"
+            width={22}
+            height={22}
+            className="h-[22px] w-[22px] object-contain"
           />
-          <span className="font-hero text-[14px] font-[700] tracking-[0.08em] text-[#09090b]">VELOCITY</span>
+          <span className="text-[13px] font-bold uppercase tracking-[0.1em] text-[#09090b]">VELOCITY</span>
         </Link>
 
-        <nav className="order-2 flex w-full flex-wrap items-center justify-center gap-x-[24px] gap-y-[16px] sm:order-3 md:order-2 md:w-auto md:flex-1 md:gap-x-[32px] md:gap-y-[12px]">
-          <Link
-            href="/about"
-            className="font-mono-ui text-[11px] font-[400] uppercase tracking-[0.1em] text-[#71717a] transition-colors duration-200 hover:text-[#09090b]"
-          >
-            About
-          </Link>
-          <Link
-            href="/privacy"
-            className="font-mono-ui text-[11px] font-[400] uppercase tracking-[0.1em] text-[#71717a] transition-colors duration-200 hover:text-[#09090b]"
-          >
-            Privacy
-          </Link>
-          <Link
-            href="/terms"
-            className="font-mono-ui text-[11px] font-[400] uppercase tracking-[0.1em] text-[#71717a] transition-colors duration-200 hover:text-[#09090b]"
-          >
-            Terms
-          </Link>
-          <Link
-            href="/compliance"
-            className="font-mono-ui text-[11px] font-[400] uppercase tracking-[0.1em] text-[#71717a] transition-colors duration-200 hover:text-[#09090b]"
-          >
-            Compliance
-          </Link>
-          <Link
-            href="/status"
-            className="font-mono-ui text-[11px] font-[400] uppercase tracking-[0.1em] text-[#71717a] transition-colors duration-200 hover:text-[#09090b]"
-          >
-            System Status
-          </Link>
+        <nav className="flex flex-wrap items-center justify-center gap-[16px] md:gap-[32px]">
+          {footerLinks.map(({ label, href }) => (
+            <Link
+              key={label}
+              href={href}
+              className="text-[12px] font-medium uppercase tracking-[0.06em] text-[#a1a1aa] transition-colors duration-150 hover:text-[#09090b]"
+            >
+              {label}
+            </Link>
+          ))}
         </nav>
 
-        <div className="order-3 whitespace-nowrap font-mono-ui text-[11px] font-[400] tracking-[0.05em] text-[#a1a1aa] sm:order-2 md:order-3">
+        <p className="m-0 whitespace-nowrap text-[12px] tracking-[0.02em] text-[#a1a1aa]">
           © 2026 Velocity Health Intelligence, Inc.
-        </div>
+        </p>
       </div>
     </footer>
   );

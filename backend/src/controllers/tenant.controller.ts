@@ -25,27 +25,18 @@ export class TenantController {
   static async create(req: Request, res: Response): Promise<void> {
     const { name, email, industry, phone, websiteURL } = req.body;
 
-    if (!name || !email || !industry || !phone || !websiteURL) {
-      HttpResponse.badRequest(
-        "name, email, industry, phone and websiteURL are required",
-      ).send(res);
-      return;
-    }
-
-    if (
-      typeof name !== "string" ||
-      typeof email !== "string" ||
-      typeof industry !== "string" ||
-      typeof phone !== "string" ||
-      typeof websiteURL !== "string"
-    ) {
-      HttpResponse.badRequest("All fields must be strings").send(res);
-      return;
-    }
+    const fieldsPresent =
+      !!name && !!email && !!industry && !!phone && !!websiteURL &&
+      typeof name === "string" &&
+      typeof email === "string" &&
+      typeof industry === "string" &&
+      typeof phone === "string" &&
+      typeof websiteURL === "string";
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      HttpResponse.badRequest("Invalid email address").send(res);
+
+    if (!fieldsPresent || !emailRegex.test(email)) {
+      HttpResponse.unprocessable("Please fill in all required business details.").send(res);
       return;
     }
 

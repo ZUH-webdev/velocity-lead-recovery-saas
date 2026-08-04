@@ -19,6 +19,8 @@ interface User {
   email: string;
   emailVerified: boolean;
   createdAt: string;
+  hasWorkspace?: boolean;
+  tenantMembers?: { tenantId: string }[];
   [key: string]: any;
 }
 
@@ -31,6 +33,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<User>;
   logout: () => Promise<void>;
   refreshAccessToken: () => Promise<void>;
+  initAuth: () => Promise<User>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -92,6 +95,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     setActiveTenantIdState(currentTenantId);
+    return userData;
+  };
+
+  // Loads the current user from an access token already set via setToken()
+  // (e.g. after the Google OAuth callback page reads it from the redirect URL).
+  const initAuth = async () => {
+    setAccessToken(getToken());
+    return fetchMe();
   };
 
   const login = async (email: string, password: string) => {
@@ -181,6 +192,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         logout,
         refreshAccessToken,
+        initAuth,
       }}
     >
       {children}

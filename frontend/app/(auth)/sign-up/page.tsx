@@ -7,6 +7,8 @@ import { useRouter } from 'next/navigation';
 import { ArrowRight, Eye, EyeOff } from 'lucide-react';
 import AuthShell from '../../../components/AuthShell';
 import { api } from '../../../lib/api';
+import { Banner } from '../../../components/ErrorBanner';
+import { getFriendlyError } from '../../../lib/errors';
 
 interface Banner {
   type: 'error' | 'success' | 'info';
@@ -67,10 +69,7 @@ export default function SignUp() {
       setBanner({ type: 'success', message: 'Check your email to verify your account.' });
       setRegistered(true);
     } catch (err: unknown) {
-      setBanner({
-        type: 'error',
-        message: err instanceof Error ? err.message : 'Failed to create account.',
-      });
+      setBanner({ type: 'error', message: getFriendlyError(err) });
     } finally {
       setLoading(false);
     }
@@ -96,7 +95,7 @@ export default function SignUp() {
   };
 
   const handleGoogle = () => {
-    setBanner({ type: 'info', message: 'Google OAuth is not connected yet.' });
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`;
   };
 
   return (
@@ -122,14 +121,10 @@ export default function SignUp() {
         </div>
 
         {banner && (
-          <div className={`mt-6 rounded-lg px-4 py-3 text-sm ${
-            banner.type === 'error'   ? 'border border-rose-100 bg-rose-50 text-rose-700' :
-            banner.type === 'success' ? 'border border-emerald-100 bg-emerald-50 text-emerald-700' :
-                                        'border border-sky-100 bg-sky-50 text-sky-700'
-          }`}>
-            {banner.message}
+          <div className="mt-6">
+            <Banner type={banner.type} message={banner.message} onDismiss={() => setBanner(null)} />
             {registered && (
-              <p className="mt-2 text-slate-600">
+              <p className="-mt-2 text-sm text-slate-600">
                 Didn&apos;t receive the email?{' '}
                 <button
                   type="button"
