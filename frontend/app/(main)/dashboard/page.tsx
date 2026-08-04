@@ -44,8 +44,8 @@ export default function DashboardOverviewPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_320px] xl:grid-cols-[1fr_360px]">
-        <div className="rounded-xl border border-[#2a2a2a] bg-[#1a1a1a] p-5">
-          <h3 className="text-xs uppercase tracking-widest text-[#888888]">Recent Leads</h3>
+        <div className="rounded-xl border border-[#e4e4e7] bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+          <h3 className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[#a1a1aa]">Recent Leads</h3>
           <div className="mt-4">
             <LeadsTable leads={recentLeads} />
           </div>

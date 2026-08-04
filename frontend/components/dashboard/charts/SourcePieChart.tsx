@@ -6,13 +6,15 @@ interface SourcePieChartProps {
   data: { name: string; value: number }[];
 }
 
-const COLORS = ['#c9a97a', '#7ddcc1', '#888888'];
+const COLORS = ['#c9a97a', '#7ddcc1', '#71717a'];
 
 const tooltipStyle = {
-  backgroundColor: '#1a1a1a',
-  border: '1px solid #2a2a2a',
+  background: '#ffffff',
+  border: '1px solid #e4e4e7',
   borderRadius: '8px',
-  color: '#f5f5f5',
+  boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+  fontSize: '12px',
+  color: '#09090b',
 };
 
 export default function SourcePieChart({ data }: SourcePieChartProps) {

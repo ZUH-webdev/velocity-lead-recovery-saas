@@ -8,7 +8,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#111111]">
+    <div className="min-h-screen bg-[#fafafa]">
       <Sidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} />
       <Topbar onMenuClick={() => setMobileOpen(true)} />
       <main className="min-h-screen pt-16 md:ml-[240px]">

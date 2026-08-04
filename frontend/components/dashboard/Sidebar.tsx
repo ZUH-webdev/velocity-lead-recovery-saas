@@ -63,11 +63,11 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
         <Image
           src="/velocity-logo.webp"
           alt="Velocity"
-          width={32}
-          height={34}
-          className="object-contain"
+          width={28}
+          height={28}
+          className="h-[28px] w-[28px] object-contain brightness-0 invert"
         />
-        <span className="text-lg font-semibold tracking-tight text-[#f5f5f5]">
+        <span className="font-hero text-sm font-bold uppercase tracking-[0.08em] text-white">
           Velocity
         </span>
         <button
