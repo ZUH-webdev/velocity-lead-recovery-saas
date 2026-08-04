@@ -6,7 +6,7 @@ import { LegalIntro, LegalParagraph, LegalSection } from '../../../components/Le
 export default function PrivacyPolicyPage() {
   return (
     <>
-      <Header variant="dark" />
+      <Header />
       <LegalPageLayout badge="Compliance Protocol" title="Privacy Policy" lastUpdated="June 2, 2026">
         <LegalIntro>
           We protect clinical and operational data with a narrow, purpose-built privacy posture. Velocity only

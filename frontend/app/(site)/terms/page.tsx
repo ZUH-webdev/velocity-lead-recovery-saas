@@ -6,7 +6,7 @@ import { LegalIntro, LegalParagraph, LegalSection } from '../../../components/Le
 export default function TermsOfServicePage() {
   return (
     <>
-      <Header variant="dark" />
+      <Header />
       <LegalPageLayout badge="Platform Governance" title="Terms of Service" lastUpdated="June 2, 2026">
         <LegalIntro>
           These Terms govern access to and use of the Velocity platform by business customers operating across one

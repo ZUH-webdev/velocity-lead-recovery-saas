@@ -24,7 +24,7 @@ const pillars = [
 export default function ComplianceSecurityPage() {
   return (
     <>
-      <Header variant="dark" />
+      <Header />
       <LegalPageLayout
         badge="Enterprise Trust"
         title="Security & Compliance Framework"
