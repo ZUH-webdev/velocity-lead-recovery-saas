@@ -80,7 +80,7 @@ export class AuthService {
     const parsed = RegisterSchema.safeParse(body);
     if (!parsed.success) {
       return HttpResponse.unprocessable(
-        "Validation failed",
+        "Please check your details and try again.",
         parsed.error.flatten(),
       );
     }
@@ -88,7 +88,7 @@ export class AuthService {
     const { email, password, fullName } = parsed.data;
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
-    if (existingUser) return HttpResponse.conflict("Email already in use");
+    if (existingUser) return HttpResponse.conflict("An account with this email already exists.");
 
     const passwordHash = await bcrypt.hash(password, 12);
     const rawToken = crypto.randomBytes(32).toString("hex");
@@ -130,11 +130,13 @@ export class AuthService {
 
     if (!user) {
       return {
-        result: HttpResponse.badRequest("Invalid or expired verification token"),
+        result: HttpResponse.badRequest("This link has already been used. Please sign in to your account."),
       };
     }
     if (user.emailVerified) {
-      return { result: HttpResponse.badRequest("Email is already verified") };
+      return {
+        result: HttpResponse.badRequest("This link has already been used. Please sign in to your account."),
+      };
     }
     if (
       !user.emailVerificationTokenExpiresAt ||
@@ -142,7 +144,7 @@ export class AuthService {
     ) {
       return {
         result: HttpResponse.badRequest(
-          "This verification link has expired. Please request a new one.",
+          "This verification link has expired. Click \"Resend verification email\" to get a new one.",
         ),
       };
     }
@@ -246,7 +248,7 @@ export class AuthService {
     });
 
     const invalid = () => ({
-      result: HttpResponse.unauthorized("Invalid email or password"),
+      result: HttpResponse.unauthorized("Invalid email or password."),
     });
 
     if (!user || !user.password) return invalid();
@@ -257,7 +259,7 @@ export class AuthService {
     if (!user.emailVerified) {
       return {
         result: HttpResponse.forbidden(
-          "Please verify your email before logging in",
+          "Please verify your email before signing in.",
         ),
       };
     }
@@ -272,6 +274,14 @@ export class AuthService {
       },
     });
 
+    // Determine workspace membership directly from TenantMember rather than
+    // the (unmaintained) User.hasOnboarded flag, so this stays correct even
+    // for users who already have a tenant.
+    const tenantMembers = await prisma.tenantMember.findMany({
+      where: { userId: user.id, status: "ACTIVE" },
+      select: { tenantId: true },
+    });
+
     return {
       result: HttpResponse.ok("Login successful", {
         user: {
@@ -279,6 +289,8 @@ export class AuthService {
           email: user.email,
           fullName: user.fullName,
           emailVerified: user.emailVerified,
+          hasWorkspace: tenantMembers.length > 0,
+          tenantMembers,
         },
         accessToken,
       }),
@@ -369,7 +381,7 @@ export class AuthService {
     await sendPasswordResetEmail(email, resetLink);
 
     return HttpResponse.ok(
-      "If this email exists, a password reset link has been sent.",
+      "If this email exists, a reset link has been sent.",
     );
   }
 
@@ -390,16 +402,14 @@ export class AuthService {
     });
 
     if (!user) {
-      return HttpResponse.badRequest("Invalid or expired reset link");
+      return HttpResponse.badRequest("This reset link is invalid.");
     }
 
     if (
       !user.passwordResetTokenExpiresAt ||
       user.passwordResetTokenExpiresAt < new Date()
     ) {
-      return HttpResponse.badRequest(
-        "This reset link has expired. Please request a new one.",
-      );
+      return HttpResponse.badRequest("This reset link has expired.");
     }
 
     const passwordHash = await bcrypt.hash(password, 12);
@@ -415,6 +425,27 @@ export class AuthService {
     });
 
     return HttpResponse.ok("Password reset successfully");
+  }
+
+  // Issues a session for a user resolved via Google OAuth (no password check —
+  // the strategy already verified their Google identity).
+  static async issueOAuthSession(userId: string) {
+    const { accessToken, refreshToken } = generateTokens(userId);
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        refreshToken: hashToken(refreshToken),
+        lastLoginAt: new Date(),
+      },
+    });
+
+    const tenantMembers = await prisma.tenantMember.findMany({
+      where: { userId, status: "ACTIVE" },
+      select: { tenantId: true },
+    });
+
+    return { accessToken, refreshToken, hasWorkspace: tenantMembers.length > 0 };
   }
 
   // GET /auth/me  — requires valid access token
@@ -447,6 +478,8 @@ export class AuthService {
     });
 
     if (!user) return HttpResponse.notFound("User not found");
-    return HttpResponse.ok("User info retrieved", { user });
+    return HttpResponse.ok("User info retrieved", {
+      user: { ...user, hasWorkspace: user.tenantMembers.length > 0 },
+    });
   }
 }

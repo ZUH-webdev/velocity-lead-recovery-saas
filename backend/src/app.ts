@@ -3,11 +3,13 @@ import morgan from "morgan";
 import helmet from "helmet";
 import chalk from "chalk";
 import cookieParser from "cookie-parser";
+import passport from "passport";
 import { limiter } from "./middleware/rateLimiter";
 import cors from "./middleware/cors";
 import { errorHandler } from "./middleware/errorHandler";
 import { prisma } from "./config/prisma";
 import { getRedisClient } from "./config/redis";
+import { configureGoogleOAuth } from "./config/google";
 
 import authRoutes from "./routes/auth.routes";
 import tenantRouter from "./routes/tenant.routes";
@@ -26,6 +28,9 @@ app.use(helmet());
 app.use(cookieParser());
 app.use(express.json({ limit: "10mb" }));
 app.use(limiter);
+
+configureGoogleOAuth();
+app.use(passport.initialize());
 
 // Morgan: concise colored format in dev, minimal in prod
 const STATUS_COLOR = (status: number) => {

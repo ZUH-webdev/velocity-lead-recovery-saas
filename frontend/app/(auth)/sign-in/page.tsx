@@ -1,12 +1,22 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowRight, Eye, EyeOff, Mail, Shield } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 import AuthShell from '../../../components/AuthShell';
+import { Banner } from '../../../components/ErrorBanner';
+import { getFriendlyError } from '../../../lib/errors';
+
+const GOOGLE_ERROR_MESSAGES: Record<string, string> = {
+  google_auth_failed:
+    "We couldn't sign you in with Google. Please try again or use your email and password.",
+  google_failed: 'Google sign-in was cancelled or failed. Please try again.',
+  server_error: 'Something went wrong during Google sign-in. Please try again.',
+  no_token: 'Sign-in failed — no session was created. Please try again.',
+};
 
 interface Banner {
   type: 'error' | 'success' | 'info';
@@ -19,7 +29,7 @@ const stats = [
   { label: 'Missed calls captured', value: '14', subtext: 'Auto saved today' },
 ];
 
-export default function SignIn() {
+function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [banner, setBanner] = useState<Banner | null>(null);
@@ -28,6 +38,17 @@ export default function SignIn() {
 
   const { login, user } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const error = searchParams.get('error');
+    if (!error) return;
+    setBanner({
+      type: 'error',
+      message: GOOGLE_ERROR_MESSAGES[error] || 'Google sign-in failed. Please try again.',
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -44,27 +65,20 @@ export default function SignIn() {
       setBanner({ type: 'success', message: 'Signed in successfully. Redirecting…' });
 
       // Use returned user — state update is async and won't be ready yet
-      if (!loggedInUser?.hasOnboarded) {
+      if (!loggedInUser?.hasWorkspace) {
         router.push('/onboarding');
       } else {
         router.push('/dashboard');
       }
     } catch (err: unknown) {
-      setBanner({
-        type: 'error',
-        message: err instanceof Error ? err.message : 'Failed to sign in.',
-      });
+      setBanner({ type: 'error', message: getFriendlyError(err) });
     } finally {
       setLoading(false);
     }
   };
 
   const handleGoogle = () => {
-    setBanner({
-      type: 'info',
-      message:
-        'Google OAuth is not connected yet. Keep the button in the layout for the final integration.',
-    });
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`;
   };
 
   return (
@@ -91,10 +105,8 @@ export default function SignIn() {
         </div>
 
         {banner ? (
-          <div
-            className={`mt-6 rounded-lg px-4 py-3 text-sm ${banner.type === 'error' ? 'border border-rose-100 bg-rose-50 text-rose-700' : banner.type === 'success' ? 'border border-emerald-100 bg-emerald-50 text-emerald-700' : 'border border-sky-100 bg-sky-50 text-sky-700'}`}
-          >
-            {banner.message}
+          <div className="mt-6">
+            <Banner type={banner.type} message={banner.message} onDismiss={() => setBanner(null)} />
           </div>
         ) : null}
 
@@ -208,5 +220,13 @@ export default function SignIn() {
         </div>
       </div>
     </AuthShell>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={null}>
+      <SignIn />
+    </Suspense>
   );
 }

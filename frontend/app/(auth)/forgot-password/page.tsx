@@ -6,6 +6,8 @@ import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import AuthShell from '../../../components/AuthShell';
 import { api } from '../../../lib/api';
+import { Banner } from '../../../components/ErrorBanner';
+import { isNetworkError } from '../../../lib/errors';
 
 interface Banner {
   type: 'error' | 'success' | 'info';
@@ -31,9 +33,18 @@ export default function ForgotPassword() {
     try {
       await api.post('/auth/forgot-password', { email: email.trim() });
       setSubmitted(true);
-    } catch {
-      // Always show the same success state — never reveal whether the email exists.
-      setSubmitted(true);
+    } catch (err: unknown) {
+      // Only surface an error for connectivity issues — a failed request for
+      // any other reason (e.g. rate limiting) should never reveal whether the
+      // email exists, so it still falls through to the same success state.
+      if (isNetworkError(err)) {
+        setBanner({
+          type: 'error',
+          message: "Can't connect right now. Please check your internet and try again.",
+        });
+      } else {
+        setSubmitted(true);
+      }
     } finally {
       setLoading(false);
     }
@@ -97,14 +108,8 @@ export default function ForgotPassword() {
         </div>
 
         {banner && (
-          <div
-            className={`mt-6 rounded-lg px-4 py-3 text-sm ${
-              banner.type === 'error'
-                ? 'border border-rose-100 bg-rose-50 text-rose-700'
-                : 'border border-sky-100 bg-sky-50 text-sky-700'
-            }`}
-          >
-            {banner.message}
+          <div className="mt-6">
+            <Banner type={banner.type} message={banner.message} onDismiss={() => setBanner(null)} />
           </div>
         )}
 

@@ -1,9 +1,32 @@
 import { Router } from "express";
+import passport from "passport";
 import { AuthController } from "../controllers/auth.controller";
 import { authenticateToken } from "../middleware/auth.middleware";
 import { authLimiter } from "../middleware/rateLimiter";
+import { env } from "../config/env";
 
 const router = Router();
+
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"], session: false }),
+);
+
+router.get("/google/callback", (req, res, next) => {
+  passport.authenticate(
+    "google",
+    { session: false },
+    (err: Error | null, user: Express.User | false) => {
+      if (err || !user) {
+        const reason = err ? "server_error" : "google_failed";
+        res.redirect(`${env.APP_URL}/sign-in?error=${reason}`);
+        return;
+      }
+      req.user = user;
+      next();
+    },
+  )(req, res, next);
+}, AuthController.googleCallback);
 
 router.post("/register", authLimiter, AuthController.register);
 router.post("/verify", AuthController.verifyEmail);

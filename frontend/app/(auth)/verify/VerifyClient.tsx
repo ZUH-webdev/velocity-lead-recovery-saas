@@ -7,6 +7,8 @@ import { ArrowRight, CheckCircle2, MailWarning, ShieldCheck } from 'lucide-react
 import { api } from '../../../lib/api';
 import AuthShell from '../../../components/AuthShell';
 import { setToken } from '../../../lib/auth';
+import { getFriendlyError } from '../../../lib/errors';
+import { Banner } from '../../../components/ErrorBanner';
 
 interface Banner {
   type: 'error' | 'success' | 'info';
@@ -53,9 +55,9 @@ export default function VerifyClient({ token }: Props) {
           // New users have never onboarded
           router.replace('/onboarding');
         }, 1500);
-      } catch {
+      } catch (err: unknown) {
         if (!active) return;
-        setBanner({ type: 'error', message: 'Invalid or expired verification link.' });
+        setBanner({ type: 'error', message: getFriendlyError(err) });
       } finally {
         if (active) setLoading(false);
       }
@@ -101,10 +103,8 @@ export default function VerifyClient({ token }: Props) {
         </div>
 
         {banner ? (
-          <div
-            className={`mt-6 rounded-[16px] border px-4 py-3 text-sm ${banner.type === 'error' ? 'border-rose-100 bg-rose-50 text-rose-700' : banner.type === 'success' ? 'border-emerald-100 bg-emerald-50 text-emerald-700' : 'border-sky-100 bg-sky-50 text-sky-700'}`}
-          >
-            {banner.message}
+          <div className="mt-6">
+            <Banner type={banner.type} message={banner.message} />
           </div>
         ) : null}
 

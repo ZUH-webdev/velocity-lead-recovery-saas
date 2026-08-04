@@ -52,21 +52,23 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap gap-2 border-b border-[#e4e4e7] pb-4">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            onClick={() => setActiveTab(tab.id)}
-            className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
-              activeTab === tab.id
-                ? 'bg-[#c9a97a] text-black'
-                : 'text-[#71717a] hover:bg-white hover:text-[#09090b]'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
+      <div className="-mx-4 overflow-x-auto px-4 pb-0.5 [-webkit-overflow-scrolling:touch] sm:mx-0 sm:px-0">
+        <div className="flex w-max min-w-full gap-2 whitespace-nowrap border-b border-[#e4e4e7] pb-4">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setActiveTab(tab.id)}
+              className={`shrink-0 rounded-lg px-4 py-2 text-sm font-medium transition ${
+                activeTab === tab.id
+                  ? 'bg-[#c9a97a] text-black'
+                  : 'text-[#71717a] hover:bg-white hover:text-[#09090b]'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {activeTab === 'profile' ? (

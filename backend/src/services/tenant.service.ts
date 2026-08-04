@@ -145,6 +145,13 @@ export class TenantService {
     phone: string,
     websiteURL: string,
   ) {
+    const existingMembership = await prisma.tenantMember.findFirst({
+      where: { userId, status: "ACTIVE" },
+    });
+    if (existingMembership) {
+      return HttpResponse.conflict("You already have a workspace.");
+    }
+
     const slug = name.toLowerCase().replace(/\s+/g, "-");
 
     const existingTenant = await prisma.tenant.findUnique({ where: { slug } });
