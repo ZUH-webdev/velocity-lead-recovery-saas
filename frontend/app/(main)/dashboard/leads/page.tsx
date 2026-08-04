@@ -99,10 +99,18 @@ export default function LeadsPage() {
 
   return (
     <div className="space-y-6">
+      <div>
+        <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#a1a1aa]">
+          Lead Management
+        </p>
+        <h1 className="text-[22px] font-bold tracking-[-0.4px] text-[#09090b]">Leads</h1>
+        <p className="mt-1 text-sm text-[#71717a]">All recovered opportunities across your pipeline</p>
+      </div>
+
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div className="flex flex-1 flex-wrap items-center gap-3">
-          <div className="relative min-w-[200px] flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#555]" />
+        <div className="flex flex-1 flex-wrap items-center gap-2.5">
+          <div className="relative min-w-[240px] flex-1">
+            <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#a1a1aa]" />
             <input
               type="text"
               placeholder="Search by name or phone..."
@@ -111,7 +119,7 @@ export default function LeadsPage() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="w-full rounded-lg border border-[#2a2a2a] bg-[#111] py-2 pl-9 pr-3 text-sm text-white placeholder:text-[#555] focus:border-[#c9a97a] focus:outline-none"
+              className="w-full rounded-lg border border-[#e4e4e7] bg-white py-[9px] pl-9 pr-3 text-[13px] text-[#09090b] placeholder:text-[#a1a1aa] focus:border-[#c9a97a] focus:outline-none"
             />
           </div>
           <select
@@ -120,7 +128,7 @@ export default function LeadsPage() {
               setStatusFilter(e.target.value as LeadStatus | 'All');
               setPage(1);
             }}
-            className="rounded-lg border border-[#2a2a2a] bg-[#111] px-3 py-2 text-sm text-white focus:border-[#c9a97a] focus:outline-none"
+            className="min-w-[140px] cursor-pointer rounded-lg border border-[#e4e4e7] bg-white px-3 py-[9px] text-[13px] text-[#09090b] focus:border-[#c9a97a] focus:outline-none"
           >
             {STATUS_OPTIONS.map((s) => (
               <option key={s} value={s}>
@@ -135,9 +143,9 @@ export default function LeadsPage() {
               setDateFrom(e.target.value);
               setPage(1);
             }}
-            className="rounded-lg border border-[#2a2a2a] bg-[#111] px-3 py-2 text-sm text-white focus:border-[#c9a97a] focus:outline-none"
+            className="cursor-pointer rounded-lg border border-[#e4e4e7] bg-white px-3 py-[9px] text-[13px] text-[#09090b] focus:border-[#c9a97a] focus:outline-none"
           />
-          <span className="text-[#888888]">to</span>
+          <span className="text-[13px] text-[#a1a1aa]">to</span>
           <input
             type="date"
             value={dateTo}
@@ -145,61 +153,73 @@ export default function LeadsPage() {
               setDateTo(e.target.value);
               setPage(1);
             }}
-            className="rounded-lg border border-[#2a2a2a] bg-[#111] px-3 py-2 text-sm text-white focus:border-[#c9a97a] focus:outline-none"
+            className="cursor-pointer rounded-lg border border-[#e4e4e7] bg-white px-3 py-[9px] text-[13px] text-[#09090b] focus:border-[#c9a97a] focus:outline-none"
           />
         </div>
         <button
           type="button"
           onClick={handleExport}
-          className="flex items-center gap-2 self-start rounded-lg bg-[#c9a97a] px-4 py-2 text-sm font-medium text-black hover:opacity-90 lg:self-auto"
+          className="flex items-center gap-1.5 self-start rounded-lg border border-[#09090b] bg-[#09090b] px-4 py-[9px] text-[13px] font-semibold text-white transition hover:bg-[#1c1c1e] lg:self-auto"
         >
-          <Download className="h-4 w-4" />
+          <Download className="h-3.5 w-3.5" />
           Export CSV
         </button>
       </div>
 
-      <div className="rounded-xl border border-[#2a2a2a] bg-[#1a1a1a] p-5">
-        <div className="mb-3 flex flex-wrap gap-4 text-xs uppercase tracking-widest text-[#888888]">
-          {(['name', 'phone', 'business', 'status', 'leadScore', 'source', 'createdAt'] as SortKey[]).map((col) => (
-            <button
-              key={col}
-              type="button"
-              onClick={() => toggleSort(col)}
-              className="hover:text-[#c9a97a]"
-            >
-              {col.replace(/([A-Z])/g, ' $1').trim()} <SortIcon col={col} />
-            </button>
-          ))}
-        </div>
-        <LeadsTable
-          leads={paginated}
-          showBusiness
-          showSource
-          showCreatedAt
-          onView={setSelectedLead}
-          onDelete={handleDelete}
-        />
-
-        <div className="mt-4 flex items-center justify-between border-t border-[#2a2a2a] pt-4">
-          <p className="text-sm text-[#888888]">
-            Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length}
+      <div className="overflow-hidden rounded-xl border border-[#e4e4e7] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#f4f4f5] px-5 py-3.5">
+          <p className="text-[13px] text-[#71717a]">
+            Showing <strong className="text-[#09090b]">{filtered.length}</strong> leads
           </p>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-1">
+            {(['name', 'phone', 'business', 'status', 'leadScore', 'source', 'createdAt'] as SortKey[]).map((col) => (
+              <button
+                key={col}
+                type="button"
+                onClick={() => toggleSort(col)}
+                className={`rounded-md border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.04em] transition ${
+                  sortKey === col
+                    ? 'border-[#e4e4e7] bg-[#f4f4f5] text-[#09090b]'
+                    : 'border-transparent text-[#a1a1aa] hover:text-[#c9a97a]'
+                }`}
+              >
+                {col.replace(/([A-Z])/g, ' $1').trim()} <SortIcon col={col} />
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="px-5">
+          <LeadsTable
+            leads={paginated}
+            showBusiness
+            showSource
+            showCreatedAt
+            onView={setSelectedLead}
+            onDelete={handleDelete}
+          />
+        </div>
+
+        <div className="flex items-center justify-between border-t border-[#f4f4f5] px-5 py-3.5">
+          <p className="text-xs text-[#a1a1aa]">
+            Page {page} of {totalPages}
+          </p>
+          <div className="flex gap-1.5">
             <button
               type="button"
               disabled={page <= 1}
               onClick={() => setPage((p) => p - 1)}
-              className="rounded-lg border border-[#2a2a2a] px-3 py-1.5 text-sm text-[#f5f5f5] hover:bg-[#111111] disabled:opacity-40"
+              className="rounded-lg border border-[#e4e4e7] bg-white px-3.5 py-1.5 text-xs font-medium text-[#09090b] hover:bg-[#f4f4f5] disabled:cursor-not-allowed disabled:text-[#a1a1aa] disabled:hover:bg-white"
             >
-              Previous
+              ← Previous
             </button>
             <button
               type="button"
               disabled={page >= totalPages}
               onClick={() => setPage((p) => p + 1)}
-              className="rounded-lg border border-[#2a2a2a] px-3 py-1.5 text-sm text-[#f5f5f5] hover:bg-[#111111] disabled:opacity-40"
+              className="rounded-lg border border-[#e4e4e7] bg-white px-3.5 py-1.5 text-xs font-medium text-[#09090b] hover:bg-[#f4f4f5] disabled:cursor-not-allowed disabled:text-[#a1a1aa] disabled:hover:bg-white"
             >
-              Next
+              Next →
             </button>
           </div>
         </div>

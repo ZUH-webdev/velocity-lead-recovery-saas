@@ -16,11 +16,15 @@ interface ConversionAreaChartProps {
 }
 
 const tooltipStyle = {
-  backgroundColor: '#1a1a1a',
-  border: '1px solid #2a2a2a',
+  background: '#ffffff',
+  border: '1px solid #e4e4e7',
   borderRadius: '8px',
-  color: '#f5f5f5',
+  boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+  fontSize: '12px',
+  color: '#09090b',
 };
+
+const labelStyle = { color: '#71717a', fontWeight: 600 };
 
 export default function ConversionAreaChart({ data }: ConversionAreaChartProps) {
   return (
@@ -32,23 +36,24 @@ export default function ConversionAreaChart({ data }: ConversionAreaChartProps) 
             <stop offset="95%" stopColor="#7ddcc1" stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid stroke="#2a2a2a" strokeDasharray="3 3" />
+        <CartesianGrid stroke="#f4f4f5" strokeDasharray="3 3" />
         <XAxis
           dataKey="date"
-          tick={{ fill: '#888888', fontSize: 11 }}
+          tick={{ fill: '#a1a1aa', fontSize: 11 }}
           tickFormatter={(v) => v.slice(5)}
-          axisLine={{ stroke: '#2a2a2a' }}
+          axisLine={{ stroke: '#e4e4e7' }}
           tickLine={false}
         />
         <YAxis
-          tick={{ fill: '#888888', fontSize: 11 }}
-          axisLine={{ stroke: '#2a2a2a' }}
+          tick={{ fill: '#a1a1aa', fontSize: 11 }}
+          axisLine={{ stroke: '#e4e4e7' }}
           tickLine={false}
           unit="%"
         />
         <Tooltip
           contentStyle={tooltipStyle}
-          labelStyle={{ color: '#888888' }}
+          labelStyle={labelStyle}
+          cursor={{ fill: 'rgba(9,9,11,0.03)' }}
           formatter={(value: number) => [`${value}%`, 'Conversion']}
         />
         <Area
