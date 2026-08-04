@@ -149,4 +149,13 @@ export class AuthController {
       next(err);
     }
   }
+
+  static async updateProfile(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await AuthService.updateProfile(req.userId!, req.body);
+      result.send(res);
+    } catch (err) {
+      next(err);
+    }
+  }
 }

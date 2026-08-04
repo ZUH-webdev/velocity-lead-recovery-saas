@@ -34,6 +34,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   refreshAccessToken: () => Promise<void>;
   initAuth: () => Promise<User>;
+  updateUser: (partial: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -135,8 +136,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('Logout error:', err);
     } finally {
       clearAuthState();
-      router.push('/sign-in');
+      router.push('/');
     }
+  };
+
+  // Merges a partial user update (e.g. after saving profile changes) into
+  // state immediately, so every component reading from context re-renders
+  // with the new data without waiting on a refetch.
+  const updateUser = (partial: Partial<User>) => {
+    setUser((prev) => (prev ? { ...prev, ...partial } : prev));
   };
 
   useEffect(() => {
@@ -169,7 +177,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (event.newValue === null) {
         // Another tab logged out — sync this tab.
         clearAuthState();
-        router.push('/sign-in');
+        router.push('/');
       } else if (event.newValue === '1' && !user) {
         // Another tab logged in — re-bootstrap this tab's auth state.
         refreshAccessToken().then(fetchMe).catch(() => clearAuthState());
@@ -193,6 +201,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         logout,
         refreshAccessToken,
         initAuth,
+        updateUser,
       }}
     >
       {children}
