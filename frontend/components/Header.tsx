@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ArrowRight } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const navItems = [
   { label: 'The Platform', hash: '#platform' },
@@ -22,6 +23,7 @@ export default function Header({ variant = 'light' }: HeaderProps) {
   const pathname = usePathname();
   const isHome = pathname === '/';
   const isDark = variant === 'dark';
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     function handleResize() {
@@ -124,17 +126,30 @@ export default function Header({ variant = 'light' }: HeaderProps) {
           </Link>
         </div>
 
-        <button
-          type="button"
-          aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-          aria-expanded={isMenuOpen}
-          onClick={() => setIsMenuOpen((prev) => !prev)}
-          className={`inline-flex h-[44px] w-[44px] items-center justify-center rounded-[8px] justify-self-end md:hidden ${
-            isDark ? 'text-white' : 'text-[#111827]'
-          }`}
-        >
-          <span className="text-[26px] leading-none">{isMenuOpen ? '×' : '☰'}</span>
-        </button>
+        <div className="flex items-center gap-[8px] justify-self-end md:hidden">
+          <Link
+            href={isAuthenticated ? '/dashboard' : '/sign-up'}
+            className={
+              isDark
+                ? 'inline-flex h-[44px] items-center justify-center rounded-[20px] bg-white px-[14px] font-body text-[13px] font-[600] tracking-[0.01em] text-[#0f0f10] shadow-[0_8px_24px_rgba(255,255,255,0.08)]'
+                : 'inline-flex h-[44px] items-center justify-center rounded-[8px] bg-[#0f172a] px-[14px] font-body text-[13px] font-[600] tracking-[0.01em] text-white shadow-[0_8px_24px_rgba(15,23,42,0.18)]'
+            }
+          >
+            {isAuthenticated ? 'Dashboard' : 'Free Signup'}
+          </Link>
+
+          <button
+            type="button"
+            aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={isMenuOpen}
+            onClick={() => setIsMenuOpen((prev) => !prev)}
+            className={`inline-flex h-[44px] w-[44px] items-center justify-center rounded-[8px] ${
+              isDark ? 'text-white' : 'text-[#111827]'
+            }`}
+          >
+            <span className="text-[26px] leading-none">{isMenuOpen ? '×' : '☰'}</span>
+          </button>
+        </div>
       </div>
 
       {isMenuOpen && (

@@ -18,16 +18,17 @@ interface Props {
 
 export default function AuthShell({ children, stats = [] }: Props) {
   return (
-    <main className="bg-gradient-to-b from-slate-50 via-slate-100 to-zinc-200/50 min-h-screen w-full flex flex-col items-center justify-center p-4 sm:p-6 relative text-slate-900">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[350px] bg-slate-200/40 blur-[120px] rounded-full pointer-events-none z-0" />
-
+    <main className="bg-[#fafafa] min-h-screen w-full flex flex-col items-center justify-center px-4 py-8 sm:p-6 relative text-[#09090b]">
       <motion.div
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.45, ease: 'easeOut' }}
-        className="w-full max-w-[480px] bg-white border border-slate-200/80 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.03)] p-6 sm:p-8 md:p-10 relative z-10"
+        className="w-full max-w-[440px] bg-white border border-[#e4e4e7] rounded-[20px] shadow-[0_20px_60px_rgba(9,9,11,0.06)] p-8 sm:p-9 md:p-10 relative z-10"
       >
-        <Link href="/" className="absolute left-4 top-4 rounded-lg p-2 text-slate-700 hover:bg-slate-50">
+        <Link
+          href="/"
+          className="absolute left-4 top-4 rounded-full p-2 text-[#71717a] transition-colors hover:bg-[#fafafa] hover:text-[#09090b]"
+        >
           <Home className="h-5 w-5" />
         </Link>
         {children}

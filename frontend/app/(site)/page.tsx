@@ -197,7 +197,7 @@ function HeroSection() {
           hero={true}
         >
           <Link
-            href="#"
+            href="/sign-up"
             className="font-body inline-flex min-h-[44px] h-[57px] w-full md:w-auto justify-center items-center gap-[12px] rounded-[6px] bg-[#0f172a] px-[28px] text-[15px] font-[600] tracking-[0.01em] text-white shadow-[0_8px_24px_rgba(15,23,42,0.18)]"
           >
             Calculate Revenue Leak
@@ -205,7 +205,7 @@ function HeroSection() {
           </Link>
 
           <Link
-            href="#"
+            href="/whitepaper"
             className="font-body inline-flex min-h-[44px] h-[57px] w-full md:w-auto justify-center items-center rounded-[6px] border border-[#dfe4ea] bg-white px-[31px] text-[15px] font-[600] tracking-[0.01em] text-[#111827] shadow-[0_1px_0_rgba(15,23,42,0.02)]"
           >
             Read the Whitepaper
