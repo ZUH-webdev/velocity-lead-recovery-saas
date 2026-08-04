@@ -1,8 +1,15 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { ArrowRight } from 'lucide-react';
 import { ScrollRevealGroup, ScrollRevealItem } from '../../../components/ScrollReveal';
 import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
+
+export const metadata: Metadata = {
+  title: 'About',
+  description:
+    'Velocity was founded by Zain Ul Hassan to help local healthcare businesses stop losing patients in the silence after a missed call.',
+};
 
 const audienceItems = [
   'Dental clinics losing patients to voicemail',
@@ -84,6 +91,12 @@ export default function AboutPage() {
                 <p className="font-body text-[18px] font-[400] leading-[1.7] text-[#4b5563]">
                   Velocity was founded on a single observation — healthcare practices weren&apos;t losing patients because of
                   bad care. They were losing them in the silence after a missed call.
+                </p>
+              </ScrollRevealItem>
+
+              <ScrollRevealItem className="mt-[20px]" direction="up" hero>
+                <p className="font-mono-ui text-[12px] font-[500] uppercase tracking-[0.12em] text-[#9ca3af]">
+                  Zain Ul Hassan, Founder of Velocity
                 </p>
               </ScrollRevealItem>
             </ScrollRevealGroup>

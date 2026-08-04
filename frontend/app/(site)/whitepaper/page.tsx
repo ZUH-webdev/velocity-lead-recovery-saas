@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import {
   ArrowRight,
   PhoneMissed,
@@ -12,6 +13,12 @@ import {
 } from 'lucide-react';
 import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
+
+export const metadata: Metadata = {
+  title: 'Whitepaper: The Cost of the Missed Call',
+  description:
+    'How AI-powered recovery turns your busiest, highest-intent moments — the calls you can’t answer — into booked appointments instead of lost revenue.',
+};
 
 const steps = [
   {
