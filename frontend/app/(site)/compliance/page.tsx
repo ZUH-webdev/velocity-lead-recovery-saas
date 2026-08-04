@@ -1,7 +1,14 @@
+import type { Metadata } from 'next';
 import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
 import LegalPageLayout from '../../../components/LegalPageLayout';
 import { LegalList, LegalParagraph, LegalSection } from '../../../components/LegalComponents';
+
+export const metadata: Metadata = {
+  title: 'Security & Compliance',
+  description:
+    'How Velocity safeguards protected health information (PHI) with HIPAA-aligned access governance, SOC 2 data integrity controls, and end-to-end encryption.',
+};
 
 const pillars = [
   {

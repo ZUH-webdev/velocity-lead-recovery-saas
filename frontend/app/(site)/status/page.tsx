@@ -1,7 +1,13 @@
+import type { Metadata } from 'next';
 import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
 import LegalPageLayout from '../../../components/LegalPageLayout';
 import { LegalSection, StatusBadge, type ServiceStatus } from '../../../components/LegalComponents';
+
+export const metadata: Metadata = {
+  title: 'System Status',
+  description: 'Real-time operational status of all Velocity services, including the AI voice agent, SMS recovery engine, and calendar sync.',
+};
 
 const services: { name: string; status: ServiceStatus }[] = [
   { name: 'AI Voice Agent', status: 'operational' },

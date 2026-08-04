@@ -1,7 +1,14 @@
+import type { Metadata } from 'next';
 import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
 import LegalPageLayout from '../../../components/LegalPageLayout';
 import { LegalIntro, LegalParagraph, LegalSection } from '../../../components/LegalComponents';
+
+export const metadata: Metadata = {
+  title: 'Privacy Policy',
+  description:
+    'How Velocity collects, processes, and retains data — including AI data handling — to support missed-call recovery and appointment booking for our clients.',
+};
 
 export default function PrivacyPolicyPage() {
   return (

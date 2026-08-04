@@ -1,7 +1,14 @@
+import type { Metadata } from 'next';
 import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
 import LegalPageLayout from '../../../components/LegalPageLayout';
 import { LegalIntro, LegalParagraph, LegalSection } from '../../../components/LegalComponents';
+
+export const metadata: Metadata = {
+  title: 'Terms of Service',
+  description:
+    'The terms governing access to and use of the Velocity platform, including account integrity, conversational AI usage policies, and billing.',
+};
 
 export default function TermsOfServicePage() {
   return (
