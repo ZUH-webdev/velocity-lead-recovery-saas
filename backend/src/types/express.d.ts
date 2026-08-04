@@ -1,9 +1,10 @@
-import type { Tenant, TenantMember } from "../generated/prisma/client";
+import type { Tenant, TenantMember, User } from "../generated/prisma/client";
 
 declare global {
   namespace Express {
     interface Request {
       userId?: string;
+      user?: User;        // ← ADD THIS
       tenant?: Tenant;
       member?: TenantMember;
     }
