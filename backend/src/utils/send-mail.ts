@@ -57,16 +57,12 @@ function layout(content: string, previewText?: string) {
               <tr>
                 <td>
                   <!-- Logo mark -->
-                  <span style="
-                    display:inline-block;
-                    font-size:18px;
-                    font-weight:800;
-                    color:#ffffff;
-                    letter-spacing:0.12em;
-                    text-transform:uppercase;
-                  ">
-                    ⚡ VELOCITY
-                  </span>
+                  <img
+                    src="https://velocity-ai.site/email/velocity-logo-email.png"
+                    alt="Velocity"
+                    width="140"
+                    style="display:block; max-width:140px; width:100%; height:auto; margin:0 auto 24px auto; border:0; outline:none; text-decoration:none;"
+                  />
                 </td>
                 <td align="right">
                   <span style="
@@ -308,6 +304,10 @@ function infoBox(rows: { label: string; value: string }[]) {
   `;
 }
 
+function icon(name: string, size = 16) {
+  return `<img src="https://velocity-ai.site/email/icons/${name}.png" alt="" width="${size}" height="${size}" style="display:inline-block; width:${size}px; height:${size}px; vertical-align:middle; margin-right:8px; border:0; outline:none; text-decoration:none;" />`;
+}
+
 function callout(text: string, type: "info" | "warning" | "success" = "info") {
   const styles = {
     info: { bg: "#fdf6ec", border: "#c9a97a", color: "#92703d" },
@@ -378,7 +378,8 @@ export const sendVerificationEmail = async (to: string, url: string) => {
     ${button("Verify Email Address", url)}
 
     ${callout(
-      "🔒 For security, this verification link can only be used once " +
+      icon("lock-gold") +
+        "For security, this verification link can only be used once " +
         "and expires in 24 hours. If you did not create a Velocity account, " +
         "you can safely ignore this email.",
       "info",
@@ -395,7 +396,7 @@ export const sendVerificationEmail = async (to: string, url: string) => {
     "Verify your Velocity account — action required",
   );
 
-  await send(to, "⚡ Verify your Velocity account", html);
+  await send(to, "Verify your Velocity account", html);
 };
 
 // ── 2. Welcome (after email verified) ─────────────────────────────────────
@@ -436,7 +437,7 @@ export const sendWelcomeEmail = async (to: string, fullName: string, dashboardUr
     `Welcome ${firstName} — your AI receptionist is ready`,
   );
 
-  await send(to, `⚡ Welcome to Velocity, ${firstName}`, html);
+  await send(to, `Welcome to Velocity, ${firstName}`, html);
 };
 
 // ── 3. Member Invite ───────────────────────────────────────────────────────
@@ -470,7 +471,8 @@ export const sendMemberInviteEmail = async (
     ${button("Accept Invitation", inviteUrl)}
 
     ${callout(
-      "⏱ This invitation expires in 7 days. After that, " + `${inviterName} will need to send a new invite.`,
+      icon("clock-amber") +
+        `This invitation expires in 7 days. After that, ${inviterName} will need to send a new invite.`,
       "warning",
     )}
 
@@ -484,7 +486,7 @@ export const sendMemberInviteEmail = async (
     `${inviterName} invited you to join ${tenantName} on Velocity`,
   );
 
-  await send(to, `⚡ ${inviterName} invited you to ${tenantName}`, html);
+  await send(to, `${inviterName} invited you to ${tenantName}`, html);
 };
 
 // ── 4. Password Reset ──────────────────────────────────────────────────────
@@ -505,7 +507,8 @@ export const sendPasswordResetEmail = async (to: string, url: string) => {
     ${button("Reset My Password", url)}
 
     ${callout(
-      "🔐 If you didn't request a password reset, your account may be " +
+      icon("lock-amber") +
+        "If you didn't request a password reset, your account may be " +
         "at risk. Contact us immediately at security@velocity-ai.site " +
         "and change your password.",
       "warning",
@@ -522,7 +525,7 @@ export const sendPasswordResetEmail = async (to: string, url: string) => {
     "Reset your Velocity password — link expires in 1 hour",
   );
 
-  await send(to, "🔐 Reset your Velocity password", html);
+  await send(to, "Reset your Velocity password", html);
 };
 
 // ── 5. Appointment Reminder ────────────────────────────────────────────────
@@ -551,7 +554,8 @@ export const sendAppointmentReminderEmail = async (
     ])}
 
     ${callout(
-      "✅ Your appointment is confirmed. If you need to reschedule " +
+      icon("check-green") +
+        "Your appointment is confirmed. If you need to reschedule " +
         "or cancel, please contact the practice directly at least " +
         "24 hours in advance.",
       "success",
@@ -567,7 +571,7 @@ export const sendAppointmentReminderEmail = async (
     `Reminder: Your appointment at ${businessName}`,
   );
 
-  await send(to, `📅 Appointment reminder — ${businessName}`, html);
+  await send(to, `Appointment reminder — ${businessName}`, html);
 };
 
 // ── 6. Critical Lead Alert ─────────────────────────────────────────────────
@@ -601,7 +605,7 @@ export const sendCriticalLeadAlert = async (
             letter-spacing:0.04em;
             text-transform:uppercase;
           ">
-            🚨 Critical Lead — Immediate Attention Required
+            ${icon("alert-red", 15)}Critical Lead — Immediate Attention Required
           </span>
         </td>
       </tr>
@@ -637,7 +641,7 @@ export const sendCriticalLeadAlert = async (
     "Critical lead requires your immediate attention",
   );
 
-  await send(to, `🚨 Critical lead alert — ${tenantName}`, html);
+  await send(to, `Critical lead alert — ${tenantName}`, html);
 };
 
 // ── Internal sender ────────────────────────────────────────────────────────

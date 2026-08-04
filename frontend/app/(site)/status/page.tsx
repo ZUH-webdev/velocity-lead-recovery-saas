@@ -15,7 +15,7 @@ const services: { name: string; status: ServiceStatus }[] = [
 export default function SystemStatusPage() {
   return (
     <>
-      <Header variant="dark" />
+      <Header />
       <LegalPageLayout
         badge="System Monitoring"
         title="System Status"
