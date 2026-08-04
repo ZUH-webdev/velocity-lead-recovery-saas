@@ -54,6 +54,19 @@ export const ResetPasswordSchema = z.object({
     .regex(/[0-9]/, "Password must contain at least one number"),
 });
 
+export const UpdateProfileSchema = z.object({
+  fullName: z.string().min(2).max(120).optional(),
+  avatarURL: z
+    .string()
+    .max(5_000_000, "Image is too large")
+    .refine(
+      (val) => /^data:image\/(png|jpe?g|webp|gif);base64,/.test(val) || /^https?:\/\//.test(val),
+      "Avatar must be an image data URL or a valid URL",
+    )
+    .nullable()
+    .optional(),
+});
+
 // ── Helpers ────────────────────────────────────────────────────────────────
 
 export function verifyRefreshToken(token: string): RefreshTokenPayload {
@@ -481,5 +494,39 @@ export class AuthService {
     return HttpResponse.ok("User info retrieved", {
       user: { ...user, hasWorkspace: user.tenantMembers.length > 0 },
     });
+  }
+
+  // PATCH /auth/me — requires valid access token
+  static async updateProfile(userId: string, body: unknown) {
+    const parsed = UpdateProfileSchema.safeParse(body);
+    if (!parsed.success) {
+      return HttpResponse.unprocessable(
+        "Please check your details and try again.",
+        parsed.error.flatten(),
+      );
+    }
+
+    const { fullName, avatarURL } = parsed.data;
+
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        ...(fullName !== undefined ? { fullName } : {}),
+        ...(avatarURL !== undefined ? { avatarURL } : {}),
+      },
+      select: {
+        id: true,
+        email: true,
+        fullName: true,
+        avatarURL: true,
+        timezone: true,
+        isPlatformAdmin: true,
+        hasOnboarded: true,
+        createdAt: true,
+        lastLoginAt: true,
+      },
+    });
+
+    return HttpResponse.ok("Profile updated", { user });
   }
 }

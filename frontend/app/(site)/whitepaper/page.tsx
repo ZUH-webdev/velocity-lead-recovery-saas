@@ -116,47 +116,47 @@ function SectionEyebrow({ children }: { children: React.ReactNode }) {
 
 export default function WhitepaperPage() {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#09090b] font-heading text-white">
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:43px_43px] opacity-[0.3]" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(201,169,122,0.08),transparent_45%)]" />
+    <div className="relative min-h-screen overflow-hidden bg-white font-heading text-[#111827]">
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(17,24,39,0.045)_1px,transparent_1px),linear-gradient(to_bottom,rgba(17,24,39,0.045)_1px,transparent_1px)] bg-[size:43px_43px] opacity-[0.26]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.92),rgba(255,255,255,0.98)_38%,rgba(255,255,255,1)_72%)]" />
 
       <div className="relative">
-        <Header variant="dark" />
+        <Header />
 
         <main style={{ paddingTop: 'var(--header-height)' }}>
           {/* Cover / Hero */}
           <section className="mx-auto max-w-[1440px] px-[24px] pb-[70px] pt-[60px] md:px-[40px] md:pb-[90px] md:pt-[80px] lg:px-[80px]">
             <div className="mx-auto max-w-[760px] text-center">
-              <span className="inline-flex h-[31px] items-center gap-[9px] rounded-full border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.04)] px-[14px] font-mono-ui text-[11px] font-[400] uppercase tracking-[0.14em] text-[rgba(255,255,255,0.7)]">
+              <span className="inline-flex h-[31px] items-center gap-[9px] rounded-full border border-[#e6eaef] bg-white px-[14px] font-mono-ui text-[11px] font-[400] uppercase tracking-[0.14em] text-[#678096] shadow-[0_1px_0_rgba(15,23,42,0.02)]">
                 <span className="h-[9px] w-[9px] rounded-full bg-[#c9a97a]" />
                 Whitepaper
               </span>
 
-              <h1 className="mt-[32px] font-hero text-[clamp(32px,7vw,64px)] font-[600] leading-[1.1] tracking-[-0.02em] text-white">
+              <h1 className="mt-[32px] font-hero text-[clamp(32px,7vw,64px)] font-[600] leading-[1.1] tracking-[-0.02em] text-[#0f0f10]">
                 The Cost of the Missed Call
               </h1>
 
-              <p className="mx-auto mt-[24px] max-w-[620px] font-body text-[17px] font-[400] leading-[1.7] text-[rgba(255,255,255,0.65)] md:text-[18px]">
+              <p className="mx-auto mt-[24px] max-w-[620px] font-body text-[17px] font-[400] leading-[1.7] text-[#4b5563] md:text-[18px]">
                 How AI-powered recovery turns your busiest, highest-intent moments — the calls you can&apos;t answer —
                 into booked appointments instead of lost revenue.
               </p>
 
-              <p className="mt-[24px] font-mono-ui text-[11px] font-[400] uppercase tracking-[0.14em] text-[rgba(255,255,255,0.45)]">
+              <p className="mt-[24px] font-mono-ui text-[11px] font-[400] uppercase tracking-[0.14em] text-[#9ca3af]">
                 8 min read &middot; Updated August 2026
               </p>
             </div>
           </section>
 
           {/* Executive Summary */}
-          <section className="border-t border-[rgba(255,255,255,0.08)]">
+          <section className="border-t border-[#e5e7eb]">
             <div className="mx-auto max-w-[1440px] px-[24px] py-[70px] md:px-[40px] md:py-[90px] lg:px-[80px]">
               <div className="mx-auto max-w-[760px]">
                 <SectionEyebrow>Executive Summary</SectionEyebrow>
-                <h2 className="mt-[20px] font-hero text-[clamp(26px,3.6vw,38px)] font-[500] leading-[1.15] tracking-[-0.02em] text-white">
+                <h2 className="mt-[20px] font-hero text-[clamp(26px,3.6vw,38px)] font-[500] leading-[1.15] tracking-[-0.02em] text-[#0f0f10]">
                   Executive Summary
                 </h2>
 
-                <div className="mt-[28px] flex flex-col gap-[22px] font-body text-[16px] font-[400] leading-[1.75] text-[rgba(255,255,255,0.68)] md:text-[17px]">
+                <div className="mt-[28px] flex flex-col gap-[22px] font-body text-[16px] font-[400] leading-[1.75] text-[#374151] md:text-[17px]">
                   <p>
                     Every local business built on inbound calls — dental practices, med spas, real estate teams, salons
                     — runs into the same wall: the phone rings during the exact moment staff can least afford to pick
@@ -181,15 +181,15 @@ export default function WhitepaperPage() {
           </section>
 
           {/* The Problem */}
-          <section className="border-t border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)]">
+          <section className="border-t border-[#e5e7eb] bg-[#FAFAFA]">
             <div className="mx-auto max-w-[1440px] px-[24px] py-[70px] md:px-[40px] md:py-[90px] lg:px-[80px]">
               <div className="mx-auto max-w-[760px]">
                 <SectionEyebrow>The Problem</SectionEyebrow>
-                <h2 className="mt-[20px] font-hero text-[clamp(26px,3.6vw,38px)] font-[500] leading-[1.2] tracking-[-0.02em] text-white">
+                <h2 className="mt-[20px] font-hero text-[clamp(26px,3.6vw,38px)] font-[500] leading-[1.2] tracking-[-0.02em] text-[#0f0f10]">
                   Every Unanswered Call Is a Decision Being Made Without You
                 </h2>
 
-                <div className="mt-[28px] flex flex-col gap-[22px] font-body text-[16px] font-[400] leading-[1.75] text-[rgba(255,255,255,0.68)] md:text-[17px]">
+                <div className="mt-[28px] flex flex-col gap-[22px] font-body text-[16px] font-[400] leading-[1.75] text-[#374151] md:text-[17px]">
                   <p>
                     Local service businesses lose leads not because demand is weak, but because the moment of highest
                     intent — someone picking up the phone to book — is also the moment staff are least available to
@@ -212,32 +212,32 @@ export default function WhitepaperPage() {
           </section>
 
           {/* The Hidden Cost */}
-          <section className="border-t border-[rgba(255,255,255,0.08)]">
+          <section className="border-t border-[#e5e7eb]">
             <div className="mx-auto max-w-[1440px] px-[24px] py-[70px] md:px-[40px] md:py-[90px] lg:px-[80px]">
               <div className="mx-auto max-w-[760px]">
                 <SectionEyebrow>The Hidden Cost</SectionEyebrow>
-                <h2 className="mt-[20px] font-hero text-[clamp(26px,3.6vw,38px)] font-[500] leading-[1.2] tracking-[-0.02em] text-white">
+                <h2 className="mt-[20px] font-hero text-[clamp(26px,3.6vw,38px)] font-[500] leading-[1.2] tracking-[-0.02em] text-[#0f0f10]">
                   What a Missed Call Actually Costs
                 </h2>
 
-                <p className="mt-[24px] font-body text-[16px] font-[400] leading-[1.75] text-[rgba(255,255,255,0.68)] md:text-[17px]">
+                <p className="mt-[24px] font-body text-[16px] font-[400] leading-[1.75] text-[#374151] md:text-[17px]">
                   The math is simple once you run it — plug in your own numbers to see where you stand:
                 </p>
 
-                <div className="mt-[32px] overflow-hidden rounded-[14px] border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)]">
+                <div className="mt-[32px] overflow-hidden rounded-[14px] border border-[#eceff3] bg-white shadow-[0_18px_50px_rgba(15,23,42,0.04)]">
                   {costRows.map((row, i) => (
                     <div
                       key={row.label}
                       className={`flex items-center justify-between gap-[16px] px-[20px] py-[16px] md:px-[28px] ${
-                        i !== costRows.length - 1 ? 'border-b border-[rgba(255,255,255,0.08)]' : ''
+                        i !== costRows.length - 1 ? 'border-b border-[#eceff3]' : ''
                       } ${i >= costRows.length - 2 ? 'bg-[rgba(201,169,122,0.06)]' : ''}`}
                     >
-                      <span className="font-body text-[14px] font-[400] text-[rgba(255,255,255,0.6)] md:text-[15px]">
+                      <span className="font-body text-[14px] font-[400] text-[#6b7280] md:text-[15px]">
                         {row.label}
                       </span>
                       <span
                         className={`font-mono-ui text-[14px] font-[500] md:text-[15px] ${
-                          i >= costRows.length - 2 ? 'text-[#c9a97a]' : 'text-white'
+                          i >= costRows.length - 2 ? 'text-[#c9a97a]' : 'text-[#111827]'
                         }`}
                       >
                         {row.value}
@@ -246,7 +246,7 @@ export default function WhitepaperPage() {
                   ))}
                 </div>
 
-                <p className="mt-[16px] font-body text-[13px] font-[400] leading-[1.6] text-[rgba(255,255,255,0.45)]">
+                <p className="mt-[16px] font-body text-[13px] font-[400] leading-[1.6] text-[#9ca3af]">
                   These are illustrative figures for a mid-sized practice. Replace with your own call volume and average
                   ticket size to estimate your recovery potential.
                 </p>
@@ -255,15 +255,15 @@ export default function WhitepaperPage() {
           </section>
 
           {/* The Solution */}
-          <section className="border-t border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)]">
+          <section className="border-t border-[#e5e7eb] bg-[#FAFAFA]">
             <div className="mx-auto max-w-[1440px] px-[24px] py-[70px] md:px-[40px] md:py-[90px] lg:px-[80px]">
               <div className="mx-auto max-w-[760px]">
                 <SectionEyebrow>The Solution</SectionEyebrow>
-                <h2 className="mt-[20px] font-hero text-[clamp(26px,3.6vw,38px)] font-[500] leading-[1.2] tracking-[-0.02em] text-white">
+                <h2 className="mt-[20px] font-hero text-[clamp(26px,3.6vw,38px)] font-[500] leading-[1.2] tracking-[-0.02em] text-[#0f0f10]">
                   How Velocity Recovers the Conversation
                 </h2>
 
-                <p className="mt-[24px] font-body text-[16px] font-[400] leading-[1.75] text-[rgba(255,255,255,0.68)] md:text-[17px]">
+                <p className="mt-[24px] font-body text-[16px] font-[400] leading-[1.75] text-[#374151] md:text-[17px]">
                   Velocity doesn&apos;t try to prevent missed calls — it makes them irrelevant. The moment a call goes
                   unanswered, Velocity takes over the follow-up automatically, in the channel callers already prefer:
                   text message.
@@ -277,12 +277,12 @@ export default function WhitepaperPage() {
                           {String(i + 1).padStart(2, '0')}
                         </span>
                         {i !== steps.length - 1 && (
-                          <span className="mt-[8px] w-[1px] flex-1 bg-[rgba(255,255,255,0.12)]" />
+                          <span className="mt-[8px] w-[1px] flex-1 bg-[#e5e7eb]" />
                         )}
                       </div>
                       <div className="pb-[4px]">
-                        <h3 className="font-heading text-[17px] font-[700] text-white">{step.title}</h3>
-                        <p className="mt-[8px] font-body text-[15px] font-[400] leading-[1.7] text-[rgba(255,255,255,0.62)]">
+                        <h3 className="font-heading text-[17px] font-[700] text-[#0f0f10]">{step.title}</h3>
+                        <p className="mt-[8px] font-body text-[15px] font-[400] leading-[1.7] text-[#6b7280]">
                           {step.body}
                         </p>
                       </div>
@@ -294,11 +294,11 @@ export default function WhitepaperPage() {
           </section>
 
           {/* Core Capabilities */}
-          <section className="border-t border-[rgba(255,255,255,0.08)]">
+          <section className="border-t border-[#e5e7eb]">
             <div className="mx-auto max-w-[1200px] px-[24px] py-[70px] md:px-[40px] md:py-[90px] lg:px-[80px]">
               <div className="mx-auto max-w-[760px]">
                 <SectionEyebrow>Core Capabilities</SectionEyebrow>
-                <h2 className="mt-[20px] font-hero text-[clamp(26px,3.6vw,38px)] font-[500] leading-[1.2] tracking-[-0.02em] text-white">
+                <h2 className="mt-[20px] font-hero text-[clamp(26px,3.6vw,38px)] font-[500] leading-[1.2] tracking-[-0.02em] text-[#0f0f10]">
                   What&apos;s Under the Hood
                 </h2>
               </div>
@@ -307,13 +307,13 @@ export default function WhitepaperPage() {
                 {capabilities.map((cap) => (
                   <div
                     key={cap.title}
-                    className="rounded-[12px] border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)] p-[22px] transition-colors duration-200 hover:border-[rgba(201,169,122,0.35)]"
+                    className="rounded-[12px] border border-[#e5e7eb] bg-white p-[22px] shadow-[0_1px_3px_rgba(0,0,0,0.06)] transition-colors duration-200 hover:border-[rgba(201,169,122,0.4)]"
                   >
-                    <div className="inline-flex h-[40px] w-[40px] items-center justify-center rounded-[8px] border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.04)] text-[#c9a97a]">
+                    <div className="inline-flex h-[40px] w-[40px] items-center justify-center rounded-[8px] border border-[#e5e7eb] bg-white text-[#0f0f10] shadow-[0_6px_18px_rgba(15,23,42,0.04)]">
                       <cap.icon size={18} />
                     </div>
-                    <h3 className="mt-[16px] font-heading text-[15px] font-[700] text-white">{cap.title}</h3>
-                    <p className="mt-[8px] font-body text-[13px] font-[400] leading-[1.6] text-[rgba(255,255,255,0.58)]">
+                    <h3 className="mt-[16px] font-heading text-[15px] font-[700] text-[#0f0f10]">{cap.title}</h3>
+                    <p className="mt-[8px] font-body text-[13px] font-[400] leading-[1.6] text-[#6b7280]">
                       {cap.body}
                     </p>
                   </div>
@@ -323,11 +323,11 @@ export default function WhitepaperPage() {
           </section>
 
           {/* Industries */}
-          <section className="border-t border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)]">
+          <section className="border-t border-[#e5e7eb] bg-[#FAFAFA]">
             <div className="mx-auto max-w-[1200px] px-[24px] py-[70px] md:px-[40px] md:py-[90px] lg:px-[80px]">
               <div className="mx-auto max-w-[760px]">
                 <SectionEyebrow>Built For These Industries</SectionEyebrow>
-                <h2 className="mt-[20px] font-hero text-[clamp(26px,3.6vw,38px)] font-[500] leading-[1.2] tracking-[-0.02em] text-white">
+                <h2 className="mt-[20px] font-hero text-[clamp(26px,3.6vw,38px)] font-[500] leading-[1.2] tracking-[-0.02em] text-[#0f0f10]">
                   Where Missed Calls Cost the Most
                 </h2>
               </div>
@@ -336,11 +336,11 @@ export default function WhitepaperPage() {
                 {industries.map((item) => (
                   <div
                     key={item.title}
-                    className="rounded-[12px] border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)] p-[24px]"
+                    className="rounded-[12px] border border-[#e5e7eb] bg-white p-[24px] shadow-[0_1px_3px_rgba(0,0,0,0.06)]"
                   >
                     <div className="mb-[12px] h-[1px] w-[24px] bg-[#c9a97a]" />
-                    <h3 className="font-heading text-[16px] font-[700] text-white">{item.title}</h3>
-                    <p className="mt-[10px] font-body text-[14px] font-[400] leading-[1.7] text-[rgba(255,255,255,0.6)]">
+                    <h3 className="font-heading text-[16px] font-[700] text-[#0f0f10]">{item.title}</h3>
+                    <p className="mt-[10px] font-body text-[14px] font-[400] leading-[1.7] text-[#6b7280]">
                       {item.body}
                     </p>
                   </div>
@@ -350,15 +350,15 @@ export default function WhitepaperPage() {
           </section>
 
           {/* Security & Compliance */}
-          <section className="border-t border-[rgba(255,255,255,0.08)]">
+          <section className="border-t border-[#e5e7eb]">
             <div className="mx-auto max-w-[1440px] px-[24px] py-[70px] md:px-[40px] md:py-[90px] lg:px-[80px]">
               <div className="mx-auto max-w-[760px]">
                 <SectionEyebrow>Security &amp; Compliance</SectionEyebrow>
-                <h2 className="mt-[20px] font-hero text-[clamp(26px,3.6vw,38px)] font-[500] leading-[1.2] tracking-[-0.02em] text-white">
+                <h2 className="mt-[20px] font-hero text-[clamp(26px,3.6vw,38px)] font-[500] leading-[1.2] tracking-[-0.02em] text-[#0f0f10]">
                   Built to Handle Real Conversations Responsibly
                 </h2>
 
-                <p className="mt-[24px] font-body text-[16px] font-[400] leading-[1.75] text-[rgba(255,255,255,0.68)] md:text-[17px]">
+                <p className="mt-[24px] font-body text-[16px] font-[400] leading-[1.75] text-[#374151] md:text-[17px]">
                   Automated outreach to real customers carries real compliance obligations. Velocity&apos;s messaging
                   infrastructure is built on Twilio&apos;s compliant messaging stack, with A2P registration handled per
                   business, opt-out language included in every automated conversation, and lead data isolated per tenant
@@ -370,20 +370,20 @@ export default function WhitepaperPage() {
           </section>
 
           {/* Closing CTA */}
-          <section className="border-t border-[rgba(255,255,255,0.08)]">
+          <section className="border-t border-[#e5e7eb] bg-[#FAFAFA]">
             <div className="mx-auto flex max-w-[800px] flex-col items-center gap-[28px] px-[24px] py-[100px] text-center md:px-[40px] lg:px-[80px]">
-              <h2 className="font-hero text-[clamp(28px,5vw,48px)] font-[600] leading-[1.15] tracking-[-0.02em] text-white">
+              <h2 className="font-hero text-[clamp(28px,5vw,48px)] font-[600] leading-[1.15] tracking-[-0.02em] text-[#0f0f10]">
                 See How Many Leads You&apos;re Currently Losing
               </h2>
 
-              <p className="mx-auto max-w-[560px] font-body text-[16px] font-[400] leading-[1.65] text-[rgba(255,255,255,0.6)] md:text-[17px]">
+              <p className="mx-auto max-w-[560px] font-body text-[16px] font-[400] leading-[1.65] text-[#6b7280] md:text-[17px]">
                 Connect your business line and Velocity will show you what missed-call recovery looks like for your
                 actual call volume — not an estimate.
               </p>
 
               <Link
                 href="/sign-up"
-                className="mt-[8px] inline-flex min-h-[44px] w-full max-w-[320px] items-center justify-center gap-[8px] rounded-[8px] bg-[#c9a97a] px-[36px] py-[16px] font-body text-[15px] font-[600] text-[#09090b] transition-colors duration-200 hover:bg-[#b8935e] md:w-auto md:max-w-none"
+                className="font-body mt-[8px] inline-flex min-h-[44px] w-full max-w-[320px] items-center justify-center gap-[12px] rounded-[6px] bg-[#0f172a] px-[28px] py-[16px] text-[15px] font-[600] tracking-[0.01em] text-white shadow-[0_8px_24px_rgba(15,23,42,0.18)] md:w-auto md:max-w-none"
               >
                 Book a Demo
                 <ArrowRight className="h-[18px] w-[18px] stroke-[2.2]" />

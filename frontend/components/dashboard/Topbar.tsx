@@ -179,7 +179,14 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
           </button>
 
           {notificationsOpen ? (
-            <div className="absolute right-0 top-12 z-[100] w-[360px] overflow-hidden rounded-[14px] border border-[#e4e4e7] bg-white shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.06)]">
+            <>
+              <button
+                type="button"
+                className="fixed inset-0 z-[100] bg-black/40 md:hidden"
+                onClick={() => setNotificationsOpen(false)}
+                aria-label="Close notifications overlay"
+              />
+              <div className="fixed inset-0 z-[110] m-auto h-fit w-[calc(100vw-32px)] max-w-[360px] overflow-hidden rounded-[14px] border border-[#e4e4e7] bg-white shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.06)] md:absolute md:inset-auto md:right-0 md:top-12 md:z-[100] md:m-0 md:h-auto md:w-[360px] md:max-w-none">
               <div className="flex items-center justify-between border-b border-[#f4f4f5] px-5 py-4">
                 <div>
                   <p className="text-sm font-bold tracking-[-0.2px] text-[#09090b]">Notifications</p>
@@ -231,7 +238,8 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
                   View all notifications →
                 </button>
               </div>
-            </div>
+              </div>
+            </>
           ) : null}
         </div>
 
@@ -242,19 +250,31 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
               setProfileOpen((v) => !v);
               setNotificationsOpen(false);
             }}
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-[#c9a97a]/15 text-xs font-semibold text-[#c9a97a]"
+            className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-[#c9a97a]/15 text-xs font-semibold text-[#c9a97a]"
             aria-label="Open profile menu"
           >
-            {initials}
+            {user?.avatarURL ? (
+              <img src={user.avatarURL} alt={displayName} className="h-full w-full object-cover" />
+            ) : (
+              initials
+            )}
           </button>
 
           {profileOpen ? (
             <div className="absolute right-0 top-12 z-[100] w-[260px] overflow-hidden rounded-[14px] border border-[#e4e4e7] bg-white shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.06)]">
               <div className="border-b border-[#f4f4f5] px-5 py-4">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#09090b] text-sm font-bold text-white">
-                    {initials}
-                  </div>
+                  {user?.avatarURL ? (
+                    <img
+                      src={user.avatarURL}
+                      alt={displayName}
+                      className="h-10 w-10 shrink-0 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#09090b] text-sm font-bold text-white">
+                      {initials}
+                    </div>
+                  )}
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold text-[#09090b]">{displayName}</p>
                     <p className="mt-0.5 truncate text-xs text-[#a1a1aa]">{email}</p>

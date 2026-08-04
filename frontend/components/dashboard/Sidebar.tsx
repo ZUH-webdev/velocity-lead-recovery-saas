@@ -80,7 +80,7 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
         </button>
       </div>
 
-      <nav className="flex-1 space-y-1 px-3 py-4">
+      <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
         {navItems.map(({ href, label, icon: Icon, exact }) => {
           const active = isActive(href, exact);
           return (
@@ -106,9 +106,17 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
 
       <div className="border-t border-[#1e1e1e] p-4">
         <div className="mb-3 flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#c9a97a]/20 text-xs font-semibold text-[#c9a97a]">
-            {initials}
-          </div>
+          {user?.avatarURL ? (
+            <img
+              src={user.avatarURL}
+              alt={displayName}
+              className="h-9 w-9 shrink-0 rounded-full object-cover"
+            />
+          ) : (
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#c9a97a]/20 text-xs font-semibold text-[#c9a97a]">
+              {initials}
+            </div>
+          )}
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-medium text-[#f5f5f5]">{displayName}</p>
             <p className="truncate text-xs text-[#888888]">{email}</p>
@@ -139,7 +147,7 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
 
       <aside
         className={cn(
-          'fixed left-0 top-0 z-50 h-screen w-[240px] border-r border-[#1e1e1e] bg-[#0f0f0f] transition-transform md:translate-x-0',
+          'fixed left-0 top-0 z-50 h-screen h-[100dvh] w-[240px] border-r border-[#1e1e1e] bg-[#0f0f0f] transition-transform md:translate-x-0',
           mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         )}
       >

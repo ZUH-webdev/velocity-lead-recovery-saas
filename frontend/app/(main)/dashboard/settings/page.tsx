@@ -1,7 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useAuth } from '../../../../context/AuthContext';
+import { api } from '../../../../lib/api';
+import { getFriendlyError } from '../../../../lib/errors';
+
+const MAX_AVATAR_BYTES = 3 * 1024 * 1024; // 3MB — keeps the base64 payload comfortably under the backend's 5MB cap
 
 type Tab = 'profile' | 'business' | 'integrations' | 'notifications';
 
@@ -37,8 +41,18 @@ function Toggle({ enabled, onChange }: { enabled: boolean; onChange: (v: boolean
   );
 }
 
+function getInitials(name?: string, email?: string): string {
+  if (name) {
+    const parts = name.trim().split(/\s+/);
+    if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+    return name.slice(0, 2).toUpperCase();
+  }
+  if (email) return email.slice(0, 2).toUpperCase();
+  return 'VL';
+}
+
 export default function SettingsPage() {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const [activeTab, setActiveTab] = useState<Tab>('profile');
   const [integrationState, setIntegrationState] = useState(
     Object.fromEntries(integrations.map((i) => [i.id, i.connected])),
@@ -49,6 +63,51 @@ export default function SettingsPage() {
     dailySummary: false,
     appointmentReminders: true,
   });
+
+  const displayName = user?.fullName || user?.name || '';
+  const [fullNameInput, setFullNameInput] = useState(displayName);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > MAX_AVATAR_BYTES) {
+      setSaveMessage({ type: 'error', text: 'Image is too large. Please choose a file under 3MB.' });
+      e.target.value = '';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => setAvatarPreview(reader.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  const handleSaveProfile = async () => {
+    setIsSaving(true);
+    setSaveMessage(null);
+    try {
+      const payload: { fullName?: string; avatarURL?: string } = {
+        fullName: fullNameInput.trim(),
+      };
+      if (avatarPreview) payload.avatarURL = avatarPreview;
+
+      const res = await api.patch('/auth/me', payload);
+      const updatedUser = res.data?.data?.user;
+      if (updatedUser) updateUser(updatedUser);
+
+      setSaveMessage({ type: 'success', text: 'Profile updated successfully.' });
+      setAvatarPreview(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    } catch (err) {
+      setSaveMessage({ type: 'error', text: getFriendlyError(err) });
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -79,7 +138,8 @@ export default function SettingsPage() {
               <div>
                 <label className="mb-1 block text-xs text-[#71717a]">Full Name</label>
                 <input
-                  defaultValue={user?.fullName || user?.name || ''}
+                  value={fullNameInput}
+                  onChange={(e) => setFullNameInput(e.target.value)}
                   className="w-full rounded-lg border border-[#e4e4e7] bg-[#fafafa] px-3 py-2 text-sm text-[#09090b] focus:border-[#c9a97a] focus:outline-none"
                 />
               </div>
@@ -88,15 +148,45 @@ export default function SettingsPage() {
                 <input
                   defaultValue={user?.email || ''}
                   type="email"
-                  className="w-full rounded-lg border border-[#e4e4e7] bg-[#fafafa] px-3 py-2 text-sm text-[#09090b] focus:border-[#c9a97a] focus:outline-none"
+                  disabled
+                  className="w-full rounded-lg border border-[#e4e4e7] bg-[#f4f4f5] px-3 py-2 text-sm text-[#a1a1aa]"
                 />
               </div>
               <div>
                 <label className="mb-1 block text-xs text-[#71717a]">Avatar</label>
-                <input type="file" accept="image/*" className="text-sm text-[#71717a]" />
+                <div className="flex items-center gap-3">
+                  {avatarPreview || user?.avatarURL ? (
+                    <img
+                      src={avatarPreview || user?.avatarURL}
+                      alt="Avatar preview"
+                      className="h-12 w-12 shrink-0 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#c9a97a]/20 text-sm font-semibold text-[#c9a97a]">
+                      {getInitials(fullNameInput, user?.email)}
+                    </div>
+                  )}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleAvatarChange}
+                    className="text-sm text-[#71717a]"
+                  />
+                </div>
               </div>
-              <button type="button" className="rounded-lg bg-[#c9a97a] px-4 py-2 text-sm font-medium text-black hover:opacity-90">
-                Save Profile
+              {saveMessage ? (
+                <p className={`text-xs font-medium ${saveMessage.type === 'success' ? 'text-[#16a34a]' : 'text-[#dc2626]'}`}>
+                  {saveMessage.text}
+                </p>
+              ) : null}
+              <button
+                type="button"
+                onClick={handleSaveProfile}
+                disabled={isSaving}
+                className="rounded-lg bg-[#c9a97a] px-4 py-2 text-sm font-medium text-black hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isSaving ? 'Saving…' : 'Save Profile'}
               </button>
             </div>
           </div>
