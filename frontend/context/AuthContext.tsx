@@ -113,16 +113,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (payload?.accessToken) {
       setToken(payload.accessToken);
       setAccessToken(payload.accessToken);
-      setUser(payload.user);
 
-      const members = payload.user?.tenantMembers || [];
-      if (members.length > 0) {
-        const firstTenantId = members[0].tenantId;
-        setActiveTenantId(firstTenantId);
-        setActiveTenantIdState(firstTenantId);
-      }
-
-      return payload.user; // ← return user so callers can act on it immediately
+      // Re-hydrate from /auth/me rather than trusting the login response body,
+      // so the canonical profile (avatarURL included) is always what populates
+      // state — the same source of truth used on mount/reload. This also sets
+      // activeTenantId, so no need to duplicate that logic here.
+      return fetchMe(); // ← return user so callers can act on it immediately
     } else {
       throw new Error(res.data?.message || 'Login failed');
     }
