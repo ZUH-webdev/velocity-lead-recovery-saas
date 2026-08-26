@@ -17,6 +17,19 @@ router.use(authenticateToken, resolveTenant);
 
 router.put("/", TenantController.update);
 
+// Integrations
+router.get("/integrations", TenantController.getIntegrations);
+router.post("/integrations/google/disconnect", TenantController.disconnectGoogleCalendar);
+router.get("/integrations/twilio", TenantController.getTwilioIntegration);
+router.post("/integrations/twilio/provision", TenantController.provisionTwilio);
+router.patch("/integrations/twilio", TenantController.updateTwilioIntegration);
+router.get("/integrations/calendly", TenantController.getCalendlyIntegration);
+router.post("/integrations/calendly", TenantController.connectCalendly);
+router.delete("/integrations/calendly", TenantController.disconnectCalendly);
+router.get("/integrations/ehr", TenantController.getEhrIntegration);
+router.post("/integrations/ehr", TenantController.connectEhr);
+router.delete("/integrations/ehr", TenantController.disconnectEhr);
+
 // Members
 router.get("/members", TenantController.getMembers);
 router.post("/members/invite", TenantController.inviteMember);

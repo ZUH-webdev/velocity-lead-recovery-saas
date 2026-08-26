@@ -1,6 +1,11 @@
 import type { Request, Response } from "express";
 import { TenantService } from "../services/tenant.service";
 import { HttpResponse } from "../utils/httpResponse";
+import { GoogleCalendarService } from "../services/google-calendar.service";
+import { TwilioProvisioningService } from "../services/twilio-provisioning.service";
+import { CalendlyService } from "../services/calendly.service";
+import { EhrFhirService } from "../services/ehr-fhir.service";
+import { prisma } from "../config/prisma";
 
 export class TenantController {
   // ── Tenant ────────────────────────────────────────────────────────────────
@@ -64,6 +69,8 @@ export class TenantController {
       "address",
       "timezone",
       "workingHours",
+      "businessHoursStart",
+      "businessHoursEnd",
     ];
     const body = req.body;
 
@@ -115,6 +122,160 @@ export class TenantController {
 
     const result = await TenantService.activate(tenantId);
     result.send(res);
+  }
+
+  // ── Integrations ─────────────────────────────────────────────────────────
+
+  static async getIntegrations(req: Request, res: Response): Promise<void> {
+    const tenant = req.tenant!;
+    const googleConnected = await GoogleCalendarService.isConnected(tenant.id);
+
+    HttpResponse.ok("Integration status", {
+      twilio: {
+        connected: tenant.twilioConnectionStatus === "active" && tenant.twilioIntegrationEnabled,
+        connectionStatus: tenant.twilioConnectionStatus,
+        integrationEnabled: tenant.twilioIntegrationEnabled,
+        phoneNumber: tenant.twilioPhoneNumber,
+      },
+      google: { connected: googleConnected },
+      calendly: { connected: tenant.calendlyConnected },
+      ehr: { connected: tenant.ehrConnected },
+    }).send(res);
+  }
+
+  static async disconnectGoogleCalendar(req: Request, res: Response): Promise<void> {
+    await GoogleCalendarService.disconnect(req.userId!);
+    HttpResponse.ok("Google Calendar disconnected").send(res);
+  }
+
+  // ── Twilio (per-tenant subaccount) ──────────────────────────────────────────
+
+  static async getTwilioIntegration(req: Request, res: Response): Promise<void> {
+    const tenant = req.tenant!;
+    HttpResponse.ok("Twilio integration status", {
+      connectionStatus: tenant.twilioConnectionStatus,
+      integrationEnabled: tenant.twilioIntegrationEnabled,
+      phoneNumber: tenant.twilioPhoneNumber,
+    }).send(res);
+  }
+
+  static async provisionTwilio(req: Request, res: Response, next: (err: unknown) => void): Promise<void> {
+    const tenant = req.tenant!;
+
+    if (tenant.twilioConnectionStatus === "active") {
+      HttpResponse.conflict("Twilio is already provisioned for this tenant").send(res);
+      return;
+    }
+
+    try {
+      await TwilioProvisioningService.provisionTenant(tenant.id);
+      const updated = await prisma.tenant.findUnique({ where: { id: tenant.id } });
+      HttpResponse.ok("Twilio provisioned", {
+        connectionStatus: updated?.twilioConnectionStatus,
+        integrationEnabled: updated?.twilioIntegrationEnabled,
+        phoneNumber: updated?.twilioPhoneNumber,
+      }).send(res);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async updateTwilioIntegration(req: Request, res: Response): Promise<void> {
+    const tenant = req.tenant!;
+    const { enabled } = req.body as { enabled?: boolean };
+
+    if (typeof enabled !== "boolean") {
+      HttpResponse.badRequest("`enabled` (boolean) is required").send(res);
+      return;
+    }
+
+    if (enabled && tenant.twilioConnectionStatus !== "active") {
+      HttpResponse.unprocessable("Twilio must be provisioned before it can be enabled").send(res);
+      return;
+    }
+
+    const updated = await prisma.tenant.update({
+      where: { id: tenant.id },
+      data: { twilioIntegrationEnabled: enabled },
+    });
+
+    HttpResponse.ok("Twilio integration updated", {
+      connectionStatus: updated.twilioConnectionStatus,
+      integrationEnabled: updated.twilioIntegrationEnabled,
+      phoneNumber: updated.twilioPhoneNumber,
+    }).send(res);
+  }
+
+  // ── Calendly ─────────────────────────────────────────────────────────────
+
+  static async getCalendlyIntegration(req: Request, res: Response): Promise<void> {
+    const tenant = req.tenant!;
+    HttpResponse.ok("Calendly integration status", { connected: tenant.calendlyConnected }).send(res);
+  }
+
+  static async connectCalendly(req: Request, res: Response): Promise<void> {
+    const { apiKey } = req.body as { apiKey?: string };
+    if (!apiKey || typeof apiKey !== "string") {
+      HttpResponse.badRequest("`apiKey` is required").send(res);
+      return;
+    }
+
+    try {
+      const user = await CalendlyService.connectTenant(req.tenant!.id, apiKey);
+      HttpResponse.ok("Calendly connected", {
+        connected: true,
+        name: user.name,
+        email: user.email,
+        schedulingUrl: user.schedulingUrl,
+      }).send(res);
+    } catch {
+      // Deliberately vague to the client — don't leak Calendly's raw error
+      // body, but the real cause (bad token vs Calendly outage) is logged
+      // server-side by CalendlyService.
+      HttpResponse.unprocessable("Could not verify that Calendly API key — check it and try again").send(res);
+    }
+  }
+
+  static async disconnectCalendly(req: Request, res: Response): Promise<void> {
+    await CalendlyService.disconnectTenant(req.tenant!.id);
+    HttpResponse.ok("Calendly disconnected").send(res);
+  }
+
+  // ── EHR (generic FHIR connector) ────────────────────────────────────────────
+
+  static async getEhrIntegration(req: Request, res: Response): Promise<void> {
+    const tenant = req.tenant!;
+    HttpResponse.ok("EHR integration status", {
+      connected: tenant.ehrConnected,
+      fhirBaseUrl: tenant.ehrFhirBaseUrl,
+      clientId: tenant.ehrClientId,
+    }).send(res);
+  }
+
+  static async connectEhr(req: Request, res: Response): Promise<void> {
+    const { fhirBaseUrl, clientId, clientSecret } = req.body as {
+      fhirBaseUrl?: string;
+      clientId?: string;
+      clientSecret?: string;
+    };
+
+    if (!fhirBaseUrl || !clientId || !clientSecret) {
+      HttpResponse.badRequest("`fhirBaseUrl`, `clientId`, and `clientSecret` are all required").send(res);
+      return;
+    }
+
+    try {
+      const info = await EhrFhirService.connectTenant(req.tenant!.id, fhirBaseUrl, clientId, clientSecret);
+      HttpResponse.ok("EHR connected", { connected: true, ...info }).send(res);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Could not validate the FHIR connection";
+      HttpResponse.unprocessable(message).send(res);
+    }
+  }
+
+  static async disconnectEhr(req: Request, res: Response): Promise<void> {
+    await EhrFhirService.disconnectTenant(req.tenant!.id);
+    HttpResponse.ok("EHR disconnected").send(res);
   }
 
   // ── Members ───────────────────────────────────────────────────────────────

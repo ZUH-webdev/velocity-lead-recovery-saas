@@ -28,6 +28,36 @@ router.get("/google/callback", (req, res, next) => {
   )(req, res, next);
 }, AuthController.googleCallback);
 
+// ── Google Calendar connect (from Settings, requires an existing app session) ──
+router.get("/google/calendar/init", authenticateToken, AuthController.googleCalendarInit);
+
+router.get("/google/calendar", (req, res, next) => {
+  // `accessType`/`prompt` are real passport-google-oauth20 options (forwarded
+  // to Google's authorization URL) that the shipped AuthenticateOptions type
+  // doesn't declare — cast to bypass that gap.
+  passport.authenticate("google-calendar", {
+    scope: ["profile", "email", "https://www.googleapis.com/auth/calendar"],
+    accessType: "offline",
+    prompt: "consent",
+    session: false,
+    state: req.query.state as string,
+  } as unknown as Parameters<typeof passport.authenticate>[1])(req, res, next);
+});
+
+router.get("/google/calendar/callback", (req, res, next) => {
+  passport.authenticate(
+    "google-calendar",
+    { session: false },
+    (err: Error | null, user: Express.User | false) => {
+      if (err || !user) {
+        AuthController.googleCalendarCallbackError(res, err ? "server_error" : "google_failed");
+        return;
+      }
+      AuthController.googleCalendarCallback(req, res);
+    },
+  )(req, res, next);
+});
+
 router.post("/register", authLimiter, AuthController.register);
 router.post("/verify", AuthController.verifyEmail);
 router.post("/resend-verification", authLimiter, AuthController.resendVerification);
