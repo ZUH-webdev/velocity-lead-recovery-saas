@@ -176,6 +176,7 @@ export class TenantService {
     data: Partial<{
       name: string; email: string; industry: string; phone: string;
       website: string; address: string; timezone: string; workingHours: object;
+      businessHoursStart: number; businessHoursEnd: number;
     }>,
   ) {
     const tenant = await prisma.tenant.findUnique({ where: { id: tenantId } });

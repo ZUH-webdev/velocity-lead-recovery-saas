@@ -52,7 +52,7 @@ const faqItems = [
   {
     question: 'Does Velocity integrate with Epic and Cerner?',
     answer:
-      'Yes. Velocity has native bi-directional integrations with Epic, Cerner, Athenahealth, and most major EHR/PMS platforms via HL7 and FHIR protocols. Setup typically completes within one business week.',
+      'Native EHR/PMS integrations (Epic, Cerner, Athenahealth, and others via HL7/FHIR) are on our roadmap. Today, Velocity operates as a standalone recovery layer alongside your existing systems — no EHR connection is required to get started.',
   },
   {
     question: 'Is this HIPAA and SOC 2 Type II compliant?',
@@ -543,7 +543,7 @@ function AutomatedCalendarSection() {
                 </div>
 
                 <div className="font-mono-ui text-[11px] font-[500] tracking-[0.08em] uppercase text-[#16a34a] bg-[rgba(22,163,74,0.08)] border border-[rgba(22,163,74,0.2)] rounded-[6px] px-[10px] py-[4px]">
-                  LIVE SYNC
+                  COMING SOON
                 </div>
               </div>
 
@@ -585,14 +585,15 @@ function AutomatedCalendarSection() {
           >
             <ScrollRevealItem direction="right">
               <h3 className="font-hero text-[clamp(28px,3vw,42px)] font-[800] leading-[1.1] tracking-[-0.02em] text-[#0f0f10] mb-[20px]">
-                Automated Calendar Sync
+                Automated Calendar Sync (Roadmap)
               </h3>
             </ScrollRevealItem>
 
             <ScrollRevealItem direction="right">
               <p className="font-body text-[17px] font-[400] leading-[1.7] text-[#374151] mb-[28px]">
-                Velocity reads your practice management software in real-time, finds the
-                exact slot, and books the patient without front-desk intervention.
+                Velocity is building direct calendar integration to find the exact open
+                slot and book patients without front-desk intervention — no manual setup
+                required once live.
               </p>
             </ScrollRevealItem>
 
@@ -600,7 +601,7 @@ function AutomatedCalendarSection() {
               <div className="flex items-center gap-[12px]">
                 <Check className="h-[14px] w-[14px] text-[#b5895a]" />
                 <span className="font-body text-[15px] font-[400] text-[#374151]">
-                  Bi-directional EMR integration.
+                  Bi-directional EMR integration. (Roadmap)
                 </span>
               </div>
 

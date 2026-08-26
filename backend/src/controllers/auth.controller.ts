@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import { AuthService } from "../services/auth.service";
 import { HttpResponse } from "../utils/httpResponse";
 import { env } from "../config/env";
+import { signCalendarLinkState } from "../utils/googleCalendarState";
 
 const REFRESH_COOKIE_OPTIONS = {
   httpOnly: true,
@@ -139,6 +140,30 @@ export class AuthController {
     } catch (err) {
       next(err);
     }
+  }
+
+  // GET /auth/google/calendar/init — called via authenticated XHR (not a page
+  // navigation), so it can read the Bearer token. Returns a URL carrying a
+  // signed, short-lived state param that identifies the caller through the
+  // subsequent full-page OAuth redirect, which can't carry the header itself.
+  static async googleCalendarInit(req: Request, res: Response, next: NextFunction) {
+    try {
+      const state = signCalendarLinkState(req.userId!);
+      const url = `${env.API_BASE_URL}/auth/google/calendar?state=${encodeURIComponent(state)}`;
+      HttpResponse.ok("OAuth URL generated", { url }).send(res);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static googleCalendarCallback(req: Request, res: Response) {
+    // Getting here means the passport-calendar strategy already persisted the
+    // tokens (see config/google.ts) — this just sends the browser back.
+    res.redirect(`${env.APP_URL}/dashboard/settings?integration=google&status=connected`);
+  }
+
+  static googleCalendarCallbackError(res: Response, reason: string) {
+    res.redirect(`${env.APP_URL}/dashboard/settings?integration=google&status=error&reason=${encodeURIComponent(reason)}`);
   }
 
   static async me(req: Request, res: Response, next: NextFunction) {

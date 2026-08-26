@@ -166,6 +166,8 @@ model Tenant {
   address      String?
   timezone     String   @default("UTC")
   workingHours Json?
+  businessHoursStart Int @default(9)  // hour of day, 0-23, in Tenant.timezone
+  businessHoursEnd   Int @default(17) // hour of day, 0-23, in Tenant.timezone
   isActive     Boolean  @default(true)
   status       String   @default("active")
   createdAt    DateTime @default(now())
@@ -176,12 +178,26 @@ model Tenant {
   isLive               Boolean        @default(false)
 
   // ── Twilio ──────────────────────────────────────────────────
-  twilioPhoneNumber    String?
-  twilioPhoneNumberSid String?
+  twilioPhoneNumber        String?
+  twilioPhoneNumberSid     String?
+  twilioSubaccountSid      String?
+  twilioSubaccountAuthToken String? // encrypted at rest — see utils/crypto.ts
+  twilioIntegrationEnabled Boolean @default(false)
+  twilioConnectionStatus   String  @default("not_connected") // not_connected | provisioning | active | suspended
 
   // ── Vapi ────────────────────────────────────────────────────
   vapiAssistantId      String?
   vapiPhoneNumberId    String?
+
+  // ── Calendly (alternate booking backend to Google Calendar) ──
+  calendlyApiKey    String? // encrypted at rest — see utils/crypto.ts
+  calendlyConnected Boolean @default(false)
+
+  // ── EHR (generic FHIR connector) ─────────────────────────────
+  ehrFhirBaseUrl  String?
+  ehrClientId     String?
+  ehrClientSecret String? // encrypted at rest — see utils/crypto.ts
+  ehrConnected    Boolean @default(false)
 
   members          TenantMember[]
   roles            Role[]
@@ -569,6 +585,7 @@ model Appointment {
   notes              String?
   reminderSentAt     DateTime?
   googleEventId      String?
+  ehrAppointmentId   String? // FHIR Appointment resource id, when synced to a connected EHR
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @updatedAt
 

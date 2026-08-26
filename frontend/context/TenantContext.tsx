@@ -41,6 +41,8 @@ interface Tenant {
   industry: string
   phone: string
   timezone: string
+  businessHoursStart: number
+  businessHoursEnd: number
   isActive: boolean
   websiteURL: string
   workingHours: Record<string, unknown>

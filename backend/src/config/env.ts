@@ -31,9 +31,21 @@ export const env = {
   GOOGLE_CALLBACK_URL: required("GOOGLE_CALLBACK_URL"),
   RESEND_API_KEY: required("RESEND_API_KEY"),
   APP_URL: optional("APP_URL", "http://localhost:3000"),
+  // The backend's own publicly reachable base URL (used to build webhook/OAuth
+  // callback URLs) — defaults to stripping the known suffix off GOOGLE_CALLBACK_URL
+  // so most deployments don't need to configure yet another URL by hand.
+  API_BASE_URL: optional(
+    "API_BASE_URL",
+    required("GOOGLE_CALLBACK_URL").replace(/\/auth\/google\/callback$/, ""),
+  ),
   TWILIO_ACCOUNT_SID: required("TWILIO_ACCOUNT_SID"),
   TWILIO_AUTH_TOKEN: required("TWILIO_AUTH_TOKEN"),
   TWILIO_PHONE_NUMBER: required("TWILIO_PHONE_NUMBER"),
+  // 32-byte (64 hex char) key used to encrypt OAuth tokens at rest, e.g. `openssl rand -hex 32`
+  TOKEN_ENCRYPTION_KEY: required("TOKEN_ENCRYPTION_KEY"),
+  // Separate key for tenant Twilio subaccount credentials — kept independent of
+  // TOKEN_ENCRYPTION_KEY so the two credential stores can be rotated independently.
+  TWILIO_CREDENTIAL_ENCRYPTION_KEY: required("TWILIO_CREDENTIAL_ENCRYPTION_KEY"),
 } as const;
 
 export type Env = typeof env;

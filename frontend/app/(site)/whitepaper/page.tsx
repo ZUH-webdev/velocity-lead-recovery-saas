@@ -62,7 +62,7 @@ const capabilities = [
   {
     icon: CalendarCheck2,
     title: 'Real-Time Appointment Booking',
-    body: 'Leads are booked straight into your connected calendar the moment they qualify.',
+    body: 'Qualified leads are routed straight into your booking workflow the moment they qualify.',
   },
   {
     icon: BarChart3,
@@ -71,8 +71,8 @@ const capabilities = [
   },
   {
     icon: RefreshCcw,
-    title: 'Calendar Sync',
-    body: 'Two-way sync keeps Velocity and your existing calendar consistent, no double-booking.',
+    title: 'Calendar Sync (Coming Soon)',
+    body: 'Two-way sync with your existing calendar is on our roadmap, eliminating double-booking once live.',
   },
   {
     icon: BellRing,

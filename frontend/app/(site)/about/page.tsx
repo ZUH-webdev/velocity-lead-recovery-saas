@@ -25,7 +25,7 @@ const audienceItems = [
       role: 'Founder & Frontend Architect',
       accent: '#c9a97a',
       description:
-        "Zain built Velocity's entire frontend experience — from the landing page to the lead recovery dashboard. A specialist in Next.js, React, and high-fidelity UI systems, he shapes how practices interact with the platform day-to-day. Velocity's design philosophy — clinical precision, zero friction — is his. He also architected and integrated all third-party API connections, including Twilio, Google Calendar, Calendly, and EHR platform pipelines that power Velocity's real-time recovery workflows.",
+        "Zain built Velocity's entire frontend experience — from the landing page to the lead recovery dashboard. A specialist in Next.js, React, and high-fidelity UI systems, he shapes how practices interact with the platform day-to-day. Velocity's design philosophy — clinical precision, zero friction — is his. He also built the third-party API architecture — including the Twilio-powered missed-call recovery pipeline — and the connection framework Velocity's roadmap of integrations (Google Calendar, Calendly, EHR platforms) will build on.",
     },
     {
       initials: 'MZ',

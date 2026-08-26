@@ -6,13 +6,12 @@ import { LegalSection, StatusBadge, type ServiceStatus } from '../../../componen
 
 export const metadata: Metadata = {
   title: 'System Status',
-  description: 'Real-time operational status of all Velocity services, including the AI voice agent, SMS recovery engine, and calendar sync.',
+  description: 'Real-time operational status of all Velocity services, including the AI voice agent and SMS recovery engine.',
 };
 
 const services: { name: string; status: ServiceStatus }[] = [
   { name: 'AI Voice Agent', status: 'operational' },
   { name: 'SMS Recovery Engine', status: 'operational' },
-  { name: 'Calendar Sync', status: 'operational' },
   { name: 'Webhook Processing', status: 'operational' },
   { name: 'Dashboard API', status: 'operational' },
   { name: 'Email Notifications', status: 'operational' },
